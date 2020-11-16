@@ -94,7 +94,7 @@ body {
 
 }
 
-.heading-avatar-icon img {
+.heading-avatar-icon img, .self-heading-avatar-icon img  {
     border-radius: 50%;
     height: 40px;
     width: 40px;
@@ -175,6 +175,8 @@ body {
     margin: 0 !important;
     background-color: #fff;
     overflow-y: auto;
+
+    overflow-x: hidden;
     border: 1px solid #f7f7f7;
     height: calc(100% - 120px);
 }
@@ -326,6 +328,7 @@ body {
     margin: 0 !important;
     background: url(/images/bg-chat-tile-light.png);
     overflow-y: auto;
+    overflow-x: hidden;
     background-blend-mode: overlay;
     background-color: #e5ddd5;
     border: 1px solid #f7f7f7;
@@ -350,7 +353,7 @@ body {
 }
 
 .message-body {
-    margin: 0 !important;
+    margin: 5px !important;
     padding: 0 !important;
     height: auto;
     overflow: hidden;
@@ -461,7 +464,7 @@ body {
 .reply-main textarea {
     border-style: solid;
     border-width: 3px;
-    border-color: #d3d3d3;
+    border-color: # d3d3d3;
     border-radius: 31px;
     width: 100%;
     resize: none;
@@ -496,7 +499,7 @@ body {
     .heading-avatar {
         padding: 0 !important;
     }
-    .heading-avatar-icon img {
+    .heading-avatar-icon img{
         height: 50px;
         width: 50px;
     }
@@ -651,6 +654,6 @@ body {
     border-radius: 50px;
 }
 
-.template{
+.receiver-template, .sender-template{
     display: none;
 }

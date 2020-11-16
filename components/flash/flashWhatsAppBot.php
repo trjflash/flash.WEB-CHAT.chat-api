@@ -167,10 +167,16 @@ namespace app\components\flash;
 
         }
 
-        public function sendRequestGet($method){
+        public function sendRequestGet($method, $params = false){
 
-            //\flashHelpers::stopA($data_string);
-            $curl = curl_init($this->APIurl.$method.'?token='.$this->token);
+            $request = '';
+            if($params)
+                $request = $this->APIurl.$method.'?token='.$this->token.'&'.implode('&', $params);
+            else
+                $request = $this->APIurl.$method.'?token='.$this->token;
+
+            //\flashHelpers::stopA($request);
+            $curl = curl_init($request);
 
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -178,7 +184,7 @@ namespace app\components\flash;
             $result = curl_exec($curl);
             curl_close($curl);
 
-            return $result;
+            return json_decode($result);
         }
     }
 

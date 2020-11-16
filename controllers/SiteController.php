@@ -65,21 +65,15 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $page = MainPages::getPageContent('main');
 
-        if(!empty($page)) {
-            $this->view->title = $page[0]['title'];
-            $this->view->registerMetaTag(['name' => 'keywords', 'content' => '' . $page[0]['keywords'] . '']);
-            $this->view->registerMetaTag(['name' => 'keywords', 'content' => '' . $page[0]['description'] . '']);
-        }
-        else{
-            $this->view->title = "Чаты";
-            $bot = new flashWhatsAppBot();
-            $dialogs = $bot->sendRequestGet("dialogs");
-            \flashHelpers::stopA(json_decode($dialogs));
-            $page['page_content'] = "Контент редактируется. Попробуйте зайти позже =)";
-        }
+
+        $this->view->title = "Чаты";
+        $bot = new flashWhatsAppBot();
+        $dialogs = $bot->sendRequestGet("dialogs");
+        //\flashHelpers::stopA($dialogs->dialogs[0]->id);
+        $page['page_content'] = $dialogs;
         //\flashHelpers::stopA($page);
+
 
         return $this->render('main.twig', compact('page'));
 

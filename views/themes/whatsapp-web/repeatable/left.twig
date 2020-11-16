@@ -3,7 +3,7 @@
         <div class="row heading">
             <div class="col-sm-6 col-xs-6 heading-avatar">
 
-                <div class="heading-avatar-icon">
+                <div class="self-heading-avatar-icon">
                     <img src="https://bootdey.com/img/Content/avatar/avatar1.png">
                     <span class="avatar-name">ИМЯ ОПЕРАТОРА</span>
                 </div>
@@ -35,6 +35,33 @@
 
         <div class="row sideBar">
             <!---Последние чаты --->
+
+            {%  for dialogs in page.page_content.dialogs %}
+
+                <div class="row sideBar-body">
+                    <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                        <div class="avatar-icon">
+                            <img src="{{ dialogs.image }}">
+                        </div>
+                    </div>
+                    <div class="col-sm-9 col-xs-9 sideBar-main">
+                        <div class="row">
+                            <div class="col-sm-8 col-xs-8 sideBar-name">
+                                <span class="name-meta">
+                                    {{ dialogs.name }}
+                                </span>
+                            </div>
+                            <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                                <span class="time-meta pull-right">
+                                    {{ dialogs.last_time|date("d-m-Y H:i:s") }}
+                                </span>
+                            </div>
+                            <input type="hidden"  class="chat-id" value="{{ dialogs.id }}"/>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
 
             <div class="row sideBar-body template">
                 <div class="col-sm-3 col-xs-3 sideBar-avatar">

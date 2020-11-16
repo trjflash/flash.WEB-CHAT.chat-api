@@ -45,7 +45,9 @@ class AppAsset extends AssetBundle
         'plugins/easing/easing.js',
         'plugins/OwlCarousel2-2.2.1/owl.carousel.js',
         'plugins/slick-1.8.0/slick.js',
+        'js/dateFormat.js',
         'js/custom_scripts.js',
+
     ];
     public $depends = [
         'yii\web\YiiAsset',

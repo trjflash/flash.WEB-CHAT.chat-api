@@ -4,6 +4,7 @@
 namespace app\controllers;
 
 
+use app\components\flash\flashWhatsAppBot;
 use app\models\AjaxLogin;
 use app\modules\Adm\models\MenuEditorModel;
 use app\modules\Adm\models\MenuTableToController;
@@ -197,6 +198,9 @@ class PostController extends Controller{
                 case "addNewGood":
                     $data['photos'] = $_FILES;
                     $this->addEditGood($data);
+                    break;
+                case "getBotMessagesByCHatId":
+                    $this->getWaBotMessagesById($data);
                     break;
                 default:
                     break;
@@ -641,6 +645,23 @@ class PostController extends Controller{
 
     private function editCurrentGood($good){
 
+    }
+
+
+    private function getWaBotMessagesById($data){
+        $chatId = $data['chatId'];
+        //flashHelpers::stopA($chatId);
+
+        $bot = new flashWhatsAppBot();
+        $messages = $bot->sendRequestGet('messagesHistory', ["chatId=$chatId"]);
+        //flashHelpers::testA($messages);
+
+        $messages->messages = (array_reverse($messages->messages));
+//flashHelpers::stopA($messages);
+        $exit['error'] = false;
+        $exit['data'] = $messages;
+        echo json_encode($exit);
+        exit();
     }
     
 }
