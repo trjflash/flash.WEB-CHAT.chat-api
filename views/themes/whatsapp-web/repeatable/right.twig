@@ -1,4 +1,5 @@
 <div class="col-sm-8 conversation">
+
     <div class="row heading">
         <div class="col-sm-2 col-md-1 col-xs-3 heading-avatar">
             <div class="heading-avatar-icon">
@@ -6,49 +7,55 @@
             </div>
         </div>
         <div class="col-sm-8 col-xs-7 heading-name">
-            <a class="heading-name-meta">John Doe
+            <a class="heading-name-meta">
+                ИМЯ КОНТАКТА
             </a>
-            <span class="heading-online">Online</span>
+            <span class="heading-online">СТАТУС</span>
         </div>
         <div class="col-sm-1 col-xs-1  heading-dot pull-right">
             <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
 
         </div>
     </div>
+    <div class="coll-sm-12">
+        <div class="row message" id="conversation">
 
-    <div class="row message" id="conversation">
-        <div class="row message-previous">
-            <div class="col-sm-12 previous">
-                <a onclick="previous(this)" id="ankitjain28" name="20">
-                    Show Previous Message!
-                </a>
-            </div>
-        </div>
-
-        <div class="row col-sm-12 message-body">
-            <div class="col-sm-12 message-main-receiver">
-                <div class="receiver">
-                    <div class="message-text">
-                        Hi, what are you doing?!
-                    </div>
-                    <span class="message-time pull-right">
-                Sun
-              </span>
+            <div class="row message-previous">
+                <div class="col-sm-12 previous">
+                    <a href="#">
+                        Показать ранние сообщения
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <div class="row col-sm-12 message-body">
-            <div class="col-sm-12 message-main-sender">
-                <div class="sender">
-                    <div class="message-text">
-                        I am doing nothing man!
+
+            <div class="row col-sm-12 message-body message-body-receiver template ">
+                <div class="col-sm-12 message-main-receiver">
+                    <div class="receiver">
+                        <div class="message-text">
+                            Hi, what are you doing?!
+                        </div>
+                        <span class="message-time pull-right">
+                    Sun
+                  </span>
                     </div>
-                    <span class="message-time pull-right">
-                Sun
-              </span>
                 </div>
             </div>
+
+            <div class="row col-sm-12 message-body-receiver template ">
+                <div class="col-sm-12 message-main-sender">
+                    <div class="sender">
+                        <div class="message-text">
+                            I am doing nothing man!
+                        </div>
+                        <span class="message-time pull-right">
+                    Sun
+                  </span>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
@@ -66,4 +73,5 @@
             <i class="fa fa-paper-plane fa-2x" aria-hidden="true"></i>
         </div>
     </div>
+
 </div>

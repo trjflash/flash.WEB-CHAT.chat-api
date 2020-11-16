@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\components\flash\flashWhatsAppBot;
+use app\components\flash\whatsAppBot;
 use app\models\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
@@ -71,7 +73,10 @@ class SiteController extends Controller
             $this->view->registerMetaTag(['name' => 'keywords', 'content' => '' . $page[0]['description'] . '']);
         }
         else{
-            $this->view->title = "Главная страница";
+            $this->view->title = "Чаты";
+            $bot = new flashWhatsAppBot();
+            $dialogs = $bot->sendRequestGet("dialogs");
+            \flashHelpers::stopA(json_decode($dialogs));
             $page['page_content'] = "Контент редактируется. Попробуйте зайти позже =)";
         }
         //\flashHelpers::stopA($page);

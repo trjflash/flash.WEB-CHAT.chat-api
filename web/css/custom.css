@@ -189,7 +189,7 @@ body {
 }
 
 .sideBar-body:hover {
-    background-color: #f2f2f2;
+    background-color: rgb(228 224 224);
 }
 
 .sideBar-avatar {
@@ -325,7 +325,7 @@ body {
     padding: 0 !important;
     margin: 0 !important;
     background: url(/images/bg-chat-tile-light.png);
-    /* background-image: url(); */
+    overflow-y: auto;
     background-blend-mode: overlay;
     background-color: #e5ddd5;
     border: 1px solid #f7f7f7;
@@ -459,12 +459,15 @@ body {
 }
 
 .reply-main textarea {
+    border-style: solid;
+    border-width: 3px;
+    border-color: #d3d3d3;
+    border-radius: 31px;
     width: 100%;
     resize: none;
     overflow: hidden;
     padding: 5px !important;
     outline: none;
-    border: none;
     text-indent: 5px;
     box-shadow: none;
     height: 100%;
@@ -593,4 +596,61 @@ body {
         padding: 5px 2px 5px 0 !important;
         font-size: 1.8em !important;
     }
+}
+
+::-webkit-scrollbar-button {
+    background-image:url('');
+    background-repeat:no-repeat;
+    width:5px;
+    height:0px
+}
+
+::-webkit-scrollbar-track {
+    background-color:#ecedee
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background-color:#6dc0c8;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background-color:#56999f;
+}
+
+::-webkit-resizer{
+    background-image:url('');
+    background-repeat:no-repeat;
+    width:4px;
+    height:0px
+}
+
+::-webkit-scrollbar{
+    width: 4px;
+}
+
+#search{
+    position: relative;
+    font-size: 13px;
+    padding-top: 21px;
+    margin: -20px auto 0;
+}
+
+#search label{
+    position: absolute;
+    left: 92%;
+    top: 32px;
+}
+
+#search input{
+    height: 35px;
+    padding: 10px 16px;
+    font-size: 13px;
+    line-height: 1.3333333;
+    border-radius: 50px;
+}
+
+.template{
+    display: none;
 }
