@@ -1,0 +1,45 @@
+.logo img{
+    height: 100%;
+}
+.slider{
+    font-size: 10px;
+}
+.one-slide span{
+    margin: auto;
+    position: absolute;
+    width: 50%;
+    height: 10%;
+    top: 0; left: 0; bottom: 0; right: 0;
+}
+
+@media screen and (min-width:1024px) {
+    .slide-desc-text{
+        font: normal normal 24px 'Capture it';
+    }}
+
+@media screen and (max-width: 800px) {
+    .slide-desc-text{
+        font: normal normal 24px 'Capture it';
+    }
+}
+
+@media screen and (max-width: 479px) {
+    .slide-desc-text{
+        font: normal normal 14px 'Capture it';
+    }
+}
+@media screen and (min-width: 320px) and (max-width: 425px) {
+    .slide-desc-text{
+        font: normal normal 12px 'Capture it';
+    }
+}
+.slide-desc-text{
+    background-color: #ffc107;
+    text-align: center;
+}
+
+.footer .logo a img{
+    width: 100%;
+    height: auto;
+}
+

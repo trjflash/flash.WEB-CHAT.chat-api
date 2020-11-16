@@ -1,0 +1,241 @@
+.root_materials_list{
+    width: 100%;
+    margin: 25px auto;
+    padding: 0 1em;
+    text-align: center;
+}
+.bottom_line{
+    margin-left: 6em;
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 0.5em 4.5em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+.form-check-label {
+    width: 100%;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+#create_page, #create_menu, #create_category, #create_good, #create_delivery{
+    width: 100%;
+    margin: 1em 0 0 0;
+}
+
+.destinations .form-control{
+    margin: 0 5px;
+    float: left;
+    width: 33%;
+}
+
+.destinations-block{
+    width: 100%;
+    height: 3em;
+}
+
+.menu-item, .sub-menu-item{
+    background-color: rgba(0,123,254, 0.3);
+    border-radius: 18px;
+    padding: 23px;
+    margin: 2em 0;
+    position: relative;
+}
+.delete-menu-item{
+    margin: -0.5em 0 0 0;
+}
+
+.AJAX-menu-loading{
+    display: none;
+}
+.AJAX-loading{
+    display: none;
+}
+.AJAX-menu-loading .overlay , .AJAX-loading .overlay{
+    background-color: #000000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    position: absolute;
+    content: "";
+    opacity: 0.3;
+    border-radius: 18px;
+    padding: 23px;
+}
+
+.AJAX-menu-loading img , .AJAX-loading img{
+    z-index: 10500;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
+
+#add-new-menu{
+    display: block;
+    margin: 10px 0 0 0;
+}
+
+.add-sub-menu {
+    display: block;
+    float: right;
+}
+
+.add-menu-bottom-control{
+    width: 100%;
+    display: block;
+    float: left;
+}
+
+.add-menu-bottom-control button, .add-menu-bottom-control div, .add-menu-bottom-control select{
+    display: block;
+    float: left;
+}
+
+.shop-cards{
+    /*float: left;*/
+}
+
+.shop-blocs{
+    width: 100%;
+    margin: 25px auto;
+    padding: 0 1em;
+    text-align: center;
+}
+
+.photos-block .form-group{
+    padding:1em;
+    margin:1em
+}
+.photos-block input[type=file]{
+    outline:0;
+    opacity:0;
+    pointer-events:none;
+    user-select:none
+}
+.photos-block .label{
+    width:120px;
+    border:2px dashed grey;
+    border-radius:5px;
+    display:block;
+    padding:1.2em;
+    transition:border 300ms ease;
+    cursor:pointer;
+    text-align:center
+}
+.photos-block .label i {
+    display: block;
+    font-size: 42px;
+    padding-bottom: 16px;
+}
+
+.photos-block .label i,.example-1 .label .title {
+    color: grey;
+    transition: 200ms color;
+}
+
+.photos-block .label:hover {
+    border: 2px solid #000;
+}
+
+.photos-block .label:hover i,.example-1 .label:hover .title {
+    color: #000;
+}
+#uploadImagesList{
+    width: 100%;
+    height: 20em;
+    float: left;
+    display: block;
+}
+
+
+.gallery-item{
+    margin: 0 10px;
+    height: 15em;
+    float: left;
+    width: 120px;
+    border: 2px solid grey;
+    border-radius: 5px;
+    display: block;
+    transition: border 300ms ease;
+    text-align: center;
+
+}
+
+.gallery-item .img-wrap  img{
+    width: 100%;
+    height: auto;
+}
+.gallery-item .img-wrap {
+
+     overflow: hidden;
+     width: 100%;
+     height: 80%;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+
+ }
+.gallery-template{
+    display: none !important;
+}

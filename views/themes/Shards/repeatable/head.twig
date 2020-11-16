@@ -1,0 +1,17 @@
+{{ register_asset_bundle('app/assets/DashboardAsset') }}
+{{ void(this.beginPage()) }}
+<html lang='{{ app.language }}'>
+
+<head>
+
+    <meta charset="{{ app.charset }}">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    {{ html.csrfMetaTags | raw }}
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {{   void(this.head) }}
+
+</head>
+    <body class="h-100">{{ void(this.beginBody()) }}
+        <div class="container-fluid">
+                    <div class="row">

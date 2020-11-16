@@ -1,0 +1,110 @@
+{% extends "themes/Shards/base.twig" %}
+
+{% block head %}
+    {% embed 'themes/Shards/repeatable/head.twig' %}
+        {% block title %}
+            Список материалов для редактирования
+        {% endblock %}
+    {% endembed %}
+{% endblock head %}
+
+{% block right %}
+    {% embed 'themes/Shards/repeatable/right.twig' %}
+        {% block pageContent %}
+            {{ parent() }}
+
+            <!-- Page Header -->
+            <div class="page-header row no-gutters py-4">
+                <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+                    <span class="text-uppercase page-subtitle">Список меню для редактирования</span>
+                </div>
+            </div>
+            <!-- End Page Header -->
+            <div class="row">
+                <div class="col-lg col-md-6 col-sm-6 mb-4">
+                    <div class="stats-small stats-small--1 card card-small">
+                        <div class="card-body p-0 d-flex">
+                            <div class="form-group root_materials_list">
+                                <label for="exampleFormControlSelect1">Список меню для редактирования</label>
+
+                                <select class="form-control" id="menuList">
+                                    <option value="empty"></option>
+                                    {%  for menuItem in menuTypes %}
+                                        <option value="{{ menuItem.menu_type }}">{{ menuItem.menu_type_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-primary" id="create_menu">Создать</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-10 col-md-12 col-sm-12 mb-4 materialCard" id="add_menu" style="display: none;">
+                    <div class="card card-small">
+
+                        <div class="card-header border-bottom">
+                            <a href="#" class="close cancel-add-menu"> x </a>
+                            <h6 class="m-0">Добавляем меню</h6> </div>
+                        <div class="card-body pt-0">
+                            <form formid="menuForm">
+                                <div class="AJAX-loading">
+                                    <div class="overlay"></div>
+                                    <img src="/web/images/gears-loading.gif">
+                                </div>
+                                <div class="menuForm">
+
+                                    <div class="form-group">
+                                            <label for="title">Название меню</label>
+                                            <input type="text" class="form-control menu-name" placeholder="Укажите название меню" value="">
+                                    </div>
+
+                                    <div class="menu-item">
+                                        <a href="#" class="close delete-menu-item"> x </a>
+                                        <div class="AJAX-menu-loading">
+                                            <div class="overlay"></div>
+                                            <img src="/web/images/gears-loading.gif">
+                                        </div>
+
+                                        <div class="form-group title-group">
+                                            <label for="title">Отображаемое имя пункта меню</label>
+                                            <input type="text" class="form-control title" placeholder="Укажите отображаемое имя пункта меню" value="">
+                                        </div>
+                                        <div class="form-group destinations">
+                                            <label for="destinationType">Куда ведет</label>
+                                            <div class="destinations-block" >
+                                                <select class="form-control destinationType">
+                                                    <option value="empty"></option>
+                                                </select>
+                                                <select class="form-control destinationPoint">
+                                                    <option value="empty"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="add-sub-menu" > <i class="fa fa-plus" aria-hidden="true"></i></a>
+                                    </div>
+
+
+                                    <div style="display: none">
+                                        {% include 'clearMenu.twig' %}
+                                    </div>
+                                </div>
+                                <div class="add-menu-bottom-control">
+                                    <div class="form-group col-md-1">
+                                        <label>Еще пункт</label>
+                                        <button type="button" class="btn btn-warning add_menu_item">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+
+                                </div>
+                                <button type="submit" class="btn btn-primary " id="add-new-menu">Добавить меню</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        {% endblock %}
+    {% endembed %}
+{% endblock right %}

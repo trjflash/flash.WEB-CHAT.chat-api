@@ -1,0 +1,35 @@
+/* Демо стили */
+*,
+*:after,
+*:before {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+
+
+body {
+    font-family: Calibri, Arial, sans-serif;
+    background: #f6b93c url(../images/noisebg.png);
+    font-weight: 400;
+    font-size: 15px;
+    color: #333;
+}
+
+
+
+.support-note {
+	clear: both;
+}
+
+.support-note span{
+	color: #ac375d;
+	font-size: 16px;
+	display: none;
+	font-weight: bold;
+	text-align: center;
+	padding: 5px 0;
+}

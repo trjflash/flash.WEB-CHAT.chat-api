@@ -1,0 +1,51 @@
+{{ register_asset_bundle('app/assets/AuthAsset') }}
+{{ void(this.beginPage()) }}
+<html lang='{{ app.language }}'>
+
+<head>
+    <title>Административная часть</title>
+    <meta charset='{{ app.charset }}'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'> {{ html.csrfMetaTags | raw }}
+    <meta name='viewport' content='width=device-width, initial-scale=1'>{{void(this.head) }}
+
+</head>
+
+<body>{{ void(this.beginBody()) }}
+
+<div class="login-form">
+    <form action="#" method="post">
+        <h2 class="text-center">Административная часть</h2>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <span class="fa fa-user"></span>
+                    </span>
+                </div>
+                <input type="text" class="form-control" name="username" id="username" placeholder="Имя пользователя" required="required">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fa fa-lock"></i>
+                    </span>
+                </div>
+                <input type="password" class="form-control" name="password" id="password" placeholder="Пароль" required="required">
+            </div>
+        </div>
+        <div class="clearfix">
+            <label class="float-left form-check-label"><input type="checkbox" id="remember"> Запомнить?</label>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary login-btn btn-block" id="adminLogin">Войти</button>
+        </div>
+        <input type="hidden" id="action" value="adminLogin" />
+    </form>
+</div>
+{{   void(this.endBody()) }}
+</body>
+</html>
+{{   void(this.endPage()) }}
+

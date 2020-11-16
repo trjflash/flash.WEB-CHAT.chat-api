@@ -1,0 +1,321 @@
+{% extends "themes/Shards/base.twig" %}
+
+{% block head %}
+    {% embed 'themes/Shards/repeatable/head.twig' %}
+        {% block title %}
+            Модуль магазина
+        {% endblock %}
+    {% endembed %}
+{% endblock head %}
+
+{% block right %}
+    {% embed 'themes/Shards/repeatable/right.twig' %}
+        {% block pageContent %}
+            {{ parent() }}
+            <!-- Page Header -->
+            <div class="page-header row no-gutters py-4">
+                <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+                    <span class="text-uppercase page-subtitle">Редактор модуля</span>
+                </div>
+            </div>
+            <!-- End Page Header -->
+
+
+            <!--- CATEGORY CARD FORM --->
+            <div class="row">
+
+                <div class="col-lg-4 col-md-4 col-sm-4 mb-4 shop-cards">
+                    <div class="stats-small stats-small--1 card card-small">
+                        <div class="card-body p-0 d-flex">
+                            <div class="form-group shop-blocs">
+                                <label for="exampleFormControlSelect1">Список категорий</label>
+
+                                <select class="form-control" id="categoryList">
+                                    <option value="empty"></option>
+                                    {%  for category in categoriesList %}
+                                        <option value="{{ category.id }}">{{ category.category_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-primary" id="create_category">Создать категорию</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            <!--- CATEGORY CARD FORM --->
+
+            <!--- GOODS CARD FORM --->
+
+                <div class="col-lg-4 col-md-4 col-sm-4 mb-4 shop-cards">
+                    <div class="stats-small stats-small--1 card card-small">
+                        <div class="card-body p-0 d-flex">
+                            <div class="form-group shop-blocs">
+                                <label for="exampleFormControlSelect1">Список товаров</label>
+
+                                <select class="form-control" id="goodsList">
+                                    <option value="empty"></option>
+                                    {%  for good in goodsList %}
+                                        <option value="{{ good.id }}">{{ good.name }}</option>
+                                    {% endfor %}                                </select>
+                                <button type="button" class="btn btn-primary" id="create_good">Создать товар</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!--- GOODS CARD FORM --->
+
+            <!--- DELIVERY CARD FORM --->
+
+                <div class="col-lg-4 col-md-4 col-sm-4 mb-4 shop-cards">
+                    <div class="stats-small stats-small--1 card card-small">
+                        <div class="card-body p-0 d-flex">
+                            <div class="form-group shop-blocs">
+                                <label for="exampleFormControlSelect1">Список типов доставки</label>
+
+                                <select class="form-control" id="deliveriesList">
+                                    <option value="empty"></option>
+                                    {%  for delivery in deliveryList %}
+                                        <option value="{{ delivery.id }}">{{ delivery.type }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-primary" id="create_delivery">Добавить тип доставки</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--- DELIVERY CARD FORM --->
+
+            <!--- ADD/EDIT CATEGORY FORM --->
+            <div class="col-lg-12 col-md-12 col-sm-12 mb-4 materialCard" id="category_form" style=" display: none;">
+                <div class="card card-small">
+                    <div class="card-header border-bottom">
+                        <a href="#" class="close cancel-add-category"> x </a>
+                        <h6 class="m-0" id="category_action"></h6>
+
+                    </div>
+                    <div class="card-body pt-0">
+                        <form formid="main">
+                            <div class="form-group">
+                                <label for="title">Название категории</label>
+                                <input type="text" class="form-control title" placeholder="Укажите отображаемое имя категории" id="category_name" value=""> </div>
+
+
+
+                            <div class="form-group">
+                                <label for="Keywords">Meta Keywords</label>
+                                <textarea type="text" class="form-control Keywords" id="category_kw" placeholder="Укажите теги для Keywords через запятую, максимум 250 знаков" maxlength="250" rows="2"></textarea>
+                            </div><div class="form-group">
+                                <label for="Description">Meta Description</label>
+                                <input type="text" class="form-control Description"  id="category_description" placeholder="Укажите описание для Description максимум 200 знаков" maxlength="200" value="">
+                            </div>
+                            <div class="form-row">
+
+                                <div class="form-group col-md-2" id="category_is_active">
+                                    <label class="form-check-label" for="activ">Категория активна?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="isCategoryActive"> <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="form-group col-md-2" id="category_is_parent">
+                                    <label for="views">Родительская категория</label>
+                                    <select class="form-control" id="category_id">
+                                        <option value="empty"></option>
+                                    </select> </div>
+
+                                <div class="form-group col-md-2" id="category_num_views">
+                                    <label for="views">Количество просмотров</label>
+                                    <input type="text" class="form-control numViews" value="0" disabled=""> </div>
+
+                                <div class="form-group col-md-2" id="category_num_comments">
+                                    <label for="comments">Количество комментариев</label>
+                                    <input type="text" class="form-control numComments" value="0" disabled=""> </div>
+                                <div class="form-group col-md-2" id="category_need_commnets">
+                                    <label class="form-check-label" for="need_commnets">Нужны коментарии?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="isComments"> <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-2" id="category_need_info_line">
+                                    <label class="form-check-label" for="need_info_line">Нужна инфолиния?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="isInfoLine"> <span class="slider round"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <input type="hidden" id="current_category_id" value="0">
+
+                            <button type="submit" class="btn btn-primary" id="category_make_edit">Применить</button>
+                            <button type="submit" class="btn btn-danger" id="category_make_delete">Удалить категорию</button>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+            <!--- ADD/EDIT CATEGORY FORM --->
+
+            <!--- ADD/EDIT GOODS FORM --->
+            <div class="col-lg-12 col-md-12 col-sm-12 mb-4 materialCard" id="good_form" style="display: none;">
+                <div class="card card-small">
+                    <div class="card-header border-bottom">
+                        <a href="#" class="close cancel-add-category"> x </a>
+                        <h6 class="m-0" id="good_action"></h6>
+                    </div>
+                    <div class="card-body pt-0">
+
+                        <form formid="main" content="multipart/form-data">
+                            <div class="form-group">
+                                <label for="good_name">Название товара</label>
+                                <input type="text" class="form-control good-name" placeholder="Укажите отображаемое имя товара" id="good_name" value=""> </div><div class="form-group">
+                                <label for="good_photos">Фото товара</label>
+
+                                <div class="photos-block">
+                                    <div class="form-group">
+                                        <label class="label">
+                                            <i class="material-icons">attach_file</i>
+                                            <span class="title">Добавить файл</span>
+                                            <input type="file" name="good_photos" id="good_photos" multiple>
+                                        </label>
+                                        <ul id="uploadImagesList" style="display: none;">
+                                            <li class="gallery-item gallery-template">
+                                                <span class="img-wrap">
+                                                    <img src="image.jpg" alt="">
+                                                </span>
+                                                <span class="delete-link btn btn-danger" title="Удалить">Удалить</span>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+
+                                <label for="good_category">Категория товара</label>
+                                <select class="form-control" id="good_category">
+                                    <option value="empty"></option>
+                                    <option value="main_id_1">Главная id 1</option>
+                                </select>
+                            </div>
+
+
+
+                            <div class="form-group">
+                                <label for="good_price">Цена</label>
+                                <input type="text" class="form-control title" placeholder="Укажите цену" id="good_price" value=""> </div><div class="form-group">
+                                <label for="good_self_price">Себестоимость</label>
+                                <input type="text" class="form-control title" placeholder="Укажите себестоимость" id="good_self_price" value=""> </div><div class="form-group">
+                                <label for="good_anons">Красткое описание</label>
+                                <input type="text" class="form-control good_anons" id="good_anons" placeholder="Укажите краткое описание максимум 250 знаков" maxlength="250" value="">
+                            </div><div class="form-group">
+                                <label for="good_description">Описание товара</label>
+                                <textarea type="text" class="form-control good_description" id="good_description" placeholder="Укажите описание товара" maxlength="250" rows="2"></textarea>
+                            </div><div class="form-group">
+                                <label for="Keywords">Meta Keywords</label>
+                                <textarea type="text" class="form-control Keywords" id="good_meta_kw" placeholder="Укажите теги для Keywords через запятую, максимум 250 знаков" maxlength="250" rows="2"></textarea>
+                            </div><div class="form-group">
+                                <label for="Description">Meta Description</label>
+                                <input type="text" class="form-control Description" id="good_meta_description" placeholder="Укажите описание для Description максимум 200 знаков" maxlength="200" value="">
+                            </div>
+                            <div class="form-row">
+
+                                <div class="form-group col-md-2" id="good_is_active">
+                                    <label class="form-check-label" for="activ">Товар активен?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="isActive"> <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+
+
+                                <div class="form-group col-md-2" id="good_is_top">
+                                    <label class="form-check-label" for="is_top">Топовый товар?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="is_top"> <span class="slider round"></span>
+                                    </label>
+                                </div><div class="form-group col-md-2" id="good_is_new">
+                                    <label class="form-check-label" for="is_new">Новинка?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="is_new"> <span class="slider round"></span>
+                                    </label>
+                                </div><div class="form-group col-md-2" id="good_availability">
+                                    <label for="availability">Наличие</label>
+                                    <input type="text" class="form-control num_availability" id="availability" value="0"> </div><div class="form-group col-md-2" id="good_num_views">
+                                    <label for="views">Количество просмотров</label>
+                                    <input type="text" class="form-control numViews" value="0" disabled=""> </div>
+
+                                <div class="form-group col-md-2" id="good_num_comments">
+                                    <label for="comments">Количество комментариев</label>
+                                    <input type="text" class="form-control numComments" value="0" disabled=""> </div>
+                                <div class="form-group col-md-2" id="good_need_commnets">
+                                    <label class="form-check-label" for="need_commnets">Нужны коментарии?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="isComments"> <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-2" id="good_need_info_line">
+                                    <label class="form-check-label" for="need_info_line">Нужна инфолиния?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="isInfoLine"> <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-2" id="is_imported">
+                                    <label class="form-check-label" for="is_import">Импортирован?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="is_import" disabled=""> <span class="slider round"></span>
+                                    </label>
+                                </div><div class="form-group col-md-2" id="import_source">
+                                    <label for="import_source">Источник импорта</label>
+                                    <input type="text" class="form-control import_source" value="" disabled=""> </div></div>
+                            <input type="hidden" id="current_good_id" value="0">
+
+                            <button type="submit" class="btn btn-primary" id="good_make_edit">Применить</button>
+                            <button type="submit" class="btn btn-danger" id="good_make_delete">Удалить категорию</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <!--- ADD/EDIT GOODS FORM --->
+
+            <!--- ADD/EDIT DELIVERY FORM --->
+            <div class="col-lg-12 col-md-12 col-sm-12 mb-4 materialCard" id="delivery_form" style="display: none;">
+                <div class="card card-small">
+                    <div class="card-header border-bottom">
+                        <a href="#" class="close cancel-add-category"> x </a>
+                        <h6 class="m-0" id="delivery_action"></h6>
+                    </div>
+                    <div class="card-body pt-0">
+                        <form formid="main">
+                            <div class="form-group">
+                                <label for="title">Способ доставки</label>
+                                <input type="text" class="form-control title" placeholder="Укажите отображаемое имя типа доставки" id="delivery_name" value=""> </div>
+                            <div class="form-row">
+
+                                <div class="form-group col-md-2" id="delivery_is_active">
+                                    <label class="form-check-label" for="activ">Способ доступен?</label>
+                                    <label class="switch">
+                                        <input type="checkbox" class="isActive"> <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                            </div>
+                            <input type="hidden" id="current_delivery_id" value="1">
+
+                            <button type="submit" class="btn btn-primary" id="delivery_make_edit">Применить</button>
+                            <button type="submit" class="btn btn-danger" id="delivery_make_delete">Удалить категорию</button>
+                        </form>
+
+
+                    </div>
+                </div>
+            </div>
+            <!--- ADD/EDIT DELIVERY FORM --->
+
+        {% endblock %}
+    {% endembed %}
+{% endblock right %}
