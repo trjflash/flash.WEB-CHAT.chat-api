@@ -20,13 +20,9 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/bootstrap4/bootstrap.min.css',
-        'css/bootstrap4/bootstrap-grid.min.css',
-        'css/bootstrap4/bootstrap-reboot.min.css',
+        'css/bootstrap3/bootstrap3.css',
         'css/FA/all.min.css',
         'fonts/Capture-it.css',
-        'css/regular_styles.css',
-        'css/regular_responsive.css',
         'plugins/fontawesome-free-5.0.1/css/fontawesome-all.css',
         'plugins/OwlCarousel2-2.2.1/owl.carousel.css',
         'plugins/OwlCarousel2-2.2.1/owl.theme.default.css',
@@ -49,7 +45,6 @@ class AppAsset extends AssetBundle
         'plugins/easing/easing.js',
         'plugins/OwlCarousel2-2.2.1/owl.carousel.js',
         'plugins/slick-1.8.0/slick.js',
-        'js/regular_custom.js',
         'js/custom_scripts.js',
     ];
     public $depends = [

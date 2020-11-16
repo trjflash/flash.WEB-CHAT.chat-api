@@ -1,5 +1,0 @@
-{
-  "start": "<div class='col-lg-12'><div class='owl-carousel owl-theme' id='main-page-carousel'>",
-  "end": "</div></div>",
-  "rep_row": "<div class='one-slide'><img src='{#img#}'><span>{#text#}</span></div>"
-}

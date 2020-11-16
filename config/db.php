@@ -2,7 +2,7 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=flashcms',
+    'dsn' => 'mysql:host=172.17.190.8;dbname=flashcms',
     'username' => 'flashcms',
     'password' => 'xCWYNjFnTtAwyMZl',
     'charset' => 'utf8',
