@@ -2,9 +2,11 @@
 
 namespace app\controllers;
 
+use app\components\flash\ChatApi;
 use app\components\flash\flashWhatsAppBot;
 use app\components\flash\whatsAppBot;
 use app\models\LoginForm;
+use app\models\WaBotLastMessageModel;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -68,12 +70,22 @@ class SiteController extends Controller
 
 
         $this->view->title = "Чаты";
+
+//        $bot = new ChatApi('oycyoxh358s1yvd8');
+//        $res = $bot->getDialogs();
+//
+//        \flashHelpers::stopA($res);
+
         $bot = new flashWhatsAppBot();
         $dialogs = $bot->sendRequestGet("dialogs");
-        //\flashHelpers::stopA($dialogs->dialogs[0]->id);
+        //\flashHelpers::stopA($dialogs);
         $page['page_content'] = $dialogs;
-        //\flashHelpers::stopA($page);
+//        for ($i=0; $i < 30; $i++){
+//            $dialogs->dialogs[$i]->lastMessage = $bot->getLastChatMessage($dialogs->dialogs[$i]->id);
+//        }
 
+
+        //\flashHelpers::stopA($dialogs);
 
         return $this->render('main.twig', compact('page'));
 

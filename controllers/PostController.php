@@ -202,6 +202,9 @@ class PostController extends Controller{
                 case "getBotMessagesByCHatId":
                     $this->getWaBotMessagesById($data);
                     break;
+                case"sendMessInCHat":
+                    $this->sendMessage($data);
+                    break;
                 default:
                     break;
 
@@ -654,6 +657,8 @@ class PostController extends Controller{
 
         $bot = new flashWhatsAppBot();
         $messages = $bot->sendRequestGet('messagesHistory', ["chatId=$chatId"]);
+        $dialog = $bot->sendRequestGet('readChat', ["phone=$chatId"]);
+        //flashHelpers::testA($dialog);
         //flashHelpers::testA($messages);
 
         $messages->messages = (array_reverse($messages->messages));
@@ -663,5 +668,16 @@ class PostController extends Controller{
         echo json_encode($exit);
         exit();
     }
-    
+
+    private function sendMessage($data){
+
+        $bot = new flashWhatsAppBot();
+        $sendResult = json_decode($bot->sendMessage($data['chatId'],$data['message']));
+        if($sendResult->sent){
+            $exit['error'] = false;
+            echo json_encode($exit);
+            exit();
+        }
+    }
+
 }

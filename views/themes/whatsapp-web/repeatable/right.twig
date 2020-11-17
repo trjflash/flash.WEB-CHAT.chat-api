@@ -1,3 +1,4 @@
+<div class="col-sm-8 chat-owerflow" style="display: block"></div>
 <div class="col-sm-8 conversation">
 
     <div class="row heading">
@@ -10,6 +11,7 @@
             <a class="heading-name-meta">
                 ИМЯ КОНТАКТА
             </a>
+            <input type="hidden" class="current-chat-id" value="">
             <span class="heading-online">СТАТУС</span>
         </div>
         <div class="col-sm-1 col-xs-1  heading-dot pull-right">
@@ -63,13 +65,13 @@
         <div class="col-sm-1 col-xs-1 reply-emojis">
             <i class="fa fa-smile fa-2x" aria-hidden="true"></i>
         </div>
-        <div class="col-sm-9 col-xs-9 reply-main">
+        <div class="col-sm-10 col-xs-10 reply-main">
             <textarea class="form-control" rows="1" id="comment"></textarea>
         </div>
         <div class="col-sm-1 col-xs-1 reply-recording">
             <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
         </div>
-        <div class="col-sm-1 col-xs-1 reply-send">
+        <div class="col-sm-1 col-xs-1 reply-send" style="display: none">
             <i class="fa fa-paper-plane fa-2x" aria-hidden="true"></i>
         </div>
     </div>

@@ -1,0 +1,17 @@
+{{ use('/app/components') }}
+{% block head %}
+    {% embed 'themes/whatsapp-web/repeatable/head.twig' %}{% endembed %}
+{% endblock head %}
+
+{% include 'themes/whatsapp-web/repeatable/header.twig' %}
+
+{% block left %}
+    {% embed 'themes/whatsapp-web/repeatable/left.twig' %}{% endembed %}
+{% endblock left %}
+
+{% block right %}
+    {% embed 'themes/whatsapp-web/repeatable/right.twig' %}{% endembed %}
+{% endblock right %}
+
+{% include 'themes/whatsapp-web/repeatable/footer.twig' %}
+{% include 'themes/whatsapp-web/repeatable/end.twig' %}

@@ -62,6 +62,7 @@ $(document).ready(function(){
                         var conversationBlock = $('#conversation');
 
                         $('.heading-name-meta').html(chatName);
+                        $('.current-chat-id').val(chatId);
                         $('.heading-avatar-icon').children('img').attr("src",chatImg);
                         //console.log(conversationBlock);
                         conversationBlock.fadeOut(500);
@@ -101,6 +102,7 @@ $(document).ready(function(){
                             }
 
                         }
+                        $('.chat-owerflow').fadeOut(500);
                         conversationBlock.fadeIn(1000);
                         $('#conversation').scrollTop(10000000);
                     }
@@ -112,8 +114,113 @@ $(document).ready(function(){
                 }
             }
         });
+
+    })
+
+    $(".reply-main textarea" ).keypress(function(){
+        if($( ".reply-main textarea" ).val().length > 0 ) {
+            $('.reply-recording').css({"display": "none"});
+            $('.reply-send').css({"display": "block"});
+        }
+        else{
+            $('.reply-recording').css({"display": "block"});
+            $('.reply-send').css({"display": "none"});
+
+        }
+    });
+
+    $(".reply-main textarea").keydown(function (event) {
+
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            sendMessage();
+        }
+    })
+
+    $(".reply-send svg").click(function (e) {
+        e.preventDefault();
+        sendMessage();
+
     })
 });
+
+function sendMessage(){
+    var message = $('#comment').val();
+
+    if (message.length == 0){
+        VanillaToasts.create({
+            title: 'Внимание',
+            text: "Сообщение не может быть пустым",
+            type: "info", // success, info, warning, error   / optional parameter
+            icon: '', // optional parameter
+            timeout: 5000, // hide after 5000ms, // optional paremter
+            callback: function () {
+
+            } // executed when toast is clicked / optional parameter
+        });
+        return false;
+    }
+    $('#comment').val('');
+    var chatId = $('.current-chat-id').val();
+
+    var request = $.ajax({
+        type: "POST",
+        url: "/post/request",
+
+        data:{
+            action: 'sendMessInCHat',
+            chatId: chatId,
+            message: message,
+            _csrf : yii.getCsrfToken()
+        },
+        success:function( data ) {
+            var content = $.parseJSON(data);
+
+
+            if (content.error != undefined) {
+
+
+                if (content.error == true) {
+                    VanillaToasts.create({
+                        title: 'Внимание',
+                        text: $.parseJSON(content.mess),
+                        type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                        icon: '', // optional parameter
+                        timeout: 5000, // hide after 5000ms, // optional paremter
+                        callback: function () {
+
+                        } // executed when toast is clicked / optional parameter
+                    });
+
+                }
+                else {
+
+                    var itemPreviewTemplate = $('#conversation').children('.sender-template').clone();
+
+                    var date = new Date();
+                    var formattedDate = date.format('d-m-Y h:i');
+
+                    itemPreviewTemplate.removeClass('sender-template');
+                    $('.last-message').removeClass('last-message');
+                    itemPreviewTemplate.addClass('injected-message');
+                    itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-text').html(message);
+                    itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-time').html(formattedDate);
+                    itemPreviewTemplate.appendTo('#conversation');
+                    $('#conversation').scrollTop(10000000);
+
+                    itemPreviewTemplate.addClass('last-message');
+                    $('#comment').val('');
+
+                }
+
+            }
+            else{
+                console.log(data);
+            }
+        }
+
+    });
+}
 
 $(function(){
     $(".heading-compose").click(function() {

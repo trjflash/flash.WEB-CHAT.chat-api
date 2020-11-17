@@ -56,6 +56,16 @@
                                     {{ dialogs.last_time|date("d-m-Y H:i:s") }}
                                 </span>
                             </div>
+
+{#                            <span class="has-new"#}
+{#                                {% if dialogs.last_time|date("U") < "-30 minutes"|date("U") %}#}
+{#                                    {% if dialogs.lastMessage.messages.0.fromMe  == 0 %}#}
+{#                                        style="display: none"#}
+{#                                    {% endif %}#}
+{#                                {% endif %}//#}
+
+
+{#                            ><i class="fa fa-circle" aria-hidden="true"></i>Есть новые</span>#}
                             <input type="hidden"  class="chat-id" value="{{ dialogs.id }}"/>
                         </div>
                     </div>

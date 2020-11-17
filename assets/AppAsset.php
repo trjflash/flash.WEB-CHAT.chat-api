@@ -22,6 +22,7 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/bootstrap3/bootstrap3.css',
         'css/FA/all.min.css',
+        'css/vanillatoasts.css',
         'fonts/Capture-it.css',
         'plugins/fontawesome-free-5.0.1/css/fontawesome-all.css',
         'plugins/OwlCarousel2-2.2.1/owl.carousel.css',
@@ -37,6 +38,7 @@ class AppAsset extends AssetBundle
         'css/bootstrap4/bootstrap.min.js',
         'css/bootstrap4/bootstrap.bundle.min.js',
         'css/FA/all.min.js',
+        'js/vanillatoasts.js',
         'plugins/greensock/TweenMax.min.js',
         'plugins/greensock/TimelineMax.min.js',
         'plugins/scrollmagic/ScrollMagic.min.js',

@@ -139,7 +139,8 @@ namespace app\components\flash;
 
         public function sendMessage($chatId, $text){
             $data = array('chatId'=>$chatId,'body'=>$text);
-            $this->sendRequest('message',$data);
+            $res = $this->sendRequestPost('message',$data);
+            return $res;
         }
 
         public function sendRequestPost($method,$data){
@@ -160,6 +161,7 @@ namespace app\components\flash;
                     'Content-Type: application/json',
                     'Content-Length: ' . strlen($data_string))
             );
+            //\flashHelpers::stopA($curl);
             $result = curl_exec($curl);
             curl_close($curl);
 
@@ -185,6 +187,10 @@ namespace app\components\flash;
             curl_close($curl);
 
             return json_decode($result);
+        }
+
+        public function getLastChatMessage($chatId){
+            return $this->sendRequestGet("messages", ["limit=1","chatId=$chatId"]);
         }
     }
 
