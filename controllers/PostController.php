@@ -23,6 +23,13 @@ use yii\web\Controller;
 use yii\web\UploadedFile;
 
 class PostController extends Controller{
+    private $bot;
+
+    public function __construct($id, $module, $config = []){
+        parent::__construct($id, $module, $config);
+        $this->bot = new flashWhatsAppBot();
+
+    }
 
     public function actionRequest(){
 
@@ -205,6 +212,10 @@ class PostController extends Controller{
                 case"sendMessInCHat":
                     $this->sendMessage($data);
                     break;
+                case"getNewMessagesInChat":
+                    $this->getNewMessages($data);
+                    break;
+
                 default:
                     break;
 
@@ -650,14 +661,13 @@ class PostController extends Controller{
 
     }
 
-
     private function getWaBotMessagesById($data){
         $chatId = $data['chatId'];
         //flashHelpers::stopA($chatId);
 
         $bot = new flashWhatsAppBot();
-        $messages = $bot->sendRequestGet('messagesHistory', ["chatId=$chatId"]);
-        $dialog = $bot->sendRequestGet('readChat', ["phone=$chatId"]);
+        $messages = $bot->getChatMessages($chatId);
+        $bot->sendReadChat( $chatId);
         //flashHelpers::testA($dialog);
         //flashHelpers::testA($messages);
 
@@ -671,13 +681,33 @@ class PostController extends Controller{
 
     private function sendMessage($data){
 
-        $bot = new flashWhatsAppBot();
-        $sendResult = json_decode($bot->sendMessage($data['chatId'],$data['message']));
+
+        $sendResult = json_decode($this->bot->sendMessage($data['chatId'],$data['message']));
         if($sendResult->sent){
             $exit['error'] = false;
             echo json_encode($exit);
             exit();
         }
+    }
+
+    private function getNewMessages($data){
+        //flashHelpers::testA($data);
+        $messages = $this->bot->getNewMessagesInChat($data['requestBody']['chatId'],$data['requestBody']['lastMessageId']);
+        //flashHelpers::stopA($messages);
+        if (count($messages->messages) != 0) {
+            $this->bot->sendReadChat($data['requestBody']['chatId']);
+            $exit['error'] = false;
+            $exit['data'] = $messages;
+            echo json_encode($exit);
+            exit();
+        }
+        else{
+            $exit['error'] = false;
+            $exit['data'] = "NO MESSAGES (((";
+            echo json_encode($exit);
+            exit();
+        }
+
     }
 
 }

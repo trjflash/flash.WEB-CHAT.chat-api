@@ -1,3 +1,22 @@
+var audio = [
+    'ogg',
+    'mp3',
+    'wave'
+];
+var img =[
+  'jpeg',
+  'gif',
+  'jpg',
+  'bmp',
+  'png'
+];
+var video = [
+    'mp4',
+    'avi',
+    'wmv'
+];
+
+
 $(document).ready(function(){
 
     $('#main-page-carousel').owlCarousel({
@@ -24,6 +43,7 @@ $(document).ready(function(){
     });
 
     $(".sideBar-body").click(function (e) {
+        $('.conversation').fadeOut(500);
         e.preventDefault();
         var chatId = $(this).children('.sideBar-main').children('.row').children('.chat-id').val();
 
@@ -65,7 +85,6 @@ $(document).ready(function(){
                         $('.current-chat-id').val(chatId);
                         $('.heading-avatar-icon').children('img').attr("src",chatImg);
                         //console.log(conversationBlock);
-                        conversationBlock.fadeOut(500);
                         $('.injected-message').remove();
 
                         for (var i = 0; i < messages.length; i++) {
@@ -79,31 +98,69 @@ $(document).ready(function(){
                                 itemPreviewTemplate = conversationBlock.children('.sender-template').clone();
                                 itemPreviewTemplate.removeClass('sender-template');
                                 itemPreviewTemplate.addClass('injected-message');
-                                itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-text').html(messages[i].body);
+
+                                var exetention = messages[i].body.split('.').pop();
+
+                                if(audio.indexOf(exetention) != -1 ){
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                }
+                                else if(img.indexOf(exetention) != -1 ){
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html('<img src="'+messages[i].body+'" class="mes-img"/>');
+                                }
+                                else if (video.indexOf(exetention) != -1 ){
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                }
+                                else{
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                }
+
                                 itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-time').html(formattedDate);
                                 itemPreviewTemplate.appendTo('#conversation');
 
-                                if(i ==  messages.length - 1)
+                                if(i ==  messages.length - 1) {
                                     itemPreviewTemplate.addClass('last-message');
+                                    itemPreviewTemplate.children('.raw-time').val(timestampInMilliSeconds/1000);
+                                    itemPreviewTemplate.children('.last-message-id').val(messages[i].messageNumber);
+
+                                }
                             }
 
                             else{
+
                                 itemPreviewTemplate = conversationBlock.children('.receiver-template').clone();
 
                                 itemPreviewTemplate.removeClass('receiver-template');
                                 itemPreviewTemplate.addClass('injected-message');
-                                itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+
+                                var exetention = messages[i].body.split('.').pop();
+
+                                if(audio.indexOf(exetention) != -1 ){
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                }
+                                else if(img.indexOf(exetention) != -1 ){
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html('<img src="'+messages[i].body+'" class="mes-img"/>');
+                                }
+                                else if (video.indexOf(exetention) != -1 ){
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                }
+                                else{
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                }
+
                                 itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-time').html(formattedDate);
                                 itemPreviewTemplate.appendTo('#conversation');
 
-                                if(i ==  messages.length - 1)
+                                if(i ==  messages.length - 1) {
                                     itemPreviewTemplate.addClass('last-message');
-
+                                    itemPreviewTemplate.children('.raw-time').val(timestampInMilliSeconds/1000);
+                                    itemPreviewTemplate.children('.last-message-id').val(messages[i].messageNumber);
+                                }
                             }
 
                         }
                         $('.chat-owerflow').fadeOut(500);
-                        conversationBlock.fadeIn(1000);
+                        $('.conversation').fadeIn(1000);
+                        conversationBlock.addClass('active');
                         $('#conversation').scrollTop(10000000);
                     }
 
@@ -142,7 +199,104 @@ $(document).ready(function(){
         sendMessage();
 
     })
+
+    $('#conversation').everyTime(10000,function () {
+        if($('#conversation').hasClass('active')){
+            var lastMessageId = $('#conversation').find('.last-message').find('.last-message-id').val();
+            var chatId = $('.current-chat-id').val();
+
+            var data = {};
+            data = {
+                "lastMessageId": lastMessageId,
+                "chatId": chatId
+            };
+
+            var request = $.ajax({
+                type: 'POST',
+                url: '/post/request',
+                data:{
+                    action: 'getNewMessagesInChat',
+                    requestBody: data,
+                    _csrf : yii.getCsrfToken()
+                },
+                success:function( data ) {
+
+                    var content = $.parseJSON(data);
+
+                    if (content.error != undefined) {
+
+
+                        if (content.error == true) {
+                            VanillaToasts.create({
+                                title: 'Внимание',
+                                text: $.parseJSON(content.mess),
+                                type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                                icon: '', // optional parameter
+                                timeout: 5000, // hide after 5000ms, // optional paremter
+                                callback: function () {
+
+                                } // executed when toast is clicked / optional parameter
+                            });
+
+                        }
+                        else {
+
+                            if(content.data != "NO MESSAGES ((("){
+                                var messages = content.data.messages;
+                                for (var i = 0; i < messages.length; i++){
+                                    if(!messages[i].fromMe){
+
+                                        var date = new Date(messages[i].time*1000);
+                                        var formattedDate = date.format('d-m-Y h:i');
+                                        var itemPreviewTemplate = '';
+                                        itemPreviewTemplate = $('#conversation').children('.receiver-template').clone();
+
+                                        itemPreviewTemplate.removeClass('receiver-template');
+                                        itemPreviewTemplate.addClass('injected-message');
+
+                                        if(audio.indexOf(messages[i].body.split('.').pop()) != -1 ){
+                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                        }
+                                        else if(img.indexOf(messages[i].body.split('.').pop()) != -1 ){
+                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html('<img src="'+messages[i].body+'" class="mes-img"/>');
+                                        }
+                                        else if (video.indexOf(messages[i].body.split('.').pop()) != -1 ){
+                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                        }
+                                        else{
+                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
+                                        }
+
+                                        itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-time').html(formattedDate);
+                                        itemPreviewTemplate.appendTo('#conversation');
+                                        $('.last-message').removeClass('last-message')
+
+                                        if(i ==  messages.length - 1) {
+                                            itemPreviewTemplate.addClass('last-message');
+                                            itemPreviewTemplate.children('.raw-time').val(messages[i].time);
+                                            itemPreviewTemplate.children('.last-message-id').val(messages[i].messageNumber);
+                                        }
+                                        $('#conversation').scrollTop(10000000);
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+                    else{
+                        console.log(data);
+                    }
+                }
+
+            });
+        }
+    })
+
+
+
 });
+
 
 function sendMessage(){
     var message = $('#comment').val();
@@ -201,6 +355,7 @@ function sendMessage(){
                     var formattedDate = date.format('d-m-Y h:i');
 
                     itemPreviewTemplate.removeClass('sender-template');
+                    var lastMessage = Number($('#conversation').find('.last-message').find('.last-message-id').val());
                     $('.last-message').removeClass('last-message');
                     itemPreviewTemplate.addClass('injected-message');
                     itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-text').html(message);
@@ -208,7 +363,11 @@ function sendMessage(){
                     itemPreviewTemplate.appendTo('#conversation');
                     $('#conversation').scrollTop(10000000);
 
+                    $('#conversation').find('.last-message').find('.last-message-id').val("")
                     itemPreviewTemplate.addClass('last-message');
+                    $('#conversation').find('.last-message').find('.last-message-id').val(lastMessage)
+
+
                     $('#comment').val('');
 
                 }

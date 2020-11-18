@@ -22,11 +22,11 @@
             <div class="col-sm-12 searchBox-inner">
                 <div class="form-group has-feedback">
                     <div id="search">
-                        <label for="search-input">
+                        <label for="search-chat-input">
                             <i class="fa fa-search" aria-hidden="true"></i>
                             <span class="sr-only">Найти чаты</span>
                         </label>
-                        <input id="search-input" class="form-control input-lg" placeholder="Найти чаты" autocomplete="off" spellcheck="false" autocorrect="off" tabindex="1">
+                        <input id="search-chat-input" class="form-control input-lg" placeholder="Найти чаты" autocomplete="off" spellcheck="false" autocorrect="off" tabindex="1">
                         <a id="search-clear" href="#" class="fa fa-times-circle hide" aria-hidden="true"><span class="sr-only">Начать заново</span></a>
                     </div>
                 </div>
@@ -55,6 +55,7 @@
                                 <span class="time-meta pull-right">
                                     {{ dialogs.last_time|date("d-m-Y H:i:s") }}
                                 </span>
+                                <input type="hidden" class="raw-time-dialogs" value="{{ dialogs.last_time }}">
                             </div>
 
 {#                            <span class="has-new"#}

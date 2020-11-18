@@ -34,6 +34,7 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/jquery-3.3.1.min.js',
+        'js/jquery.timers.js',
         'css/bootstrap4/popper.js',
         'css/bootstrap4/bootstrap.min.js',
         'css/bootstrap4/bootstrap.bundle.min.js',

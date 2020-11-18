@@ -22,13 +22,13 @@
     <div class="coll-sm-12">
         <div class="row message" id="conversation">
 
-            <div class="row message-previous">
-                <div class="col-sm-12 previous">
-                    <a href="#">
-                        Показать ранние сообщения
-                    </a>
-                </div>
-            </div>
+{#            <div class="row message-previous">#}
+{#                <div class="col-sm-12 previous">#}
+{#                    <a href="#">#}
+{#                        Показать ранние сообщения#}
+{#                    </a>#}
+{#                </div>#}
+{#            </div>#}
 
 
             <div class="row col-sm-12 message-body message-body-receiver receiver-template ">
@@ -42,9 +42,11 @@
                   </span>
                     </div>
                 </div>
+                <input type="hidden" class="raw-time" value=""/>
+                <input type="hidden" class="last-message-id" value=""/>
             </div>
 
-            <div class="row col-sm-12 message-body-receiver sender-template ">
+            <div class="row col-sm-12 message-body  message-body-receiver sender-template ">
                 <div class="col-sm-12 message-main-sender">
                     <div class="sender">
                         <div class="message-text">
@@ -55,6 +57,9 @@
                         </span>
                     </div>
                 </div>
+                <input type="hidden" class="raw-time" value=""/>
+                <input type="hidden" class="last-message-id" value=""/>
+
             </div>
 
 

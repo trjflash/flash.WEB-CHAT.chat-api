@@ -150,7 +150,7 @@ namespace app\components\flash;
             else
                 $data_string = $data;
 
-            //\flashHelpers::stopA($data_string);
+            //\flashHelpers::stopA($data);
             $curl = curl_init($this->APIurl.$method.'?token='.$this->token);
 
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
@@ -164,7 +164,7 @@ namespace app\components\flash;
             //\flashHelpers::stopA($curl);
             $result = curl_exec($curl);
             curl_close($curl);
-
+            //\flashHelpers::stopA($result);
             return $result;
 
         }
@@ -191,6 +191,15 @@ namespace app\components\flash;
 
         public function getLastChatMessage($chatId){
             return $this->sendRequestGet("messages", ["limit=1","chatId=$chatId"]);
+        }
+        public function getNewMessagesInChat($chatId, $lastMessageId){
+            return $this->sendRequestGet("messages", ["lastMessageNumber=".$lastMessageId."","chatId=$chatId"]);
+        }
+        public function sendReadChat($chatId){
+            return $this->sendRequestPost("readChat", array("chatId"=>$chatId));
+        }
+        public function getChatMessages($chatId){
+            return $this->sendRequestGet("messagesHistory", ["count=10","chatId=$chatId"]);
         }
     }
 
