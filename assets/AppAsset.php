@@ -30,11 +30,13 @@ class AppAsset extends AssetBundle
         'plugins/OwlCarousel2-2.2.1/animate.css',
         'plugins/slick-1.8.0/slick.css',
         'plugins/slick-1.8.0/slick-theme.css',
+        'plugins/lightBox/css/jquery.lightbox.css',
         'css/custom.css',
     ];
     public $js = [
         'js/jquery-3.3.1.min.js',
         'js/jquery.timers.js',
+        'js/vcard.parser.js',
         'css/bootstrap4/popper.js',
         'css/bootstrap4/bootstrap.min.js',
         'css/bootstrap4/bootstrap.bundle.min.js',
@@ -50,6 +52,7 @@ class AppAsset extends AssetBundle
         'plugins/slick-1.8.0/slick.js',
         'js/dateFormat.js',
         'js/custom_scripts.js',
+        'plugins/lightBox/js/jquery.lightbox.min.js',
 
     ];
     public $depends = [

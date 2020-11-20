@@ -666,3 +666,27 @@ body {
     color: green;
     margin: 0 5px 0 0;
 }
+.mes-img{
+
+    width: 6em;
+    margin: 0 auto;
+    display: block;
+
+}
+.quoted{
+    border-radius: 10px 10px 10px 0px;
+    background: rgb(229,221,213);
+    font-size: 12px;
+    overflow-wrap: break-word;
+    width: auto !important;
+    padding: 19px 12px 15px !important;
+    margin: 0 0 0.2em 0;
+}
+.forwarded-message span{
+    position: relative;
+    top: -2px;
+    color: var(--secondary-lighter);
+    font-size: 12.5px;
+    font-style: italic;
+    display: block;
+}

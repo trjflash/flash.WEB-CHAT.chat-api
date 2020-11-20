@@ -13,6 +13,7 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\MainPages;
+use function GuzzleHttp\Psr7\mimetype_from_filename;
 
 class SiteController extends Controller
 {
@@ -150,6 +151,6 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        return $this->render('about');
+        //echo mimetype_from_filename('Думал уменьшить количество сообщений... Не помогает... Что бы быстрее работало нужно у себя хранить сообщения');
     }
 }

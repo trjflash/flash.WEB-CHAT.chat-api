@@ -209,10 +209,10 @@ class PostController extends Controller{
                 case "getBotMessagesByCHatId":
                     $this->getWaBotMessagesById($data);
                     break;
-                case"sendMessInCHat":
+                case "sendMessInCHat":
                     $this->sendMessage($data);
                     break;
-                case"getNewMessagesInChat":
+                case "getNewMessagesInChat":
                     $this->getNewMessages($data);
                     break;
 

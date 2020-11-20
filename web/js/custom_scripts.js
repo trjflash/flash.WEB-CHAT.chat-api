@@ -1,20 +1,74 @@
-var audio = [
-    'ogg',
-    'mp3',
-    'wave'
-];
-var img =[
-  'jpeg',
-  'gif',
-  'jpg',
-  'bmp',
-  'png'
-];
-var video = [
-    'mp4',
-    'avi',
-    'wmv'
-];
+function parseMessage(message){
+
+    switch(message.type){
+        case 'image':
+            return '<a target="_blank" href="'+message.body+'" class="lightbox" data-lightbox="img"><img src="'+message.body+'" class="mes-img"/></a>';
+            break;
+        case 'ptt':
+        case 'audio':
+            return  '<audio class="audio" src="'+message.body+'" controls=""></audio>';
+            break;
+        case 'chat':
+            return message.body;
+            break;
+        case 'location':
+
+            var location = message.body.split(';')
+            return '<a target="_blank" href="https://www.google.com/maps?q='+location[0]+','+location[1]+'&z=17&hl=ru">Геолокация</a>';
+            break;
+        case 'vcard':
+            var vcard = vCardParser.parse(message.body);
+            return "Парсер контакта подготовлен но пока не работает =(";
+            break;
+        case 'document':
+            return '<a target="_blank" href="'+message.body+'">'+message.caption+'</a>';
+            break;
+        case 'video':
+            return  "Видео к сожалению не поддерживается =(";
+            break;
+    }
+}
+
+function parseQuotedMessage(message){
+    var quotedMessage = $("div[id='"+message.quotedMsgId+"'").children('.message-main-receiver').children('.receiver').children('.message-text').html();
+
+    return "<div href='#"+message.quotedMsgId+"' class='quoted'>"+quotedMessage + "</div>"+message.body;
+}
+
+function parseForwardedMessage(message){
+
+    var forwardHead = "<div class=\"forwarded-message\">\n" +
+        "    <span><i class=\"fa fa-share\" aria-hidden=\"true\"></i> Пересылаемое сообщение</span>";
+    var forwardEnd = "</div>";
+    switch(message.type){
+        case 'image':
+            return forwardHead+'<a target="_blank" href="'+message.body+'" class="lightbox" data-lightbox="img"><img src="'+message.body+'" class="mes-img lightzoom"/></a>'+forwardEnd;
+            break;
+        case 'ptt':
+        case 'audio':
+            return  forwardHead+'<audio class="audio" src="'+message.body+'" controls=""></audio>'+forwardEnd;
+            break;
+        case 'chat':
+            return forwardHead+message.body+forwardEnd;
+            break;
+        case 'location':
+
+            var location = message.body.split(';')
+            return forwardHead+'<a target="_blank" href="https://www.google.com/maps?q='+location[0]+','+location[1]+'&z=17&hl=ru">Геолокация</a>'+forwardEnd;
+            break;
+        case 'vcard':
+            var vcard = vCardParser.parse(message.body);
+            return forwardHead+"Парсер контакта подготовлен но пока не работает =("+forwardEnd;
+            break;
+        case 'document':
+            return forwardHead+'<a target="_blank" href="'+message.body+'">'+message.caption+'</a>'+forwardEnd;
+            break;
+        case 'video':
+            return  forwardHead+"Видео к сожалению не поддерживается =("+forwardEnd;
+            break;
+    }
+}
+
 
 
 $(document).ready(function(){
@@ -93,26 +147,24 @@ $(document).ready(function(){
                             var formattedDate = date.format('d-m-Y h:i');
                             var itemPreviewTemplate = '';
 
+                            console.log (messages[i].senderName);
                             if(messages[i].fromMe == true){
 
                                 itemPreviewTemplate = conversationBlock.children('.sender-template').clone();
                                 itemPreviewTemplate.removeClass('sender-template');
                                 itemPreviewTemplate.addClass('injected-message');
 
-                                var exetention = messages[i].body.split('.').pop();
+                                itemPreviewTemplate.attr('id',messages[i].id);
 
-                                if(audio.indexOf(exetention) != -1 ){
-                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                }
-                                else if(img.indexOf(exetention) != -1 ){
-                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html('<img src="'+messages[i].body+'" class="mes-img"/>');
-                                }
-                                else if (video.indexOf(exetention) != -1 ){
-                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                }
-                                else{
-                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                }
+
+                                itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.messenger-name').html(messages[i].senderName);
+
+                                if(messages[i].quotedMsgId != null)
+                                    itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-text').html(parseQuotedMessage(messages[i]));
+                                else if(messages[i].isForwarded == 1)
+                                    itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-text').html(parseForwardedMessage(messages[i]));
+                                else
+                                    itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-text').html(parseMessage(messages[i]));
 
                                 itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-time').html(formattedDate);
                                 itemPreviewTemplate.appendTo('#conversation');
@@ -132,23 +184,20 @@ $(document).ready(function(){
                                 itemPreviewTemplate.removeClass('receiver-template');
                                 itemPreviewTemplate.addClass('injected-message');
 
-                                var exetention = messages[i].body.split('.').pop();
+                                itemPreviewTemplate.attr('id',messages[i].id);
 
-                                if(audio.indexOf(exetention) != -1 ){
-                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                }
-                                else if(img.indexOf(exetention) != -1 ){
-                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html('<img src="'+messages[i].body+'" class="mes-img"/>');
-                                }
-                                else if (video.indexOf(exetention) != -1 ){
-                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                }
-                                else{
-                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                }
+                                itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.messenger-name').html(messages[i].senderName);
+
+                                if(messages[i].quotedMsgId != null)
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(parseQuotedMessage(messages[i]));
+                                else if(messages[i].isForwarded == 1)
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(parseForwardedMessage(messages[i]));
+                                else
+                                    itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(parseMessage(messages[i]));
 
                                 itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-time').html(formattedDate);
                                 itemPreviewTemplate.appendTo('#conversation');
+
 
                                 if(i ==  messages.length - 1) {
                                     itemPreviewTemplate.addClass('last-message');
@@ -158,6 +207,8 @@ $(document).ready(function(){
                             }
 
                         }
+                        $('.lightbox').lightBox();
+
                         $('.chat-owerflow').fadeOut(500);
                         $('.conversation').fadeIn(1000);
                         conversationBlock.addClass('active');
@@ -170,7 +221,10 @@ $(document).ready(function(){
                     console.log(data);
                 }
             }
+
         });
+
+
 
     })
 
@@ -254,18 +308,14 @@ $(document).ready(function(){
                                         itemPreviewTemplate.removeClass('receiver-template');
                                         itemPreviewTemplate.addClass('injected-message');
 
-                                        if(audio.indexOf(messages[i].body.split('.').pop()) != -1 ){
-                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                        }
-                                        else if(img.indexOf(messages[i].body.split('.').pop()) != -1 ){
-                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html('<img src="'+messages[i].body+'" class="mes-img"/>');
-                                        }
-                                        else if (video.indexOf(messages[i].body.split('.').pop()) != -1 ){
-                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                        }
-                                        else{
-                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(messages[i].body);
-                                        }
+                                        itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.messenger-name').html(messages[i].senderName);
+
+                                        if(messages[i].quotedMsgId != null)
+                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(parseQuotedMessage(messages[i]));
+                                        else if(messages[i].isForwarded == 1)
+                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(parseForwardedMessage(messages[i]));
+                                        else
+                                            itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-text').html(parseMessage(messages[i]));
 
                                         itemPreviewTemplate.children('.message-main-receiver').children('.receiver').children('.message-time').html(formattedDate);
                                         itemPreviewTemplate.appendTo('#conversation');
@@ -394,3 +444,5 @@ $(function(){
         });
     });
 })
+
+

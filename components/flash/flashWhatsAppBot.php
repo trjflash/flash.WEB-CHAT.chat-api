@@ -199,7 +199,7 @@ namespace app\components\flash;
             return $this->sendRequestPost("readChat", array("chatId"=>$chatId));
         }
         public function getChatMessages($chatId){
-            return $this->sendRequestGet("messagesHistory", ["count=10","chatId=$chatId"]);
+            return $this->sendRequestGet("messagesHistory", ["count=30","chatId=$chatId"]);
         }
     }
 
