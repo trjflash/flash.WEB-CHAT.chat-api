@@ -24,6 +24,7 @@ $config = [
         '@webfeature' => '@app/web/images/feature',
         '@modules' => '@app/modules',
         '@shopphotos' => '@app/web/images/shop',
+        '@outfiles' => '@app/web/images/out',
     ],
     'components' => [
         'viewRenderer' => array(

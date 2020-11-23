@@ -690,3 +690,15 @@ body {
     font-style: italic;
     display: block;
 }
+.upload-file{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    transform: translate(-300px, 0) scale(4);
+    font-size: 10px;
+    direction: ltr;
+    cursor: pointer;    cursor: pointer;
+}

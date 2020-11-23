@@ -16,6 +16,7 @@ use app\modules\Adm\models\TablesForLinksModel;
 use app\modules\Adm\models\MenuEditorsTypesModel;
 use flashAjaxHelpers;
 use flashHelpers;
+use yii\helpers\Html;
 use yii\helpers\Url;
 use Yii;
 use yii\db\Exception;
@@ -32,7 +33,6 @@ class PostController extends Controller{
     }
 
     public function actionRequest(){
-
         if(Yii::$app->request->isAjax){
             $data = Yii::$app->request->post();
             //flashHelpers::stopA($data);
@@ -613,7 +613,7 @@ class PostController extends Controller{
 
                         $newPhoto->file = $file;
                         $newPhoto->good_id = $goodModel->id;
-                            $i == 0 ? $newPhoto->is_main = 1 : $newPhoto->is_main = 0;
+                        $i == 0 ? $newPhoto->is_main = 1 : $newPhoto->is_main = 0;
 
                         $newPhoto->save();
                         $photos[] = $newPhoto->id;
@@ -681,12 +681,40 @@ class PostController extends Controller{
 
     private function sendMessage($data){
 
+        if(empty($_FILES)) {
+            $sendResult = json_decode($this->bot->sendMessage($data['chatId'], $data['message']));
+            if ($sendResult->sent) {
+                $exit['error'] = false;
+                echo json_encode($exit);
+                exit();
+            }
+        }
+        else{
 
-        $sendResult = json_decode($this->bot->sendMessage($data['chatId'],$data['message']));
-        if($sendResult->sent){
-            $exit['error'] = false;
-            echo json_encode($exit);
-            exit();
+            for ($i = 0; $i < count($_FILES); $i++){
+
+                $ext = explode('.', $_FILES[$i]['name']);
+                //Helpers::stopA($_FILES);
+                $file = flashHelpers::generateRandString(10).'.'.end($ext);
+
+
+                try {
+                    $res = move_uploaded_file($_FILES[$i]['tmp_name'], Yii::getAlias('@outfiles/') . $file);
+                    //flashHelpers::stopA($res);
+                }catch (\Exception $e){
+                    //flashHelpers::stopA($e->getMessage());
+                }
+
+                $file = "https://chat.onclinic.kz/images/out/".$file;
+                $sendResult = json_decode($this->bot->sendFile($data['chatId'], $data['message'], $file, $_FILES[0]['name']));
+                //flashHelpers::stopA($sendResult);
+                if ($sendResult->sent) {
+                    $exit['error'] = false;
+                    echo json_encode($exit);
+                    exit();
+                }
+
+            }
         }
     }
 

@@ -142,6 +142,11 @@ namespace app\components\flash;
             $res = $this->sendRequestPost('message',$data);
             return $res;
         }
+        public function sendFile($chatId, $text, $file, $filename){
+            $data = array('chatId'=>$chatId,'filename'=>$filename,'caption'=>$text,'body'=>$file);
+            $res = $this->sendRequestPost('sendFile',$data);
+            return $res;
+        }
 
         public function sendRequestPost($method,$data){
 
