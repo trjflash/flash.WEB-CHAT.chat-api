@@ -213,6 +213,9 @@ class PostController extends Controller{
                     $this->sendMessage($data);
                     break;
                 case "getNewMessagesInChat":
+                    $this->getNewChatMessages($data);
+                    break;
+                case "checkMessages":
                     $this->getNewMessages($data);
                     break;
 
@@ -706,10 +709,18 @@ class PostController extends Controller{
                 }
 
                 $file = "https://chat.onclinic.kz/images/out/".$file;
+                flashHelpers::stopA($_FILES[0]['name']);
                 $sendResult = json_decode($this->bot->sendFile($data['chatId'], $data['message'], $file, $_FILES[0]['name']));
-                //flashHelpers::stopA($sendResult);
-                if ($sendResult->sent) {
+                //flashHelpers::stopA($sendResult->error);
+                if (!isset($sendResult->error)) {
                     $exit['error'] = false;
+                    echo json_encode($exit);
+                    exit();
+                }
+                else{
+                    $exit['error'] = true;
+                    $exit['mess'] = $sendResult->error;
+                    $exit['error_level'] = flashAjaxHelpers::getErrorLevel(3);
                     echo json_encode($exit);
                     exit();
                 }
@@ -718,12 +729,37 @@ class PostController extends Controller{
         }
     }
 
-    private function getNewMessages($data){
+    private function getNewChatMessages($data){
         //flashHelpers::testA($data);
-        $messages = $this->bot->getNewMessagesInChat($data['requestBody']['chatId'],$data['requestBody']['lastMessageId']);
+        if(isset($data['requestBody']['chatId']) && isset($data['requestBody']['lastMessageId']) ){
+            $messages = $this->bot->getNewMessagesInChat($data['requestBody']['chatId'],$data['requestBody']['lastMessageId']);
+            //flashHelpers::stopA($messages);
+            if (count($messages->messages) != 0) {
+                $this->bot->sendReadChat($data['requestBody']['chatId']);
+                $exit['error'] = false;
+                $exit['data'] = $messages;
+                echo json_encode($exit);
+                exit();
+            }
+            else{
+                $exit['error'] = false;
+                $exit['data'] = "NO MESSAGES (((";
+                echo json_encode($exit);
+                exit();
+            }
+        }
+        else{
+            $exit['error'] = false;
+            $exit['data'] = "NO MESSAGES (((";
+            echo json_encode($exit);
+            exit();
+        }
+    }
+
+    private function getNewMessages(){
+        $messages = $this->bot->getMessages();;
         //flashHelpers::stopA($messages);
         if (count($messages->messages) != 0) {
-            $this->bot->sendReadChat($data['requestBody']['chatId']);
             $exit['error'] = false;
             $exit['data'] = $messages;
             echo json_encode($exit);
@@ -735,7 +771,6 @@ class PostController extends Controller{
             echo json_encode($exit);
             exit();
         }
-
     }
 
 }

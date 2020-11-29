@@ -206,6 +206,13 @@ namespace app\components\flash;
         public function getChatMessages($chatId){
             return $this->sendRequestGet("messagesHistory", ["count=30","chatId=$chatId"]);
         }
+        public function getMessages(){
+
+            $date = date("d-m-Y").' 00:00:00';
+            $date = strtotime($date);
+            //\flashHelpers::stopA($date);
+            return $this->sendRequestGet("messages",["min_time=$date"]);
+        }
     }
 
     //execute the class when this file is requested by the instance

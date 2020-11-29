@@ -2,7 +2,11 @@ function parseMessage(message){
 
     switch(message.type){
         case 'image':
-            return '<a target="_blank" href="'+message.body+'" class="lightbox" data-lightbox="img"><img src="'+message.body+'" class="mes-img"/></a>'+message.caption;
+            if(message.caption != undefined)
+                return '<a target="_blank" href="'+message.body+'" class="lightbox" data-lightbox="img"><img src="'+message.body+'" class="mes-img"/></a>'+message.caption;
+
+            else
+                return '<a target="_blank" href="'+message.body+'" class="lightbox" data-lightbox="img"><img src="'+message.body+'" class="mes-img"/></a>';
             break;
         case 'ptt':
         case 'audio':
@@ -105,23 +109,44 @@ $(document).ready(function(){
         var chatImg = $(this).children('.sideBar-avatar').children('.avatar-icon').children('img').attr("src");
 
 
-        getChatMessages(chatId,chatName,chatImg )
-
-
+        getChatMessages(chatId,chatName,chatImg );
+        var dot = $(this).children('.sideBar-main').children('.row').children('.has-new').remove();
 
     })
 
-    $(".reply-main textarea" ).keypress(function(){
-        if($( ".reply-main textarea" ).val().length > 0 ) {
-            $('.reply-recording').css({"display": "none"});
-            $('.reply-send').css({"display": "block"});
-        }
-        else{
-            $('.reply-recording').css({"display": "block"});
-            $('.reply-send').css({"display": "none"});
+    $('#new-chat-input').keydown(function (event) {
 
+        if (event.keyCode == 13) {
+            event.preventDefault();
+            let number = $(this).val();
+
+            if(number.length === 0 || isNaN(number) || number.length < 11){
+
+                VanillaToasts.create({
+                    title: 'Внимание',
+                    text: "Номер должен содержать 11 цифр первая 7",
+                    type: "info", // success, info, warning, error   / optional parameter
+                    icon: '', // optional parameter
+                    timeout: 5000, // hide after 5000ms, // optional paremter
+                    callback: function () {
+
+                    } // executed when toast is clicked / optional parameter
+                });
+                return false;
+            }
+            else {
+                var chatId = number+'@c.us';
+
+                var chatName = number;
+                var chatImg = '<i class="fa fa-user-circle-o" aria-hidden="true"></i>';
+                $(this).val('');
+
+                getChatMessages(chatId,chatName,chatImg );
+
+            }
         }
-    });
+    })
+
 
     $(".reply-main textarea").keydown(function (event) {
 
@@ -137,7 +162,7 @@ $(document).ready(function(){
 
     })
 
-    $('#conversation').everyTime(10000,function () {
+    $('#conversation').everyTime(5000,function () {
         if($('#conversation').hasClass('active')){
             var lastMessageId = $('#conversation').find('.last-message').find('.last-message-id').val();
             var chatId = $('.current-chat-id').val();
@@ -227,6 +252,64 @@ $(document).ready(function(){
     })
 
 
+    $('.sideBar').everyTime(5000, function(){
+
+        var request = $.ajax({
+            type: 'POST',
+            url: '/post/request',
+            data:{
+                action: 'checkMessages',
+                _csrf : yii.getCsrfToken()
+            },
+
+            success:function( data ) {
+
+                var content = $.parseJSON(data);
+
+                if (content.error != undefined) {
+
+
+                    if (content.error == true) {
+                        VanillaToasts.create({
+                            title: 'Внимание',
+                            text: $.parseJSON(content.mess),
+                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                            icon: '', // optional parameter
+                            timeout: 5000, // hide after 5000ms, // optional paremter
+                            callback: function () {
+
+                            } // executed when toast is clicked / optional parameter
+                        });
+
+                    }
+                    else {
+
+                        if(content.data != "NO MESSAGES ((("){
+                            var messages = content.data.messages;
+
+                            for (var i = 0; i < messages.length; i++){
+                                if(!messages[i].fromMe){
+                                    var chatId = messages[i].chatId;
+                                    var chatBlock = $("[value = '"+chatId+"']").parent();
+                                    if(!($(chatBlock).children('.has-new').length > 0)){
+                                        $(chatBlock).append('<span class="has-new"><i class="fa fa-circle" aria-hidden="true"></i>Есть новые</span>');
+
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+                else{
+                    console.log(data);
+                }
+            }
+
+        });
+
+    })
 
 });
 
@@ -244,7 +327,7 @@ function sendMessage(){
 
     var data = new FormData();
 
-    if (message.length == 0){
+    if (message.length == 0 && $('.upload-file')[0].files[0] == undefined){
         VanillaToasts.create({
             title: 'Внимание',
             text: "Сообщение не может быть пустым",
@@ -294,8 +377,8 @@ function sendMessage(){
                 if (content.error == true) {
                     VanillaToasts.create({
                         title: 'Внимание',
-                        text: $.parseJSON(content.mess),
-                        type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                        text: content.mess,
+                        type: content.error_level, // success, info, warning, error   / optional parameter
                         icon: '', // optional parameter
                         timeout: 5000, // hide after 5000ms, // optional paremter
                         callback: function () {
@@ -305,37 +388,29 @@ function sendMessage(){
 
                 }
                 else {
-                    if(files != 'undefinded'){
-                        var chatId = $('.current-chat-id').val();
-                        var chatName = $('.heading-name-meta').html();
-                        var chatImg = $('.heading-avatar-icon').children('img').attr("src");
-                        getChatMessages(chatId, chatName, chatImg);
-                        return false;
-                    }
-                    else {
-                        $('.upload-file').prop('value', null);
 
-                        var itemPreviewTemplate = $('#conversation').children('.sender-template').clone();
-                        var date = new Date();
-                        var formattedDate = date.format('d-m-Y h:i');
+                    $('.upload-file').prop('value', null);
 
-                        itemPreviewTemplate.removeClass('sender-template');
-                        var lastMessage = Number($('#conversation').find('.last-message').find('.last-message-id').val());
-                        $('.last-message').removeClass('last-message');
-                        itemPreviewTemplate.addClass('injected-message');
-                        itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-text').html(message);
-                        itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-time').html(formattedDate);
-                        itemPreviewTemplate.appendTo('#conversation');
-                        $('#conversation').scrollTop(10000000);
+                    var itemPreviewTemplate = $('#conversation').children('.sender-template').clone();
+                    var date = new Date();
+                    var formattedDate = date.format('d-m-Y h:i');
 
-                        $('#conversation').find('.last-message').find('.last-message-id').val("")
-                        itemPreviewTemplate.addClass('last-message');
-                        $('#conversation').find('.last-message').find('.last-message-id').val(lastMessage)
+                    itemPreviewTemplate.removeClass('sender-template');
+                    var lastMessage = Number($('#conversation').find('.last-message').find('.last-message-id').val());
+                    $('.last-message').removeClass('last-message');
+                    itemPreviewTemplate.addClass('injected-message');
+                    itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-text').html(message);
+                    itemPreviewTemplate.children('.message-main-sender').children('.sender').children('.message-time').html(formattedDate);
+                    itemPreviewTemplate.appendTo('#conversation');
+                    $('#conversation').scrollTop(10000000);
+
+                    $('#conversation').find('.last-message').find('.last-message-id').val("")
+                    itemPreviewTemplate.addClass('last-message');
+                    $('#conversation').find('.last-message').find('.last-message-id').val(lastMessage)
 
 
-                        $('#comment').val('');
-                    }
-                    return  false;
+                    $('#comment').val('');
+
                 }
 
             }
@@ -361,79 +436,8 @@ $(function(){
     });
 })
 
-
-function parseMessage(message){
-    switch(message.type){
-        case 'image':
-            return '<a target="_blank" href="'+message.body+'" class="lightbox" data-lightbox="img"><img src="'+message.body+'" class="mes-img"/></a>'+message.caption;
-            break;
-        case 'ptt':
-        case 'audio':
-            return  '<audio class="audio" src="'+message.body+'" controls=""></audio>';
-            break;
-        case 'chat':
-            return message.body;
-            break;
-        case 'location':
-
-            var location = message.body.split(';')
-            return '<a target="_blank" href="https://www.google.com/maps?q='+location[0]+','+location[1]+'&z=17&hl=ru">Геолокация</a>';
-            break;
-        case 'vcard':
-            var vcard = vCardParser.parse(message.body);
-            return "Парсер контакта подготовлен но пока не работает =(";
-            break;
-        case 'document':
-            return '<a target="_blank" href="'+message.body+'">'+message.caption+'</a>';
-            break;
-        case 'video':
-            return  "Видео к сожалению не поддерживается =(";
-            break;
-    }
-}
-
-function parseQuotedMessage(message){
-    var quotedMessage = $("div[id='"+message.quotedMsgId+"'").children('.message-main-receiver').children('.receiver').children('.message-text').html();
-
-    return "<div href='#"+message.quotedMsgId+"' class='quoted'>"+quotedMessage + "</div>"+message.body;
-}
-
-function parseForwardedMessage(message){
-
-    var forwardHead = "<div class=\"forwarded-message\">\n" +
-        "    <span><i class=\"fa fa-share\" aria-hidden=\"true\"></i> Пересылаемое сообщение</span>";
-    var forwardEnd = "</div>";
-    switch(message.type){
-        case 'image':
-            return forwardHead+'<a target="_blank" href="'+message.body+'" class="lightbox" data-lightbox="img"><img src="'+message.body+'" class="mes-img lightzoom"/></a>'+forwardEnd;
-            break;
-        case 'ptt':
-        case 'audio':
-            return  forwardHead+'<audio class="audio" src="'+message.body+'" controls=""></audio>'+forwardEnd;
-            break;
-        case 'chat':
-            return forwardHead+message.body+forwardEnd;
-            break;
-        case 'location':
-
-            var location = message.body.split(';')
-            return forwardHead+'<a target="_blank" href="https://www.google.com/maps?q='+location[0]+','+location[1]+'&z=17&hl=ru">Геолокация</a>'+forwardEnd;
-            break;
-        case 'vcard':
-            var vcard = vCardParser.parse(message.body);
-            return forwardHead+"Парсер контакта подготовлен но пока не работает =("+forwardEnd;
-            break;
-        case 'document':
-            return forwardHead+'<a target="_blank" href="'+message.body+'">'+message.caption+'</a>'+forwardEnd;
-            break;
-        case 'video':
-            return  forwardHead+"Видео к сожалению не поддерживается =("+forwardEnd;
-            break;
-    }
-}
-
-
 function getChatMessages(chatId, chatName, chatImg){
+    $('.upload-file').prop('value', null);
 
     $('.conversation').fadeOut(500);
     var request = $.ajax({
@@ -452,8 +456,8 @@ function getChatMessages(chatId, chatName, chatImg){
                 if(content.error == true) {
                     VanillaToasts.create({
                         title: 'Внимание',
-                        text: $.parseJSON(content.mess),
-                        type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                        text: content.mess,
+                        type: content.error_level, // success, info, warning, error   / optional parameter
                         icon: '', // optional parameter
                         timeout: 5000, // hide after 5000ms, // optional paremter
                         callback: function() {

@@ -21,7 +21,7 @@
         <div class="row searchBox">
             <div class="col-sm-12 searchBox-inner">
                 <div class="form-group has-feedback">
-                    <div id="search">
+                    <div class="search">
                         <label for="search-chat-input">
                             <i class="fa fa-search" aria-hidden="true"></i>
                             <span class="sr-only">Найти чаты</span>
@@ -37,62 +37,43 @@
             <!---Последние чаты --->
 
             {%  for dialogs in page.page_content.dialogs %}
-
-                <div class="row sideBar-body">
-                    <div class="col-sm-3 col-xs-3 sideBar-avatar">
-                        <div class="avatar-icon">
-                            <img src="{{ dialogs.image }}">
+                {% if dialogs.name != 'Киса' %}
+                    <div class="row sideBar-body">
+                        <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                            <div class="avatar-icon">
+                                <img src="{{ dialogs.image }}">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-9 col-xs-9 sideBar-main">
-                        <div class="row">
-                            <div class="col-sm-8 col-xs-8 sideBar-name">
+                        <div class="col-sm-9 col-xs-9 sideBar-main">
+                            <div class="row">
+                                <div class="col-sm-8 col-xs-8 sideBar-name">
                                 <span class="name-meta">
                                     {{ dialogs.name }}
                                 </span>
-                            </div>
-                            <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                                </div>
+                                <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
                                 <span class="time-meta pull-right">
                                     {{ dialogs.last_time|date("d-m-Y H:i:s") }}
                                 </span>
-                                <input type="hidden" class="raw-time-dialogs" value="{{ dialogs.last_time }}">
+                                    <input type="hidden" class="raw-time-dialogs" value="{{ dialogs.last_time }}">
+                                </div>
+
+{#                                <span class="has-new"#}
+{#                                    {% if dialogs.last_time|date("U") < "-30 minutes"|date("U") %}#}
+{#                                        {% if dialogs.lastMessage.messages.0.fromMe  == 0 %}#}
+{#                                            style="display: none"#}
+{#                                        {% endif %}#}
+{#                                    {% endif %}//#}
+{#                                ><i class="fa fa-circle" aria-hidden="true"></i>Есть новые</span>#}
+                                <input type="hidden"  class="chat-id" value="{{ dialogs.id }}"/>
                             </div>
-
-{#                            <span class="has-new"#}
-{#                                {% if dialogs.last_time|date("U") < "-30 minutes"|date("U") %}#}
-{#                                    {% if dialogs.lastMessage.messages.0.fromMe  == 0 %}#}
-{#                                        style="display: none"#}
-{#                                    {% endif %}#}
-{#                                {% endif %}//#}
-
-
-{#                            ><i class="fa fa-circle" aria-hidden="true"></i>Есть новые</span>#}
-                            <input type="hidden"  class="chat-id" value="{{ dialogs.id }}"/>
                         </div>
                     </div>
-                </div>
+                {% endif %}
 
             {% endfor %}
 
-            <div class="row sideBar-body template">
-                <div class="col-sm-3 col-xs-3 sideBar-avatar">
-                    <div class="avatar-icon">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png">
-                    </div>
-                </div>
-                <div class="col-sm-9 col-xs-9 sideBar-main">
-                    <div class="row">
-                        <div class="col-sm-8 col-xs-8 sideBar-name">
-                  <span class="name-meta">John Doe
-                </span>
-                        </div>
-                        <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
-                  <span class="time-meta pull-right">18:18
-                </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
 
 
         </div>
@@ -113,13 +94,21 @@
         <div class="row composeBox">
             <div class="col-sm-12 composeBox-inner">
                 <div class="form-group has-feedback">
-                    <div id="search">
+                    <div class="search">
+
                         <label for="search-input">
                             <i class="fa fa-search" aria-hidden="true"></i>
                             <span class="sr-only">Поиск контактов</span>
                         </label>
                         <input id="search-input" class="form-control input-lg" placeholder="Поиск контактов" autocomplete="off" spellcheck="false" autocorrect="off" tabindex="1">
                         <a id="search-clear" href="#" class="fa fa-times-circle hide" aria-hidden="true"><span class="sr-only">Начать заново</span></a>
+                    </div>
+                    <div class="search">
+                        <label for="new-chat-input">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                            <span class="sr-only">Номер в формате 7 777 123 45 67</span>
+                        </label>
+                        <input id="new-chat-input" class="form-control input-lg" placeholder="Номер в формате 7 777 123 45 67" type="text" maxlength="11" minlength="10">
                     </div>
                 </div>
             </div>

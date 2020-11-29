@@ -638,20 +638,20 @@ body {
     width: 4px;
 }
 
-#search{
+.search{
     position: relative;
     font-size: 13px;
     padding-top: 21px;
     margin: -20px auto 0;
 }
 
-#search label{
+.search label{
     position: absolute;
     left: 92%;
     top: 32px;
 }
 
-#search input{
+.search input{
     height: 35px;
     padding: 10px 16px;
     font-size: 13px;
