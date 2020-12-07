@@ -1,0 +1,1 @@
+{"messages":[{"id":"false_77750188218@c.us_3EB0316A8C2CA57230E1","body":"какие","fromMe":false,"self":1,"isForwarded":0,"author":"77750188218@c.us","time":1607333898,"chatId":"77750188218@c.us","messageNumber":211,"type":"chat","senderName":"Киса","caption":null,"quotedMsgBody":null,"quotedMsgId":null,"quotedMsgType":null,"chatName":"Киса"}],"instanceId":"195686"}

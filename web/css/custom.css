@@ -702,3 +702,22 @@ body {
     direction: ltr;
     cursor: pointer;    cursor: pointer;
 }
+
+.has-new {
+	-webkit-animation: blink 2s linear infinite; 
+	animation: blink 2s linear infinite; 
+	font-weight: bold; 
+	
+}
+
+@-webkit-keyframes blink { 
+	0% { color: #F00; }
+	50% { color: #FBB; }
+	100% { color: #F00; }
+}
+
+@keyframes blink {  
+	0% { color: #F00; }
+	50% { color: #FBB; }
+	100% { color: #F00; } 
+}

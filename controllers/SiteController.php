@@ -7,6 +7,7 @@ use app\components\flash\flashWhatsAppBot;
 use app\components\flash\whatsAppBot;
 use app\models\LoginForm;
 use app\models\WaBotLastMessageModel;
+use app\models\ChatsInfo;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -72,22 +73,11 @@ class SiteController extends Controller
 
         $this->view->title = "Чаты";
 
-//        $bot = new ChatApi('oycyoxh358s1yvd8');
-//        $res = $bot->getDialogs();
-//
-//        \flashHelpers::stopA($res);
-
         $bot = new flashWhatsAppBot();
-        $dialogs = $bot->sendRequestGet("dialogs");
+        $dialogs = ChatsInfo::getChats();
         //\flashHelpers::stopA($dialogs);
-        $page['page_content'] = $dialogs;
-//        for ($i=0; $i < 30; $i++){
-//            $dialogs->dialogs[$i]->lastMessage = $bot->getLastChatMessage($dialogs->dialogs[$i]->id);
-//        }
-
-
-        //\flashHelpers::stopA($dialogs);
-
+        $page['page_content'] = array_reverse($dialogs);
+		//\flashHelpers::stopA($page);
         return $this->render('main.twig', compact('page'));
 
     }
@@ -149,28 +139,22 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionAbout()
-    {
+    public function actionAbout(){
+		/*
+		$code = "4/0AY0e-g56uq8XFAlifCLlGqbnbB5jDxamIWyTKb76Iw2Mdn5s9GVTjrZuHSKfthesPZAcag";
+		$curl = curl_init();
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => 'https://www.google.com/m8/feeds/contacts/trjflash@gmail.com/full?access_token=ya29.a0AfH6SMDrjm_zbYPjGLg4pigVXBV5jCmNkY_mbi-xcqBgRE77CAvubgBulCiih5bhgucrkUV69a3Ag1r9ubDTDrltZU3ENYbheOnYmaDVgMZVWujAMwwbxQRJOr5K1RTNJ6cXPor2J1vEHshV_g6ec7pARjdY9n-CKohDHWJlMTA',
+			CURLOPT_VERBOSE => true,
+			
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_TIMEOUT => 30,
 
-        $data_string = 'code=0AY0e-g4tMDCU8JusgGZ414Phwn56GYpSxtGeiuEN2a1ZtxZNSzXq-RgIB4IKUrvujmVebQ&
-                        33949710378-gsqgv9pkiuf7u01jclsmn89c25po0fb3.apps.googleusercontent.com&
-                        client_secret=8vE-4msMjGfygtFsqzAFXIqv&
-                        redirect_uri=chat.onclinic.kz&
-                        grant_type=authorization_code';
-        //\flashHelpers::stopA($data);
-        $curl = curl_init('www.googleapis.com/oauth2/v4/token');
+		));
 
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-        // Принимаем в виде массива. (false - в виде объекта)
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                'Content-Type: application/x-www-form-urlencoded',
-                'Content-Length: ' . strlen($data_string))
-        );
-        //\flashHelpers::stopA($curl);
         $result = curl_exec($curl);
         curl_close($curl);
-        //\flashHelpers::stopA($result);
-    }
+			
+        \flashHelpers::stopA($result);*/
+	}
 }

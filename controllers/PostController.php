@@ -5,6 +5,7 @@ namespace app\controllers;
 
 
 use app\components\flash\flashWhatsAppBot;
+
 use app\models\AjaxLogin;
 use app\modules\Adm\models\MenuEditorModel;
 use app\modules\Adm\models\MenuTableToController;
@@ -14,6 +15,10 @@ use app\modules\Adm\models\ShopGoodsModel;
 use app\modules\Adm\models\ShopGoodsPhotosModel;
 use app\modules\Adm\models\TablesForLinksModel;
 use app\modules\Adm\models\MenuEditorsTypesModel;
+//API
+use app\models\ChatsInfo;
+use app\models\ChatsMessages;
+
 use flashAjaxHelpers;
 use flashHelpers;
 use yii\helpers\Html;
@@ -213,10 +218,13 @@ class PostController extends Controller{
                     $this->sendMessage($data);
                     break;
                 case "getNewMessagesInChat":
-                    $this->getNewChatMessages($data);
-                    break;
-                case "checkMessages":
                     $this->getNewMessages($data);
+                    break;
+                case "checkNewMessages":
+                    $this->checkNewMessages($data);
+                    break;
+                case "getChatInfo":
+                    $this->getDialogInfo($data);
                     break;
 
                 default:
@@ -665,17 +673,17 @@ class PostController extends Controller{
     }
 
     private function getWaBotMessagesById($data){
+		$messages['messages'] = '';
         $chatId = $data['chatId'];
         //flashHelpers::stopA($chatId);
 
         $bot = new flashWhatsAppBot();
-        $messages = $bot->getChatMessages($chatId);
-        $bot->sendReadChat( $chatId);
-        //flashHelpers::testA($dialog);
-        //flashHelpers::testA($messages);
+        $messages['messages'] = ChatsMessages::getChatMessages($chatId);
+        $bot->sendReadChat($chatId);
+		
+        $messages['messages'] = ($messages['messages']);
+		ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$chatId]);
 
-        $messages->messages = (array_reverse($messages->messages));
-//flashHelpers::stopA($messages);
         $exit['error'] = false;
         $exit['data'] = $messages;
         echo json_encode($exit);
@@ -709,7 +717,7 @@ class PostController extends Controller{
                 }
 
                 $file = "https://chat.onclinic.kz/images/out/".$file;
-                flashHelpers::stopA($_FILES[0]['name']);
+                //flashHelpers::stopA($file);
                 $sendResult = json_decode($this->bot->sendFile($data['chatId'], $data['message'], $file, $_FILES[0]['name']));
                 //flashHelpers::stopA($sendResult->error);
                 if (!isset($sendResult->error)) {
@@ -729,12 +737,14 @@ class PostController extends Controller{
         }
     }
 
-    private function getNewChatMessages($data){
+    private function getNewMessages($data){
         //flashHelpers::testA($data);
         if(isset($data['requestBody']['chatId']) && isset($data['requestBody']['lastMessageId']) ){
-            $messages = $this->bot->getNewMessagesInChat($data['requestBody']['chatId'],$data['requestBody']['lastMessageId']);
+            $messages['messages'] = ChatsMessages::getNewChatMessages($data['requestBody']['chatId']);
+			
+			ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$data['requestBody']['chatId']]);
             //flashHelpers::stopA($messages);
-            if (count($messages->messages) != 0) {
+            if (count($messages['messages']) != 0) {
                 $this->bot->sendReadChat($data['requestBody']['chatId']);
                 $exit['error'] = false;
                 $exit['data'] = $messages;
@@ -756,21 +766,38 @@ class PostController extends Controller{
         }
     }
 
-    private function getNewMessages(){
-        $messages = $this->bot->getMessages();;
-        //flashHelpers::stopA($messages);
-        if (count($messages->messages) != 0) {
-            $exit['error'] = false;
-            $exit['data'] = $messages;
-            echo json_encode($exit);
-            exit();
-        }
-        else{
-            $exit['error'] = false;
-            $exit['data'] = "NO MESSAGES (((";
-            echo json_encode($exit);
-            exit();
-        }
-    }
+    private function checkNewMessages($data){
+		$messages['messages'] = ChatsMessages::checkNewMessages();
+		//flashHelpers::stopA($messages);
+		if (count($messages['messages']) != 0) {
+			$exit['error'] = false;
+			$exit['data'] = $messages;
+			echo json_encode($exit);
+			exit();
+		}
+		else{
+			$exit['error'] = false;
+			$exit['data'] = "NO MESSAGES (((";
+			echo json_encode($exit);
+			exit();
+		}
 
+	}
+	
+	private function getDialogInfo($data){
+		//flashHelpers::stopA($data);
+		$chatInfo = $this->bot->getDialogInfo($data['requestBody']['chatId']);
+		if (!empty($chatInfo)) {
+			$exit['error'] = false;
+			$exit['data'] = $chatInfo;
+			echo json_encode($exit);
+			exit();
+		}
+		else{
+                $exit['error'] = false;
+                $exit['data'] = "NO INFO (((";
+                echo json_encode($exit);
+                exit();
+            }
+	}
 }

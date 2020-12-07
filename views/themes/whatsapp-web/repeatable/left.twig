@@ -13,21 +13,21 @@
             <div class="col-sm-1 col-xs-1  heading-dot  pull-right">
                 <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
             </div>
+			<!---
             <div class="col-sm-2 col-xs-2 heading-compose  pull-right">
                 <i class="fa fa-comments fa-2x  pull-right" aria-hidden="true"></i>
-            </div>
+            </div>--->
         </div>
 
         <div class="row searchBox">
             <div class="col-sm-12 searchBox-inner">
                 <div class="form-group has-feedback">
                     <div class="search">
-                        <label for="search-chat-input">
+                        <label for="new-chat-input">
                             <i class="fa fa-search" aria-hidden="true"></i>
-                            <span class="sr-only">Найти чаты</span>
+                            <span class="sr-only">Номер в формате 7 777 123 45 67</span>
                         </label>
-                        <input id="search-chat-input" class="form-control input-lg" placeholder="Найти чаты" autocomplete="off" spellcheck="false" autocorrect="off" tabindex="1">
-                        <a id="search-clear" href="#" class="fa fa-times-circle hide" aria-hidden="true"><span class="sr-only">Начать заново</span></a>
+                        <input id="new-chat-input" class="form-control input-lg" placeholder="Номер в формате 7 777 123 45 67" type="text" maxlength="11" minlength="10">
                     </div>
                 </div>
             </div>
@@ -36,41 +36,28 @@
         <div class="row sideBar">
             <!---Последние чаты --->
 
-            {%  for dialogs in page.page_content.dialogs %}
-                {% if dialogs.name != 'Киса' %}
-                    <div class="row sideBar-body">
+            {%  for dialogs in page.page_content %}
+			
+			
+                    <div id="{{ dialogs.chatId }}" class="row sideBar-body">
                         <div class="col-sm-3 col-xs-3 sideBar-avatar">
                             <div class="avatar-icon">
-                                <img src="{{ dialogs.image }}">
+                                <img src="{{ dialogs.chatImage }}">
                             </div>
                         </div>
                         <div class="col-sm-9 col-xs-9 sideBar-main">
                             <div class="row">
                                 <div class="col-sm-8 col-xs-8 sideBar-name">
                                 <span class="name-meta">
-                                    {{ dialogs.name }}
+                                    {{ dialogs.chatName }}
                                 </span>
                                 </div>
-                                <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
-                                <span class="time-meta pull-right">
-                                    {{ dialogs.last_time|date("d-m-Y H:i:s") }}
-                                </span>
-                                    <input type="hidden" class="raw-time-dialogs" value="{{ dialogs.last_time }}">
-                                </div>
-
-{#                                <span class="has-new"#}
-{#                                    {% if dialogs.last_time|date("U") < "-30 minutes"|date("U") %}#}
-{#                                        {% if dialogs.lastMessage.messages.0.fromMe  == 0 %}#}
-{#                                            style="display: none"#}
-{#                                        {% endif %}#}
-{#                                    {% endif %}//#}
-{#                                ><i class="fa fa-circle" aria-hidden="true"></i>Есть новые</span>#}
-                                <input type="hidden"  class="chat-id" value="{{ dialogs.id }}"/>
                             </div>
                         </div>
+						<span class="has-new" style="display: none">
+							<i class="fa fa-circle" aria-hidden="true"></i>Есть новые
+						</span>
                     </div>
-                {% endif %}
-
             {% endfor %}
 
 
