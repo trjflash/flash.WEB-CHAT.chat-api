@@ -5,6 +5,7 @@ namespace app\controllers;
 
 
 use app\components\flash\flashWhatsAppBot;
+use app\components\flash\PHPExcel;
 
 use app\models\AjaxLogin;
 use app\modules\Adm\models\MenuEditorModel;
@@ -225,6 +226,9 @@ class PostController extends Controller{
                     break;
                 case "getChatInfo":
                     $this->getDialogInfo($data);
+                    break;
+                case "uploadPhonesList":
+                    $this->makeMailing($data);
                     break;
 
                 default:
@@ -673,16 +677,16 @@ class PostController extends Controller{
     }
 
     private function getWaBotMessagesById($data){
-		$messages['messages'] = '';
+        $messages['messages'] = '';
         $chatId = $data['chatId'];
         //flashHelpers::stopA($chatId);
 
         $bot = new flashWhatsAppBot();
         $messages['messages'] = ChatsMessages::getChatMessages($chatId);
         $bot->sendReadChat($chatId);
-		
+
         $messages['messages'] = ($messages['messages']);
-		ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$chatId]);
+        ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$chatId]);
 
         $exit['error'] = false;
         $exit['data'] = $messages;
@@ -741,8 +745,8 @@ class PostController extends Controller{
         //flashHelpers::testA($data);
         if(isset($data['requestBody']['chatId']) && isset($data['requestBody']['lastMessageId']) ){
             $messages['messages'] = ChatsMessages::getNewChatMessages($data['requestBody']['chatId']);
-			
-			ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$data['requestBody']['chatId']]);
+
+            ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$data['requestBody']['chatId']]);
             //flashHelpers::stopA($messages);
             if (count($messages['messages']) != 0) {
                 $this->bot->sendReadChat($data['requestBody']['chatId']);
@@ -767,37 +771,61 @@ class PostController extends Controller{
     }
 
     private function checkNewMessages($data){
-		$messages['messages'] = ChatsMessages::checkNewMessages();
-		//flashHelpers::stopA($messages);
-		if (count($messages['messages']) != 0) {
-			$exit['error'] = false;
-			$exit['data'] = $messages;
-			echo json_encode($exit);
-			exit();
-		}
-		else{
-			$exit['error'] = false;
-			$exit['data'] = "NO MESSAGES (((";
-			echo json_encode($exit);
-			exit();
-		}
+        $messages['messages'] = ChatsMessages::checkNewMessages();
+        //flashHelpers::stopA($messages);
+        if (count($messages['messages']) != 0) {
+            $exit['error'] = false;
+            $exit['data'] = $messages;
+            echo json_encode($exit);
+            exit();
+        }
+        else{
+            $exit['error'] = false;
+            $exit['data'] = "NO MESSAGES (((";
+            echo json_encode($exit);
+            exit();
+        }
 
-	}
-	
-	private function getDialogInfo($data){
-		//flashHelpers::stopA($data);
-		$chatInfo = $this->bot->getDialogInfo($data['requestBody']['chatId']);
-		if (!empty($chatInfo)) {
-			$exit['error'] = false;
-			$exit['data'] = $chatInfo;
-			echo json_encode($exit);
-			exit();
-		}
-		else{
-                $exit['error'] = false;
-                $exit['data'] = "NO INFO (((";
-                echo json_encode($exit);
-                exit();
+    }
+
+    private function getDialogInfo($data){
+        //flashHelpers::stopA($data);
+        $chatInfo = $this->bot->getDialogInfo($data['requestBody']['chatId']);
+        if (!empty($chatInfo)) {
+            $exit['error'] = false;
+            $exit['data'] = $chatInfo;
+            echo json_encode($exit);
+            exit();
+        }
+        else{
+            $exit['error'] = false;
+            $exit['data'] = "NO INFO (((";
+            echo json_encode($exit);
+            exit();
+        }
+    }
+    private function makeMailing($data){
+        $res = array();
+
+        for ($i = 0; $i < count($_FILES); $i++){
+
+            $ext = explode('.', $_FILES[$i]['name']);
+            //Helpers::stopA($_FILES);
+            $file = flashHelpers::generateRandString(10).'.'.end($ext);
+
+
+            try {
+                move_uploaded_file($_FILES[$i]['tmp_name'], Yii::getAlias('@outfiles/') . $file);
+                $res[] = Yii::getAlias('@outfiles/') . $file;
+                //flashHelpers::stopA($res);
+            }catch (\Exception $e){
+                //flashHelpers::stopA($e->getMessage());
             }
-	}
+        }
+
+
+        $pExcel = new PHPExcel();
+        $pExcel->
+        flashHelpers::stopA($pExcel);
+    }
 }

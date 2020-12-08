@@ -225,7 +225,7 @@ $(document).ready(function() {
 									if($('.current-chat-id').val() != messages[i].chatId) {
 										var hasNew = ('.has-new');
 										$(chatBlock).find(hasNew).css("display", 'block');
-										
+
 									}
 								} else {
 									chatBlock = $('.sideBar-body')[0];
@@ -277,7 +277,76 @@ $(document).ready(function() {
 				}
 			}
 		});
+
 	})
+
+	$('.popup-close').click(function() {
+		$(this).parents('.popup-fade').fadeOut();
+		return false;
+	});
+	$('.popup-fade').click(function(e) {
+		if($(e.target).closest('.popup').length == 0) {
+			$(this).fadeOut();
+		}
+	});
+
+	$('.heading-dot').click(function() {
+		$('.popup-fade').fadeIn();
+		return false;
+	});
+	$('#upload-telephones').change(function(){
+		files = this.files;
+
+		var query = {};
+
+		query['_csrf'] = yii.getCsrfToken();
+		query['action'] = 'uploadPhonesList';
+
+		var data = new FormData();
+		$.each( files, function( key, value ){
+			data.append( key, value );
+		});
+		$.each( query, function( key, value ){
+			data.append( key, value );
+		});
+		var request = $.ajax({
+			type: "POST",
+			url: "/post/request",
+			data: data,
+			cache: false,
+			dataType: 'json',
+			processData: false, // Не обрабатываем файлы (Don't process the files)
+			contentType: false, // Так jQuery скажет серверу что это строковой запрос
+			success: function(data) {
+				$('#upload-telephones').prop('value', null);
+				var content = $.parseJSON(data);
+				if(content.error != undefined) {
+					if(content.error == true) {
+						VanillaToasts.create({
+							title: 'Внимание',
+							text: $.parseJSON(content.mess),
+							type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+							icon: '', // optional parameter
+							timeout: 5000, // hide after 5000ms, // optional paremter
+							callback: function() {} // executed when toast is clicked / optional parameter
+						});
+					} else {
+						console.log(content);
+
+					}
+				} else {
+					console.log(data);
+				}
+			}
+		});
+
+
+
+
+	});
+
+
+
 });
 
 function sendMessage() {
@@ -288,7 +357,9 @@ function sendMessage() {
 	query.chatId = chatId;
 	query.message = message;
 	query._csrf = yii.getCsrfToken();
+
 	var data = new FormData();
+
 	if(message.length == 0 && $('.upload-file')[0].files[0] == undefined) {
 		VanillaToasts.create({
 			title: 'Внимание',
@@ -354,6 +425,8 @@ function sendMessage() {
 			}
 		}
 	});
+
+
 }
 $(function() {
 	$(".heading-compose").click(function() {
