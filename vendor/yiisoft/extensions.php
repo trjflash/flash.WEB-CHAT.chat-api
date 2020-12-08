@@ -21,15 +21,6 @@ return array (
       '@yii/swiftmailer' => $vendorDir . '/yiisoft/yii2-swiftmailer/src',
     ),
   ),
-  'yiisoft/yii2-debug' => 
-  array (
-    'name' => 'yiisoft/yii2-debug',
-    'version' => '2.1.13.0',
-    'alias' => 
-    array (
-      '@yii/debug' => $vendorDir . '/yiisoft/yii2-debug/src',
-    ),
-  ),
   'yiisoft/yii2-gii' => 
   array (
     'name' => 'yiisoft/yii2-gii',
@@ -39,24 +30,6 @@ return array (
       '@yii/gii' => $vendorDir . '/yiisoft/yii2-gii/src',
     ),
   ),
-  'yiisoft/yii2-faker' => 
-  array (
-    'name' => 'yiisoft/yii2-faker',
-    'version' => '2.0.4.0',
-    'alias' => 
-    array (
-      '@yii/faker' => $vendorDir . '/yiisoft/yii2-faker',
-    ),
-  ),
-  'yiisoft/yii2-twig' => 
-  array (
-    'name' => 'yiisoft/yii2-twig',
-    'version' => '2.4.0.0',
-    'alias' => 
-    array (
-      '@yii/twig' => $vendorDir . '/yiisoft/yii2-twig/src',
-    ),
-  ),
   'mihaildev/yii2-ckeditor' => 
   array (
     'name' => 'mihaildev/yii2-ckeditor',
@@ -64,6 +37,51 @@ return array (
     'alias' => 
     array (
       '@mihaildev/ckeditor' => $vendorDir . '/mihaildev/yii2-ckeditor',
+    ),
+  ),
+  'costa-rico/yii2-images' => 
+  array (
+    'name' => 'costa-rico/yii2-images',
+    'version' => '1.0.5.0',
+    'alias' => 
+    array (
+      '@rico/yii2images' => $vendorDir . '/costa-rico/yii2-images',
+    ),
+  ),
+  'yiisoft/yii2-debug' => 
+  array (
+    'name' => 'yiisoft/yii2-debug',
+    'version' => '2.1.15.0',
+    'alias' => 
+    array (
+      '@yii/debug' => $vendorDir . '/yiisoft/yii2-debug/src',
+    ),
+  ),
+  'yiisoft/yii2-faker' => 
+  array (
+    'name' => 'yiisoft/yii2-faker',
+    'version' => '2.0.5.0',
+    'alias' => 
+    array (
+      '@yii/faker' => $vendorDir . '/yiisoft/yii2-faker/src',
+    ),
+  ),
+  'yiisoft/yii2-twig' => 
+  array (
+    'name' => 'yiisoft/yii2-twig',
+    'version' => '2.4.1.0',
+    'alias' => 
+    array (
+      '@yii/twig' => $vendorDir . '/yiisoft/yii2-twig/src',
+    ),
+  ),
+  'moonlandsoft/yii2-phpexcel' => 
+  array (
+    'name' => 'moonlandsoft/yii2-phpexcel',
+    'version' => '2.0.0.0',
+    'alias' => 
+    array (
+      '@moonland/phpexcel' => $vendorDir . '/moonlandsoft/yii2-phpexcel',
     ),
   ),
 );

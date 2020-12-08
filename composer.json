@@ -22,7 +22,8 @@
         "yiisoft/yii2-twig": "^2.4",
 		"yiiext/twig-renderer":"1.1.*",
         "mihaildev/yii2-ckeditor": "*",
-        "costa-rico/yii2-images": "*"
+        "costa-rico/yii2-images": "*",
+        "moonlandsoft/yii2-phpexcel": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
