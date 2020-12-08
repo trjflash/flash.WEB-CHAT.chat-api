@@ -258,7 +258,7 @@ $(document).ready(function() {
 													} else {
 														$(chatBlock).children('.sideBar-avatar').children('.avatar-icon').children().attr('src', content.data.image);
 														$(chatBlock).children('.sideBar-main').children('.row').children('.sideBar-name').children('.name-meta').html(content.data.name);
-														$(chatBlock).attr(["id", content.data.id]);
+														$(chatBlock).attr("id", content.data.id);
 														$('.sideBar').prepend(chatBlock);
 														$('[id = "' + content.data.id + '"]').find(hasNew).css("display", 'block');
 													}
@@ -320,7 +320,7 @@ $(document).ready(function() {
 			contentType: false, // Так jQuery скажет серверу что это строковой запрос
 			success: function(data) {
 
-				var content = $.parseJSON(data);
+				var content = data;
 				if(content.error != undefined) {
 					if(content.error == true) {
 						VanillaToasts.create({
@@ -332,8 +332,15 @@ $(document).ready(function() {
 							callback: function() {} // executed when toast is clicked / optional parameter
 						});
 					} else {
-						console.log(content);
-
+						$('.popup').fadeOut();
+						VanillaToasts.create({
+							title: 'Внимание',
+							text: $.parseJSON(content.mess),
+							type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+							icon: '', // optional parameter
+							timeout: 5000, // hide after 5000ms, // optional paremter
+							callback: function() {} // executed when toast is clicked / optional parameter
+						});
 					}
 				} else {
 					console.log(data);

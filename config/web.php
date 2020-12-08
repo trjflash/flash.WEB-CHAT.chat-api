@@ -7,7 +7,10 @@ $config = [
     'id' => 'basic',
     'layout' => false,
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => [
+        'log',
+        'queue'
+    ],
     'language' => 'ru-RU',
     'modules' => [
         'adm' => [
@@ -25,8 +28,15 @@ $config = [
         '@modules' => '@app/modules',
         '@shopphotos' => '@app/web/images/shop',
         '@outfiles' => '@app/web/images/out',
+        '@console' => '@app/console',
     ],
     'components' => [
+
+        'queue' => [
+            'class' => \yii\queue\file\Queue::class,
+            'path' => '@console/runtime/queue',
+            'as log' => \yii\queue\LogBehavior::class,
+        ],
         'viewRenderer' => array(
             'class' => 'ext.ETwigViewRenderer',
 
@@ -108,15 +118,15 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => array(
-                        'adm' => 'adm/dashboard',
-                        'login' => 'site/login',
+                'adm' => 'adm/dashboard',
+                'login' => 'site/login',
 
-                    [
-                        'pattern'=>'<url:.+>',
-                        'route' => 'materials/view',
-                        'suffix' => '.html',
-                    ],
-                )
+                [
+                    'pattern'=>'<url:.+>',
+                    'route' => 'materials/view',
+                    'suffix' => '.html',
+                ],
+            )
         ],
     ],
     'params' => $params,

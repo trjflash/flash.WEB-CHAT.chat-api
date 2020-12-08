@@ -6,41 +6,9 @@ namespace app\components\flash;
         //specify instance URL and token
         private $APIurl = 'https://eu191.chat-api.com/instance195686/';
         private $token = 'oycyoxh358s1yvd8';
+        private $instanceId = '195686';
 
         public function __construct(){
-            //get the JSON body from the instance
-            $json = file_get_contents('php://input');
-            $decoded = json_decode($json,true);
-
-            //write parsed JSON-body to the file for debugging
-            ob_start();
-            var_dump($decoded);
-            $input = ob_get_contents();
-            ob_end_clean();
-            file_put_contents('input_requests.log',$input.PHP_EOL,FILE_APPEND);
-
-            if(isset($decoded['messages'])){
-                //check every new message
-                foreach($decoded['messages'] as $message){
-                    //delete excess spaces and split the message on spaces. The first word in the message is a command, other words are parameters
-                    $text = explode(' ',trim($message['body']));
-                    //current message shouldn't be send from your bot, because it calls recursion
-                    if(!$message['fromMe']){
-                        //check what command contains the first word and call the function
-                        switch(mb_strtolower($text[0],'UTF-8')){
-                            case 'hi':  {$this->welcome($message['chatId'],false); break;}
-                            case 'chatId': {$this->showchatId($message['chatId']); break;}
-                            case 'time':   {$this->time($message['chatId']); break;}
-                            case 'me':     {$this->me($message['chatId'],$message['senderName']); break;}
-                            case 'file':   {$this->file($message['chatId'],$text[1]); break;}
-                            case 'ptt':     {$this->ptt($message['chatId']); break;}
-                            case 'geo':    {$this->geo($message['chatId']); break;}
-                            case 'group':  {$this->group($message['author']); break;}
-                            default:        {$this->welcome($message['chatId'],true); break;}
-                        }
-                    }
-                }
-            }
         }
 
         //this function calls function sendRequest to send a simple message
@@ -142,6 +110,12 @@ namespace app\components\flash;
             $res = $this->sendRequestPost('message',$data);
             return $res;
         }
+
+        public function sendMessageByPhone($phone, $text){
+            $data = array('phone'=>$phone,'body'=>$text);
+            $res = $this->sendRequestPost('message',$data);
+            return $res;
+        }
         public function sendFile($chatId, $text, $file, $filename){
             $data = array('chatId'=>$chatId,'filename'=>$filename,'caption'=>$text,'body'=>$file);
             $res = $this->sendRequestPost('sendFile',$data);
@@ -212,6 +186,15 @@ namespace app\components\flash;
             $date = strtotime($date);
             //\flashHelpers::stopA($date);
             return $this->sendRequestGet("messages",["min_time=$date"]);
+        }
+        public function checkInstanceId($instanceId){
+            if($this->instanceId == $instanceId)
+                return true;
+            else
+                return false;
+        }
+        public function getDialogInfo($chatId){
+           return $this->sendRequestGet('dialog',["chatId=$chatId"]);
         }
     }
 

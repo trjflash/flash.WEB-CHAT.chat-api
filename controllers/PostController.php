@@ -5,8 +5,8 @@ namespace app\controllers;
 
 
 use app\components\flash\flashWhatsAppBot;
-use app\components\flash\PHPExcel;
 
+use app\components\jobs\WaMailing;
 use app\models\AjaxLogin;
 use app\modules\Adm\models\MenuEditorModel;
 use app\modules\Adm\models\MenuTableToController;
@@ -28,6 +28,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use Yii;
 use yii\db\Exception;
+use yii\queue\Queue;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 
@@ -826,18 +827,24 @@ class PostController extends Controller{
         }
 
 
-        $excel = new Excel();
         $pExcel = IOFactory::load($res[0]);
         foreach ($pExcel->getWorksheetIterator() as $worksheet) {
             // выгружаем данные из объекта в массив
             $tables[] = $worksheet->toArray();
         }
-        for($i = 0; $i <= count($tables); $i++){
-            for($j = 0; $j < count($tables[$i]); $j++){
-                flashHelpers::stopA(tables[$i][$j]);
-            }
+        $data = [];
+        for($i = 0; $i < count($tables); $i++) {
+            $data[] = $tables[$i];
+            //
         }
+        $data = json_encode($data);
 
+        $queueNum = Yii::$app->queue->push(new WaMailing(['data' => $data]));
 
+        $exit['error'] = true;
+        $exit['mess'] = flashAjaxHelpers::returnJson(58);
+        $exit['error_level'] = flashAjaxHelpers::getErrorLevel(0);
+        echo json_encode($exit);
+        exit();
     }
 }
