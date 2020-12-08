@@ -23,7 +23,8 @@
 		"yiiext/twig-renderer":"1.1.*",
         "mihaildev/yii2-ckeditor": "*",
         "costa-rico/yii2-images": "*",
-        "moonlandsoft/yii2-phpexcel": "*"
+        "moonlandsoft/yii2-phpexcel": "*",
+        "yiisoft/yii2-queue": "^2.3"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

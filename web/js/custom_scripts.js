@@ -309,6 +309,7 @@ $(document).ready(function() {
 		$.each( query, function( key, value ){
 			data.append( key, value );
 		});
+		$('#upload-telephones').prop('value', null);
 		var request = $.ajax({
 			type: "POST",
 			url: "/post/request",
@@ -318,7 +319,7 @@ $(document).ready(function() {
 			processData: false, // Не обрабатываем файлы (Don't process the files)
 			contentType: false, // Так jQuery скажет серверу что это строковой запрос
 			success: function(data) {
-				$('#upload-telephones').prop('value', null);
+
 				var content = $.parseJSON(data);
 				if(content.error != undefined) {
 					if(content.error == true) {

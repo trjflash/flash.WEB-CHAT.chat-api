@@ -721,3 +721,74 @@ body {
 	50% { color: #FBB; }
 	100% { color: #F00; } 
 }
+#modal_content{
+    position: fixed;
+    z-index: 100;
+}
+.popup-fade {
+    display: none;
+}
+.popup-fade:before {
+    content: '';
+    background: #000;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+    z-index: 9999;
+}
+.popup {
+    position: fixed;
+    top: 2%;
+    left: 35%;
+    padding: 20px;
+    width: 20%;
+    margin-left: -200px;
+    background: #fff;
+    border: 1px solid orange;
+    border-radius: 4px;
+    z-index: 10000;
+    opacity: 1;
+}
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+#AJAX {
+    display: none;
+}
+#AJAX #overlay{
+    background-color: #000000;
+    opacity: 0.2;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10300;
+}
+#AJAX img{
+    z-index: 10500;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
+#upload-telephones{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    transform: translate(-300px, 0) scale(4);
+    font-size: 23px;
+    direction: ltr;
+    cursor: pointer;
+}

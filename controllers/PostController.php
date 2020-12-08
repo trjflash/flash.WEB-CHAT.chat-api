@@ -22,6 +22,8 @@ use app\models\ChatsMessages;
 
 use flashAjaxHelpers;
 use flashHelpers;
+use moonland\phpexcel\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use Yii;
@@ -804,6 +806,7 @@ class PostController extends Controller{
             exit();
         }
     }
+
     private function makeMailing($data){
         $res = array();
 
@@ -812,7 +815,6 @@ class PostController extends Controller{
             $ext = explode('.', $_FILES[$i]['name']);
             //Helpers::stopA($_FILES);
             $file = flashHelpers::generateRandString(10).'.'.end($ext);
-
 
             try {
                 move_uploaded_file($_FILES[$i]['tmp_name'], Yii::getAlias('@outfiles/') . $file);
@@ -824,8 +826,18 @@ class PostController extends Controller{
         }
 
 
-        $pExcel = new PHPExcel();
-        $pExcel->
-        flashHelpers::stopA($pExcel);
+        $excel = new Excel();
+        $pExcel = IOFactory::load($res[0]);
+        foreach ($pExcel->getWorksheetIterator() as $worksheet) {
+            // выгружаем данные из объекта в массив
+            $tables[] = $worksheet->toArray();
+        }
+        for($i = 0; $i <= count($tables); $i++){
+            for($j = 0; $j < count($tables[$i]); $j++){
+                flashHelpers::stopA(tables[$i][$j]);
+            }
+        }
+
+
     }
 }

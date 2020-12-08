@@ -19,7 +19,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '68e027da7379fe3327bdfc6af2a9ad18421fc817',
+    'reference' => 'd306cf28f594e7205b268fda73fcf13d7e857457',
     'name' => 'yiisoft/yii2-app-basic',
   ),
   'versions' => 
@@ -812,6 +812,15 @@ private static $installed = array (
       ),
       'reference' => 'e70aa8b064c5b72d3df2abd5ab1e90464ad009de',
     ),
+    'symfony/process' => 
+    array (
+      'pretty_version' => 'v4.4.17',
+      'version' => '4.4.17.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'ec1482f13d53911a8a32e54ba6f9a3b43a57d943',
+    ),
     'symfony/service-contracts' => 
     array (
       'pretty_version' => 'v2.2.0',
@@ -891,7 +900,7 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '68e027da7379fe3327bdfc6af2a9ad18421fc817',
+      'reference' => 'd306cf28f594e7205b268fda73fcf13d7e857457',
     ),
     'yiisoft/yii2-bootstrap' => 
     array (
@@ -937,6 +946,15 @@ private static $installed = array (
       array (
       ),
       'reference' => 'd879cb186361fbc6f71a2d994d580b5a071a5642',
+    ),
+    'yiisoft/yii2-queue' => 
+    array (
+      'pretty_version' => '2.3.0',
+      'version' => '2.3.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '25c1142558768ec0e835171c972a4edc2fb59cf0',
     ),
     'yiisoft/yii2-swiftmailer' => 
     array (
