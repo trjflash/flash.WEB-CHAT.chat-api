@@ -682,6 +682,30 @@ class PostController extends Controller{
     private function getWaBotMessagesById($data){
         $messages['messages'] = '';
         $chatId = $data['chatId'];
+        if(!preg_match_all('^[7][7]{1}[0-7]{1}[0-8]{1}\d{7}(@c.us)$^', $chatId)) {
+            $exit['error'] = true;
+            $exit['error_level'] = flashAjaxHelpers::getErrorLevel(3);
+            $exit['mess'] = flashAjaxHelpers::returnJson(59);
+            echo json_encode($exit);
+            exit();
+        }
+        //flashHelpers::stopA($chatId);
+
+        $bot = new flashWhatsAppBot();
+        $messages['messages'] = ChatsMessages::getChatMessages($chatId);
+        $bot->sendReadChat($chatId);
+
+        $messages['messages'] = ($messages['messages']);
+        ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$chatId]);
+
+        $exit['error'] = false;
+        $exit['data'] = $messages;
+        echo json_encode($exit);
+        exit();
+    }
+    private function getWaBotMessagesByPhone($data){
+        $messages['messages'] = '';
+        $chatId = $data['chatId'];
         //flashHelpers::stopA($chatId);
 
         $bot = new flashWhatsAppBot();

@@ -245,6 +245,7 @@ $(document).ready(function() {
 										success: function(data) {
 											var content = $.parseJSON(data);
 											if(content.error != undefined) {
+												console.log(content.data);
 												if($('.current-chat-id').val() != content.data.id) {
 													if(content.error == true) {
 														VanillaToasts.create({
@@ -332,7 +333,7 @@ $(document).ready(function() {
 							callback: function() {} // executed when toast is clicked / optional parameter
 						});
 					} else {
-						$('.popup').fadeOut();
+						$('.popup-fade').fadeOut();
 						VanillaToasts.create({
 							title: 'Внимание',
 							text: $.parseJSON(content.mess),
@@ -345,6 +346,7 @@ $(document).ready(function() {
 				} else {
 					console.log(data);
 				}
+				$('.popup-fade').fadeOut();
 			}
 		});
 
@@ -466,8 +468,8 @@ function getChatMessages(chatId, chatName, chatImg) {
 				if(content.error == true) {
 					VanillaToasts.create({
 						title: 'Внимание',
-						text: content.mess,
-						type: content.error_level, // success, info, warning, error   / optional parameter
+						text: $.parseJSON(content.mess),
+						type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
 						icon: '', // optional parameter
 						timeout: 5000, // hide after 5000ms, // optional paremter
 						callback: function() {} // executed when toast is clicked / optional parameter
