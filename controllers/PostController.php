@@ -750,6 +750,8 @@ class PostController extends Controller{
                 $file = "https://chat.onclinic.kz/images/out/".$file;
                 //flashHelpers::stopA($file);
                 $sendResult = json_decode($this->bot->sendFile($data['chatId'], $data['message'], $file, $_FILES[0]['name']));
+
+                unlink(Yii::getAlias('@outfiles/') . $file);
                 //flashHelpers::stopA($sendResult->error);
                 if (!isset($sendResult->error)) {
                     $exit['error'] = false;
@@ -864,6 +866,8 @@ class PostController extends Controller{
         $data = json_encode($data);
 
         $queueNum = Yii::$app->queue->push(new WaMailing(['data' => $data]));
+
+        unlink($res[0]);
 
         $exit['error'] = true;
         $exit['mess'] = flashAjaxHelpers::returnJson(58);

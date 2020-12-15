@@ -30,7 +30,8 @@ class WaMailing extends BaseObject implements JobInterface{
             //file_put_contents('/web/sites/chat.onclinic.kz/www/controllers/data.txt', PHP_EOL . $this->data, FILE_APPEND);
 
         }catch (\Exception $e){
-            file_put_contents('/web/sites/chat.onclinic.kz/www/controllers/data.txt', PHP_EOL . $e->getMessage(), FILE_APPEND);
+            file_put_contents('/web/sites/chat.onclinic.kz/www/components/jobs/logs/mailingErrorMessage.txt', PHP_EOL . $e->getMessage(), FILE_APPEND);
+            file_put_contents('/web/sites/chat.onclinic.kz/www/components/jobs/logs/mailingErrorData.txt', PHP_EOL . $this->data, FILE_APPEND);
         }
 
 
