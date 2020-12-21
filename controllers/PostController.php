@@ -737,21 +737,21 @@ class PostController extends Controller{
 
                 $ext = explode('.', $_FILES[$i]['name']);
                 //Helpers::stopA($_FILES);
-                $file = flashHelpers::generateRandString(10).'.'.end($ext);
+                $fileName = flashHelpers::generateRandString(10).'.'.end($ext);
 
 
                 try {
-                    $res = move_uploaded_file($_FILES[$i]['tmp_name'], Yii::getAlias('@outfiles/') . $file);
+                    $res = move_uploaded_file($_FILES[$i]['tmp_name'], Yii::getAlias('@outfiles/') . $fileName);
                     //flashHelpers::stopA($res);
                 }catch (\Exception $e){
                     //flashHelpers::stopA($e->getMessage());
                 }
 
-                $file = "https://chat.onclinic.kz/images/out/".$file;
+                $file = "https://chat.onclinic.kz/images/out/".$fileName;
                 //flashHelpers::stopA($file);
                 $sendResult = json_decode($this->bot->sendFile($data['chatId'], $data['message'], $file, $_FILES[0]['name']));
 
-                unlink(Yii::getAlias('@outfiles/') . $file);
+                unlink(Yii::getAlias('@outfiles/') . $fileName);
                 //flashHelpers::stopA($sendResult->error);
                 if (!isset($sendResult->error)) {
                     $exit['error'] = false;
@@ -864,11 +864,12 @@ class PostController extends Controller{
             //
         }
         $data = json_encode($data);
+//flashHelpers::stopA($data);
 
         $queueNum = Yii::$app->queue->push(new WaMailing(['data' => $data]));
-
-        unlink($res[0]);
-
+		
+		unlink($res[0]);
+		
         $exit['error'] = true;
         $exit['mess'] = flashAjaxHelpers::returnJson(58);
         $exit['error_level'] = flashAjaxHelpers::getErrorLevel(0);

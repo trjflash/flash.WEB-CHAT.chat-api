@@ -21,6 +21,8 @@ class WaMailing extends BaseObject implements JobInterface{
         try {
             $data = json_decode($this->data);
             for ($i = 0; $i<count($data[0]); $i++) {
+
+            file_put_contents('/web/sites/chat.onclinic.kz/www/components/jobs/logs/mailingErrorData.txt', PHP_EOL . $data[0][$i][0], FILE_APPEND);
                 if (preg_match_all('^[7][7]{1}[0-7]{1}[0-8]{1}\d{7}$^', $data[0][$i][0])) {
 
                     $this->bot->sendMessageByPhone($data[0][$i][0], $data[0][$i][1]);

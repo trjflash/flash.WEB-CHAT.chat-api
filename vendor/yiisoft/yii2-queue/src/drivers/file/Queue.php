@@ -53,6 +53,7 @@ class Queue extends CliQueue
     public function init()
     {
         parent::init();
+
         $this->path = Yii::getAlias($this->path);
         if (!is_dir($this->path)) {
             FileHelper::createDirectory($this->path, $this->dirMode, true);

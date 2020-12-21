@@ -4,9 +4,9 @@ namespace app\components\flash;
 {
     class flashWhatsAppBot{
         //specify instance URL and token
-        private $APIurl = 'https://eu191.chat-api.com/instance195686/';
-        private $token = 'oycyoxh358s1yvd8';
-        private $instanceId = '195686';
+        private $APIurl = 'https://eu182.chat-api.com/instance207064/';
+        private $token = 'o3dnty29nf5l5qth';
+        private $instanceId = '207064';
 
         public function __construct(){
         }
@@ -195,6 +195,7 @@ namespace app\components\flash;
         }
         public function getDialogInfo($chatId){
            return $this->sendRequestGet('dialog',["chatId=$chatId"]);
+		   //\flashHelpers::stopA($res);
         }
     }
 

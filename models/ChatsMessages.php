@@ -11,14 +11,11 @@ class ChatsMessages extends ActiveRecord{
     public function getChatMessages($chatId){
         return self::find()->where(['chatId' => "$chatId"])->asArray()->all();
     }
-    public function getChatMessagesByPhone($phone){
-        return self::find()->where(['chatId' => "$phone"])->asArray()->all();
-    }
 	public function getNewChatMessages($chatId){
         return self::find()->where(['chatId' => "$chatId",'isNew'=>'1'])->asArray()->all();
     }
 	public function checkNewMessages(){
-		return self::find()->where(['isNew'=>'1','fromMe'=>0])->select(['chatId'])->distinct()->asArray()->all();
+		return self::find()->select(['chatId'])->where(['isNew'=>'1','fromMe'=>'0'])->distinct()->asArray()->all();
 	}
 
 }

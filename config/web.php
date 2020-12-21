@@ -10,7 +10,7 @@ $config = [
     'bootstrap' => [
         'log',
         'queue'
-    ],
+		],
     'language' => 'ru-RU',
     'modules' => [
         'adm' => [
@@ -32,6 +32,10 @@ $config = [
     ],
     'components' => [
 
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+        ],
+	
         'queue' => [
             'class' => \yii\queue\file\Queue::class,
             'path' => '@console/runtime/queue',
@@ -118,15 +122,15 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => array(
-                'adm' => 'adm/dashboard',
-                'login' => 'site/login',
+                        'adm' => 'adm/dashboard',
+                        'login' => 'site/login',
 
-                [
-                    'pattern'=>'<url:.+>',
-                    'route' => 'materials/view',
-                    'suffix' => '.html',
-                ],
-            )
+                    [
+                        'pattern'=>'<url:.+>',
+                        'route' => 'materials/view',
+                        'suffix' => '.html',
+                    ],
+                )
         ],
     ],
     'params' => $params,

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Дек 14 2020 г., 11:01
+-- Время создания: Дек 07 2020 г., 09:59
 -- Версия сервера: 10.4.14-MariaDB
 -- Версия PHP: 7.4.10
 
@@ -51,7 +51,7 @@ CREATE TABLE `flash_cms_table_chats_info` (
   `id` int(11) NOT NULL,
   `chatId` varchar(100) NOT NULL,
   `chatName` varchar(100) NOT NULL,
-  `chatImage` varchar(255) DEFAULT NULL
+  `chatImage` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -59,9 +59,11 @@ CREATE TABLE `flash_cms_table_chats_info` (
 --
 
 INSERT INTO `flash_cms_table_chats_info` (`id`, `chatId`, `chatName`, `chatImage`) VALUES
-(1, '77770188219@c.us', 'TRJflash', 'https://pps.whatsapp.net/v/t61.24694-24/55963533_382458569009471_881171145603153920_n.jpg?oh=b38a0d6510e8626a3cdf1f60724f4076&oe=5FDB2EF2'),
-(2, '77011002015@c.us', 'Дамир Жаримбетов', 'https://pps.whatsapp.net/v/t61.24694-24/124456374_1341224036270192_1766066952502831056_n.jpg?oh=52eb7de122257de2b9a4e8413c8d2007&oe=5FDB191F'),
-(3, '77777815599@c.us', 'Мария Маркетинг', 'https://pps.whatsapp.net/v/t61.24694-24/74937007_462321697800314_959897802823991846_n.jpg?oh=f629e00e69ae0ef5e8f3bc9a8fa0ee3c&oe=5FDADBE7');
+(1, '77015667246@c.us', '+7 701 566 7246', 'https://pps.whatsapp.net/v/t61.24694-24/125526754_809729479595229_4979426076799001883_n.jpg?oh=b8ecb336c0090f57dd6b784a82e4fceb&oe=5FCA47A4'),
+(4, '77011002015@c.us', 'Дамир Жаримбетов', 'https://pps.whatsapp.net/v/t61.24694-24/124456374_1341224036270192_1766066952502831056_n.jpg?oh=250830cd181989326177e7ed68975d31&oe=5FCB471F'),
+(5, '77777815599@c.us', 'Мария Маркетинг', 'https://pps.whatsapp.net/v/t61.24694-24/74937007_462321697800314_959897802823991846_n.jpg?oh=8af1be180fcbf2b9b8c19cc7df7c87da&oe=5FCB09E7'),
+(17, '77770188219@c.us', 'ЛЮБИМЫЙ МУЖ!!!!!!', 'https://pps.whatsapp.net/v/t61.24694-24/55963533_382458569009471_881171145603153920_n.jpg?oh=5d71e0f63db5ec88cba2da55c0497e56&oe=5FD1F472'),
+(18, '77750188218@c.us', 'Киса', 'https://pps.whatsapp.net/v/t61.24694-24/104433811_209146187166411_6185456538709267362_n.jpg?oh=36eb441d4c26b5725b05d74e945c46d3&oe=5FD1C4C6');
 
 -- --------------------------------------------------------
 
@@ -73,9 +75,9 @@ CREATE TABLE `flash_cms_table_chats_messages` (
   `id` int(7) NOT NULL,
   `messageId` varchar(255) DEFAULT NULL,
   `body` text DEFAULT NULL,
-  `self` enum('0','1') DEFAULT '0',
-  `fromMe` enum('0','1') NOT NULL DEFAULT '0',
-  `isForwarded` enum('0','1') DEFAULT '0',
+  `self` tinyint(1) DEFAULT NULL,
+  `fromMe` tinyint(1) NOT NULL,
+  `isForwarded` tinyint(1) DEFAULT NULL,
   `author` varchar(50) DEFAULT NULL,
   `time` int(11) DEFAULT NULL,
   `chatId` varchar(50) DEFAULT NULL,
@@ -87,7 +89,7 @@ CREATE TABLE `flash_cms_table_chats_messages` (
   `quotedMsgId` varchar(255) DEFAULT NULL,
   `quotedMsgType` varchar(50) DEFAULT NULL,
   `chatName` varchar(100) DEFAULT NULL,
-  `isNew` enum('0','1') DEFAULT '0'
+  `isNew` enum('0','1') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -95,10 +97,31 @@ CREATE TABLE `flash_cms_table_chats_messages` (
 --
 
 INSERT INTO `flash_cms_table_chats_messages` (`id`, `messageId`, `body`, `self`, `fromMe`, `isForwarded`, `author`, `time`, `chatId`, `messageNumber`, `type`, `senderName`, `caption`, `quotedMsgBody`, `quotedMsgId`, `quotedMsgType`, `chatName`, `isNew`) VALUES
-(9, 'false_77770188219@c.us_3EB065731536A2D8ACA1', 'sdf', '1', '0', '0', '77770188219@c.us', 1607942867, '77770188219@c.us', 327, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
-(10, 'false_77770188219@c.us_3EB0AEF39EA2BACB6F24', 'asdasd', '1', '0', '0', '77770188219@c.us', 1607943586, '77770188219@c.us', 341, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
-(11, 'true_77011002015@c.us_3EB0E03CEB98781D6F96', '231321', '1', '1', '0', '77771298943@c.us', 1607943611, '77011002015@c.us', 342, 'chat', 'Hetreelis', NULL, NULL, NULL, NULL, 'Дамир Жаримбетов', '0'),
-(12, 'false_77011002015@c.us_3EB018C46141B11866C1', '21321', '1', '0', '0', '77011002015@c.us', 1607943626, '77011002015@c.us', 343, 'chat', 'Дамир Жаримбетов', NULL, NULL, NULL, NULL, 'Дамир Жаримбетов', '1');
+(2, 'false_77770188219@c.us_3EB088013C21095F5E3B', 'фываыфв', 1, 0, 0, '77770188219@c.us', 1607330751, '77770188219@c.us', 187, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(3, 'false_77770188219@c.us_3EB0E14D947A611B0801', 'dgsdfg', 1, 0, 0, '77770188219@c.us', 1607331113, '77770188219@c.us', 188, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(4, 'false_77770188219@c.us_3EB048860233F1E98DA9', 'asdf', 1, 0, 0, '77770188219@c.us', 1607331654, '77770188219@c.us', 189, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(5, 'false_77770188219@c.us_3EB01B14F7554218CB7B', 'asdasd', 1, 0, 0, '77770188219@c.us', 1607331731, '77770188219@c.us', 190, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(6, 'false_77750188218@c.us_3EB0156AFB63ADE9B0FA', 'ююю', 1, 0, 0, '77750188218@c.us', 1607331888, '77750188218@c.us', 191, 'chat', 'Киса', NULL, NULL, NULL, NULL, 'Киса', '0'),
+(7, 'false_77770188219@c.us_3EB07F07A51F480F2641', 'Тест', 1, 0, 0, '77770188219@c.us', 1607331911, '77770188219@c.us', 192, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(8, 'true_77750188218@c.us_3EB0699A764D93E811C1', 'Аааа', 1, 1, 0, '77771298943@c.us', 1607332713, '77750188218@c.us', 193, 'chat', 'Hetreelis', NULL, NULL, NULL, NULL, 'Киса', '0'),
+(9, 'false_77750188218@c.us_3EB0EC99C2CC22105897', 'добрый день', 1, 0, 0, '77750188218@c.us', 1607332790, '77750188218@c.us', 194, 'chat', 'Киса', NULL, NULL, NULL, NULL, 'Киса', '0'),
+(10, 'true_77750188218@c.us_3EB090BB89DF87490100', 'ага', 1, 1, 0, '77771298943@c.us', 1607332803, '77750188218@c.us', 195, 'chat', 'Hetreelis', NULL, NULL, NULL, NULL, 'Киса', '0'),
+(11, 'true_77750188218@c.us_3EB079C827548A61FAF3', 'фыв', 1, 1, 0, '77771298943@c.us', 1607332877, '77750188218@c.us', 196, 'chat', 'Hetreelis', NULL, NULL, NULL, NULL, 'Киса', '0'),
+(12, 'false_77750188218@c.us_3EB0896E303AC1B42D5C', 'Здравствуйте', 1, 0, 0, '77750188218@c.us', 1607332949, '77750188218@c.us', 197, 'chat', 'Киса', NULL, NULL, NULL, NULL, 'Киса', '0'),
+(13, 'false_77770188219@c.us_07D67D355AA6485BDAB622FCDA49BFC2', 'Ага', 0, 0, 0, '77770188219@c.us', 1607333011, '77770188219@c.us', 198, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(14, 'false_77770188219@c.us_89FAF71B7AB3B0A90522D14689A9957A', 'Йцу', 0, 0, 0, '77770188219@c.us', 1607333067, '77770188219@c.us', 199, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(15, 'false_77770188219@c.us_3EB0688D5B30AA6E0089', 'asd', 1, 0, 0, '77770188219@c.us', 1607333123, '77770188219@c.us', 200, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(16, 'true_77770188219@c.us_3EB06C4FE99C1B2F7B2C', 'Ответить надо бы', 1, 1, 0, '77771298943@c.us', 1607333140, '77770188219@c.us', 201, 'chat', 'Hetreelis', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(17, 'false_77770188219@c.us_3EB025C9EE206974D416', 'ячс', 1, 0, 0, '77770188219@c.us', 1607333188, '77770188219@c.us', 202, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(18, 'false_77770188219@c.us_3EB0F3EB348038B5ED6D', 'ыквуцк', 1, 0, 0, '77770188219@c.us', 1607333207, '77770188219@c.us', 203, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(19, 'false_77770188219@c.us_3EB067B8EBC3DD772A43', 'asd', 1, 0, 0, '77770188219@c.us', 1607333482, '77770188219@c.us', 204, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(20, 'false_77770188219@c.us_3EB06CA102376F82B55B', 'sdaf', 1, 0, 0, '77770188219@c.us', 1607333633, '77770188219@c.us', 205, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(21, 'true_77770188219@c.us_3EB075FA07709AF6E3D9', 'Агась', 1, 1, 0, '77771298943@c.us', 1607333647, '77770188219@c.us', 206, 'chat', 'Hetreelis', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(22, 'false_77770188219@c.us_3EB0952F6EFC3F3DB915', 'фывэ', 1, 0, 0, '77770188219@c.us', 1607333726, '77770188219@c.us', 207, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(23, 'false_77770188219@c.us_3EB0F5D530AE3BF43875', 'ывф', 1, 0, 0, '77770188219@c.us', 1607333789, '77770188219@c.us', 208, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(24, 'true_77750188218@c.us_3EB01D9E9C3E194B32D4', 'Проверим 2 клиента', 1, 1, 0, '77771298943@c.us', 1607333830, '77750188218@c.us', 209, 'chat', 'Hetreelis', NULL, NULL, NULL, NULL, 'Киса', '0'),
+(25, 'false_77770188219@c.us_3EB0A58F411F4A202BE8', 'asdf', 1, 0, 0, '77770188219@c.us', 1607333841, '77770188219@c.us', 210, 'chat', 'ЛЮБИМЫЙ МУЖ!!!!!!', NULL, NULL, NULL, NULL, 'ЛЮБИМЫЙ МУЖ!!!!!!', '0'),
+(26, 'false_77750188218@c.us_3EB0316A8C2CA57230E1', 'какие', 1, 0, 0, '77750188218@c.us', 1607333898, '77750188218@c.us', 211, 'chat', 'Киса', NULL, NULL, NULL, NULL, 'Киса', '0');
 
 -- --------------------------------------------------------
 
@@ -550,13 +573,13 @@ ALTER TABLE `flash_cms_table_base_pages`
 -- AUTO_INCREMENT для таблицы `flash_cms_table_chats_info`
 --
 ALTER TABLE `flash_cms_table_chats_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT для таблицы `flash_cms_table_chats_messages`
 --
 ALTER TABLE `flash_cms_table_chats_messages`
-  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT для таблицы `flash_cms_table_menus`
