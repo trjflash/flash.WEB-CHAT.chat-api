@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1
--- Время создания: Дек 21 2020 г., 07:31
+-- Время создания: Дек 25 2020 г., 08:01
 -- Версия сервера: 10.1.37-MariaDB
 -- Версия PHP: 7.3.1
 
@@ -39,8 +39,13 @@ CREATE TABLE `auth_assignment` (
 --
 
 INSERT INTO `auth_assignment` (`item_name`, `user_id`, `created_at`) VALUES
-('admin', '1', 1608524793),
-('editor', '2', 1608524793);
+('almatyAdmin', '3', 1608782694),
+('almatyOperator', '6', 1608782694),
+('astanaAdmin', '2', 1608782694),
+('astanaOperator', '5', 1608782694),
+('fullAdmin', '1', 1608782694),
+('ukAdmin', '4', 1608782694),
+('ukOperator', '7', 1608782694);
 
 -- --------------------------------------------------------
 
@@ -63,10 +68,16 @@ CREATE TABLE `auth_item` (
 --
 
 INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `created_at`, `updated_at`) VALUES
-('admin', 1, NULL, NULL, NULL, 1608524792, 1608524792),
-('editor', 1, NULL, NULL, NULL, 1608524792, 1608524792),
-('updateNews', 2, 'Редактирование новости', NULL, NULL, 1608524793, 1608524793),
-('viewAdminPage', 2, 'Просмотр админки', NULL, NULL, 1608524792, 1608524792);
+('almatyAdmin', 1, NULL, NULL, NULL, 1608782694, 1608782694),
+('almatyOperator', 1, NULL, NULL, NULL, 1608782694, 1608782694),
+('astanaAdmin', 1, NULL, NULL, NULL, 1608782694, 1608782694),
+('astanaOperator', 1, NULL, NULL, NULL, 1608782694, 1608782694),
+('chatOperator', 2, 'Оператор чат бота', NULL, NULL, 1608782694, 1608782694),
+('fullAdmin', 1, NULL, NULL, NULL, 1608782694, 1608782694),
+('instanceAdmin', 2, 'Администратор инстанса бота', NULL, NULL, 1608782694, 1608782694),
+('systemAdmin', 2, 'Администратор системы', NULL, NULL, 1608782694, 1608782694),
+('ukAdmin', 1, NULL, NULL, NULL, 1608782694, 1608782694),
+('ukOperator', 1, NULL, NULL, NULL, 1608782694, 1608782694);
 
 -- --------------------------------------------------------
 
@@ -84,9 +95,18 @@ CREATE TABLE `auth_item_child` (
 --
 
 INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
-('admin', 'editor'),
-('admin', 'viewAdminPage'),
-('editor', 'updateNews');
+('almatyAdmin', 'chatOperator'),
+('almatyAdmin', 'instanceAdmin'),
+('almatyOperator', 'chatOperator'),
+('astanaAdmin', 'chatOperator'),
+('astanaAdmin', 'instanceAdmin'),
+('astanaOperator', 'chatOperator'),
+('fullAdmin', 'systemAdmin'),
+('systemAdmin', 'chatOperator'),
+('systemAdmin', 'instanceAdmin'),
+('ukAdmin', 'chatOperator'),
+('ukAdmin', 'instanceAdmin'),
+('ukOperator', 'chatOperator');
 
 -- --------------------------------------------------------
 
@@ -150,8 +170,18 @@ CREATE TABLE `flash_cms_table_chats_info` (
   `id` int(11) NOT NULL,
   `chatId` varchar(100) NOT NULL,
   `chatName` varchar(100) NOT NULL,
-  `chatImage` varchar(255) DEFAULT NULL
+  `chatImage` varchar(255) DEFAULT NULL,
+  `city` varchar(10) DEFAULT NULL,
+  `instance` int(7) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `flash_cms_table_chats_info`
+--
+
+INSERT INTO `flash_cms_table_chats_info` (`id`, `chatId`, `chatName`, `chatImage`, `city`, `instance`) VALUES
+(1, '77770188219@c.us', 'TRJflash', 'https://pps.whatsapp.net/v/t61.24694-24/55963533_382458569009471_881171145603153920_n.jpg?oh=b38a0d6510e8626a3cdf1f60724f4076&oe=5FDB2EF2', NULL, 207064),
+(82, '77770188219@c.us', 'TRJflash', 'https://pps.whatsapp.net/v/t61.24694-24/55963533_382458569009471_881171145603153920_n.jpg?oh=b38a0d6510e8626a3cdf1f60724f4076&oe=5FDB2EF2', NULL, 123456);
 
 -- --------------------------------------------------------
 
@@ -177,8 +207,66 @@ CREATE TABLE `flash_cms_table_chats_messages` (
   `quotedMsgId` varchar(255) DEFAULT NULL,
   `quotedMsgType` varchar(50) DEFAULT NULL,
   `chatName` varchar(100) DEFAULT NULL,
-  `isNew` enum('0','1') DEFAULT '0'
+  `isNew` enum('0','1') DEFAULT '0',
+  `instance` int(7) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `flash_cms_table_chats_messages`
+--
+
+INSERT INTO `flash_cms_table_chats_messages` (`id`, `messageId`, `body`, `self`, `fromMe`, `isForwarded`, `author`, `time`, `chatId`, `messageNumber`, `type`, `senderName`, `caption`, `quotedMsgBody`, `quotedMsgId`, `quotedMsgType`, `chatName`, `isNew`, `instance`) VALUES
+(1, 'false_77770188219@c.us_3BA46E64CC700CE1F13CF2ADBF260119', 'Ответ', '0', '0', '0', '77770188219@c.us', 1608189972, '77770188219@c.us', 940, 'chat', 'TRJflash', NULL, NULL, NULL, NULL, '+7 777 018 8219', '1', 207064),
+(2, 'false_77770188219@c.us_663EDBD98873D35145FEB90012AB5599', 'Ещё раз', '0', '0', '0', '77770188219@c.us', 1608189993, '77770188219@c.us', 941, 'chat', 'TRJflash', NULL, NULL, NULL, NULL, '+7 777 018 8219', '1', 207064),
+(3, 'true_77770188219@c.us_3EB050946DE290D6DD47', 'ОК', '1', '1', '0', '77073660303@c.us', 1608190013, '77770188219@c.us', 942, 'chat', 'Он Клиник', NULL, NULL, NULL, NULL, '+7 777 018 8219', '1', 207064),
+(6, 'true_77770188219@c.us_3EB050946DE290D6DD47', 'ОК', '1', '1', '0', '77073660303@c.us', 1608190013, '77770188219@c.us', 942, 'chat', 'Он Клиник', NULL, NULL, NULL, NULL, '+7 777 018 8219', '1', 123456);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `flash_cms_table_chat_instances`
+--
+
+CREATE TABLE `flash_cms_table_chat_instances` (
+  `id` int(11) NOT NULL,
+  `link` varchar(255) DEFAULT NULL,
+  `token` varchar(100) DEFAULT NULL,
+  `instance` int(7) DEFAULT NULL,
+  `name` varchar(20) DEFAULT NULL,
+  `display_name` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `flash_cms_table_chat_instances`
+--
+
+INSERT INTO `flash_cms_table_chat_instances` (`id`, `link`, `token`, `instance`, `name`, `display_name`) VALUES
+(1, 'https://eu182.chat-api.com/instance207064/', 'o3dnty29nf5l5qth', 207064, 'astsna', 'Астана'),
+(2, 'https://eu182.chat-api.com/instance207064/', '123456', 123456, 'almaty', 'Алматы');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `flash_cms_table_chat_inst_collation`
+--
+
+CREATE TABLE `flash_cms_table_chat_inst_collation` (
+  `id` int(10) NOT NULL,
+  `inst_name` varchar(20) DEFAULT NULL,
+  `user` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `flash_cms_table_chat_inst_collation`
+--
+
+INSERT INTO `flash_cms_table_chat_inst_collation` (`id`, `inst_name`, `user`) VALUES
+(8, 'almaty', 1),
+(7, 'almaty', 3),
+(9, 'almaty', 6),
+(4, 'astsna', 1),
+(6, 'astsna', 2),
+(5, 'astsna', 5);
 
 -- --------------------------------------------------------
 
@@ -468,18 +556,25 @@ CREATE TABLE `flash_cms_table_users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) DEFAULT NULL,
   `secret` varchar(255) DEFAULT NULL,
+  `display_name` varchar(100) NOT NULL,
+  `avatar_icon` varchar(100) NOT NULL,
   `authKey` varchar(255) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `lastLogin` timestamp NULL DEFAULT NULL,
-  `role` int(11) NOT NULL
+  `lastLogin` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `flash_cms_table_users`
 --
 
-INSERT INTO `flash_cms_table_users` (`id`, `username`, `secret`, `authKey`, `email`, `lastLogin`, `role`) VALUES
-(1, 'flashadmin', '$2y$13$D8jgVSD/aZ5HBkgg4l2ml.8Rjnt3vwEkLffZM3Nkc9IRPUutw4Jxm', NULL, NULL, NULL, 0);
+INSERT INTO `flash_cms_table_users` (`id`, `username`, `secret`, `display_name`, `avatar_icon`, `authKey`, `email`, `lastLogin`) VALUES
+(1, 'flashadmin', '$2y$13$D8jgVSD/aZ5HBkgg4l2ml.8Rjnt3vwEkLffZM3Nkc9IRPUutw4Jxm', 'Администратор Системы', '', NULL, NULL, NULL),
+(2, 'astanaadmin', '$2y$13$RxAXttxAmRVL.Chd6h85V.rtcjzJg/sIbwEGxQFXVIxpyIkDfUL0a', 'Администратор Астана', '', NULL, NULL, NULL),
+(3, 'almatyadmin', '$2y$13$RxAXttxAmRVL.Chd6h85V.rtcjzJg/sIbwEGxQFXVIxpyIkDfUL0a', 'Администратор Алматы', '', NULL, NULL, NULL),
+(4, 'ukadmin', '$2y$13$RxAXttxAmRVL.Chd6h85V.rtcjzJg/sIbwEGxQFXVIxpyIkDfUL0a', 'Администратор Усть-Каменогорск', '', NULL, NULL, NULL),
+(5, 'astanaoperator', '$2y$13$RxAXttxAmRVL.Chd6h85V.rtcjzJg/sIbwEGxQFXVIxpyIkDfUL0a', 'Оператор Астана', '', NULL, NULL, NULL),
+(6, 'almatyoperator', '$2y$13$RxAXttxAmRVL.Chd6h85V.rtcjzJg/sIbwEGxQFXVIxpyIkDfUL0a', 'Оператор Алматы', '', NULL, NULL, NULL),
+(7, 'ukoperator', '$2y$13$RxAXttxAmRVL.Chd6h85V.rtcjzJg/sIbwEGxQFXVIxpyIkDfUL0a', 'Оператор Усть-Каменогорск', '', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -546,6 +641,37 @@ ALTER TABLE `flash_cms_table_base_pages`
 --
 ALTER TABLE `flash_cms_table_bwa_bot_last_message`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `flash_cms_table_chats_info`
+--
+ALTER TABLE `flash_cms_table_chats_info`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`),
+  ADD KEY `instance` (`instance`);
+
+--
+-- Индексы таблицы `flash_cms_table_chats_messages`
+--
+ALTER TABLE `flash_cms_table_chats_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`),
+  ADD KEY `instance` (`instance`);
+
+--
+-- Индексы таблицы `flash_cms_table_chat_instances`
+--
+ALTER TABLE `flash_cms_table_chat_instances`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Индексы таблицы `flash_cms_table_chat_inst_collation`
+--
+ALTER TABLE `flash_cms_table_chat_inst_collation`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `inst_name` (`inst_name`,`user`),
+  ADD KEY `FK_UserId` (`user`);
 
 --
 -- Индексы таблицы `flash_cms_table_menus`
@@ -631,7 +757,9 @@ ALTER TABLE `flash_cms_table_tables_for_links`
 -- Индексы таблицы `flash_cms_table_users`
 --
 ALTER TABLE `flash_cms_table_users`
-  ADD UNIQUE KEY `id` (`id`);
+  ADD UNIQUE KEY `id` (`id`),
+  ADD UNIQUE KEY `username_2` (`username`),
+  ADD KEY `username` (`username`);
 
 --
 -- Индексы таблицы `migration`
@@ -654,6 +782,30 @@ ALTER TABLE `flash_cms_table_base_pages`
 --
 ALTER TABLE `flash_cms_table_bwa_bot_last_message`
   MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT для таблицы `flash_cms_table_chats_info`
+--
+ALTER TABLE `flash_cms_table_chats_info`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+
+--
+-- AUTO_INCREMENT для таблицы `flash_cms_table_chats_messages`
+--
+ALTER TABLE `flash_cms_table_chats_messages`
+  MODIFY `id` int(7) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT для таблицы `flash_cms_table_chat_instances`
+--
+ALTER TABLE `flash_cms_table_chat_instances`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT для таблицы `flash_cms_table_chat_inst_collation`
+--
+ALTER TABLE `flash_cms_table_chat_inst_collation`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT для таблицы `flash_cms_table_menus`
@@ -731,7 +883,7 @@ ALTER TABLE `flash_cms_table_tables_for_links`
 -- AUTO_INCREMENT для таблицы `flash_cms_table_users`
 --
 ALTER TABLE `flash_cms_table_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -755,6 +907,14 @@ ALTER TABLE `auth_item`
 ALTER TABLE `auth_item_child`
   ADD CONSTRAINT `auth_item_child_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `auth_item_child_ibfk_2` FOREIGN KEY (`child`) REFERENCES `auth_item` (`name`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `flash_cms_table_chat_inst_collation`
+--
+ALTER TABLE `flash_cms_table_chat_inst_collation`
+  ADD CONSTRAINT `FK_City` FOREIGN KEY (`inst_name`) REFERENCES `flash_cms_table_chat_instances` (`name`),
+  ADD CONSTRAINT `FK_InstName` FOREIGN KEY (`inst_name`) REFERENCES `flash_cms_table_chat_instances` (`name`),
+  ADD CONSTRAINT `FK_UserId` FOREIGN KEY (`user`) REFERENCES `flash_cms_table_users` (`id`);
 
 --
 -- Ограничения внешнего ключа таблицы `flash_cms_table_menus`
