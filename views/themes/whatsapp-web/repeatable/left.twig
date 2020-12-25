@@ -4,19 +4,28 @@
             <div class="col-sm-6 col-xs-6 heading-avatar">
 
                 <div class="self-heading-avatar-icon">
-                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png">
-                    <span class="avatar-name">ИМЯ ОПЕРАТОРА</span>
+                    <img src="{{ url(['images/avatars/'], {'alias' : web}) }}/avatardefault.png">
+                    <span class="avatar-name">{{ username }}</span>
                 </div>
 
 
             </div>
-            <div class="col-sm-1 col-xs-1  heading-dot  pull-right">
-                <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
+
+            <div class="col-sm-5 col-xs-5 ">
+                <label for="exampleFormControlSelect1">Текущий инстанс</label>
+                <select class="form-control form-control-sm" id="exampleFormControlSelect1">
+                    {%  for instance in instanceName %}
+                        <option value="{{ instance.name }}">{{ instance.display_name }}</option>
+                    {% endfor %}
+                </select>
             </div>
-			<!---
-            <div class="col-sm-2 col-xs-2 heading-compose  pull-right">
-                <i class="fa fa-comments fa-2x  pull-right" aria-hidden="true"></i>
-            </div>--->
+
+            {% if app.user.can('instanceAdmin') %}
+                <div class="col-sm-1 col-xs-1  heading-dot  pull-right">
+                    <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
+                </div>
+            {% endif %}
+
         </div>
 
         <div class="row searchBox">

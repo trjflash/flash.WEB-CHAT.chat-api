@@ -17,23 +17,45 @@ use app\modules\Adm\models\ShopGoodsPhotosModel;
 use app\modules\Adm\models\TablesForLinksModel;
 use app\modules\Adm\models\MenuEditorsTypesModel;
 //API
-use app\models\ChatsInfo;
 use app\models\ChatsMessages;
 
 use flashAjaxHelpers;
 use flashHelpers;
-use moonland\phpexcel\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use yii\helpers\Html;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use Yii;
 use yii\db\Exception;
-use yii\queue\Queue;
 use yii\web\Controller;
-use yii\web\UploadedFile;
 
 class PostController extends Controller{
+
+
     private $bot;
+
+    public function behaviors()
+    {
+
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+
+                    [
+                        'actions' => ['request'],
+                        'allow' => true,
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'request' => ['post','get'],
+                ],
+            ],
+        ];
+    }
 
     public function __construct($id, $module, $config = []){
         parent::__construct($id, $module, $config);
@@ -703,6 +725,7 @@ class PostController extends Controller{
         echo json_encode($exit);
         exit();
     }
+
     private function getWaBotMessagesByPhone($data){
         $messages['messages'] = '';
         $chatId = $data['chatId'];
@@ -801,14 +824,15 @@ class PostController extends Controller{
 
     private function checkNewMessages($data){
         $messages['messages'] = ChatsMessages::checkNewMessages();
-        //flashHelpers::stopA($messages);
         if (count($messages['messages']) != 0) {
+            header('Content-Type: application/json');
             $exit['error'] = false;
             $exit['data'] = $messages;
             echo json_encode($exit);
             exit();
         }
         else{
+            header('Content-Type: application/json');
             $exit['error'] = false;
             $exit['data'] = "NO MESSAGES (((";
             echo json_encode($exit);

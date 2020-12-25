@@ -1,14 +1,27 @@
 <?php
 namespace app\components\flash;
 
+use app\models\ChatCollationModel;
+use app\models\ChatInstancesModel;
+use Yii;
+
 {
     class flashWhatsAppBot{
         //specify instance URL and token
-        private $APIurl = 'https://eu182.chat-api.com/instance207064/';
-        private $token = 'o3dnty29nf5l5qth';
-        private $instanceId = '207064';
+        private $APIurl;
+        private $token;
+        private $instanceId;
 
         public function __construct(){
+            $instanceCity = ChatCollationModel::GetCitiesForOperator(Yii::$app->user->getId());
+            if(count($instanceCity) == 1){
+                $instanceData = ChatInstancesModel::getInstanceByName($instanceCity[0]['inst_name']);
+
+                $this->APIurl = $instanceData[0]['link'];
+                $this->token = $instanceData[0]['token'];
+                $this->instanceId = $instanceData[0]['instance'];
+            }
+
         }
 
         //this function calls function sendRequest to send a simple message

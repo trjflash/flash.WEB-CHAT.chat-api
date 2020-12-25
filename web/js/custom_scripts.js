@@ -201,7 +201,7 @@ $(document).ready(function() {
 				_csrf: yii.getCsrfToken()
 			},
 			success: function(data) {
-				var content = $.parseJSON(data);
+				var content = data;
 				if(content.error != undefined) {
 					if(content.error == true) {
 						VanillaToasts.create({
@@ -245,7 +245,6 @@ $(document).ready(function() {
 										success: function(data) {
 											var content = $.parseJSON(data);
 											if(content.error != undefined) {
-												console.log(content.data);
 												if($('.current-chat-id').val() != content.data.id) {
 													if(content.error == true) {
 														VanillaToasts.create({

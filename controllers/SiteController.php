@@ -2,44 +2,57 @@
 
 namespace app\controllers;
 
-use app\components\flash\ChatApi;
-use app\components\flash\flashWhatsAppBot;
-use app\components\flash\whatsAppBot;
+use app\models\ChatCollationModel;
+use app\models\ChatInstancesModel;
 use app\models\LoginForm;
-use app\models\WaBotLastMessageModel;
 use app\models\ChatsInfo;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
-use app\models\MainPages;
-use function GuzzleHttp\Psr7\mimetype_from_filename;
 
 class SiteController extends Controller
 {
+    /**
+     * @var mixed|string
+     */
 
     /**
      * {@inheritdoc}
      */
     public function behaviors()
     {
+
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
                 'rules' => [
+
                     [
                         'actions' => ['logout'],
                         'allow' => true,
                         'roles' => ['@'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index'],
+                        'roles' => ['chatOperator'],
+
+                    ],
+
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                        'roles' => ['?','@'], // " ? " for guest user
                     ],
                 ],
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'logout' => ['post'],
+                    'logout' => ['post','get'],
+                    'login' => ['post','get'],
                 ],
             ],
         ];
@@ -69,16 +82,39 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-
-
         $this->view->title = "Чаты";
 
-        $bot = new flashWhatsAppBot();
-        $dialogs = ChatsInfo::getChats();
-        //\flashHelpers::stopA($dialogs);
+
+        $instanceCity = ChatCollationModel::GetCitiesForOperator(Yii::$app->user->getId());
+        $instanceId = '';
+        $instanceName =  '';
+
+        //\flashHelpers::stopA(Yii::$app->user->can('instanceAdmin'));
+
+        if(count($instanceCity) == 1){
+            $instanceId = ChatInstancesModel::getInstanceIdByName($instanceCity[0]['inst_name'])[0]['instance'];
+            $instanceName = ChatInstancesModel::getInstanceDisplayNameByName($instanceCity[0]['inst_name']);
+
+
+
+        }
+        else{
+
+            $session = Yii::$app->session;
+            $session->set('currentInstance', $instanceCity[0]['inst_name']);
+            $instanceId = ChatInstancesModel::getInstanceIdByName($instanceCity[0]['inst_name'])[0]['instance'];
+            $instanceName = ChatInstancesModel::getInstanceDisplayName($instanceCity[0]['inst_name']);
+
+        }
+        //\flashHelpers::stopA($instanceId);
+
+        $dialogs = ChatsInfo::getChats($instanceId);
+        $username = Yii::$app->user->identity->display_name;
+
+
         $page['page_content'] = array_reverse($dialogs);
-		//\flashHelpers::stopA($page);
-        return $this->render('main.twig', compact('page'));
+        //\flashHelpers::stopA($page);
+        return $this->render('main.twig', compact('page', 'username', 'instanceName'));
 
     }
 
@@ -89,6 +125,8 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+
+
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -123,6 +161,8 @@ class SiteController extends Controller
      */
     public function actionContact()
     {
+
+        \flashHelpers::stopA(Yii::$app->security->generatePasswordHash(1234));
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
@@ -146,7 +186,7 @@ class SiteController extends Controller
 		curl_setopt_array($curl, array(
 			CURLOPT_URL => 'https://www.google.com/m8/feeds/contacts/trjflash@gmail.com/full?access_token=ya29.a0AfH6SMDrjm_zbYPjGLg4pigVXBV5jCmNkY_mbi-xcqBgRE77CAvubgBulCiih5bhgucrkUV69a3Ag1r9ubDTDrltZU3ENYbheOnYmaDVgMZVWujAMwwbxQRJOr5K1RTNJ6cXPor2J1vEHshV_g6ec7pARjdY9n-CKohDHWJlMTA',
 			CURLOPT_VERBOSE => true,
-			
+
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_TIMEOUT => 30,
 
@@ -154,7 +194,10 @@ class SiteController extends Controller
 
         $result = curl_exec($curl);
         curl_close($curl);
-			
+
         \flashHelpers::stopA($result);*/
 	}
+	public function actionError(){
+        \flashHelpers::stopA('ERROR');
+    }
 }

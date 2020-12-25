@@ -12,10 +12,35 @@ use flashAjaxHelpers;
 use flashHelpers;
 //core
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 
 class WawhController extends Controller{
 	public $enableCsrfValidation = false;
+
+    public function behaviors()
+    {
+
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+
+                    [
+                        'actions' => ['wh'],
+                        'allow' => true,
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'request' => ['post'],
+                ],
+            ],
+        ];
+    }
 
 	
     public function actionWh(){
@@ -35,7 +60,7 @@ class WawhController extends Controller{
 					if($data->messages[$i]->fromMe != false)
 						$fromMe = '1';
 
-					if(!empty(ChatsInfo::checkChat($chatId))){
+					if(!empty(ChatsInfo::checkChat($chatId,$data->instanceId))){
 						$newMessage = new ChatsMessages();
 						
 						$newMessage->messageId = $data->messages[$i]->id;
@@ -54,8 +79,9 @@ class WawhController extends Controller{
 						$newMessage->quotedMsgId = $data->messages[$i]->quotedMsgId;
 						$newMessage->quotedMsgType = $data->messages[$i]->quotedMsgType;
 						$newMessage->chatName = $data->messages[$i]->chatName;
-						$newMessage->isNew = '1'; 
-						//file_put_contents('/web/sites/chat.onclinic.kz/www/controllers/data.txt','error'.var_dump($res), FILE_APPEND);
+						$newMessage->isNew = '1';
+                        $newMessage->instance = $data->instanceId;
+
 						try {
 							$res = $newMessage->save();
 							file_put_contents('/web/sites/chat.onclinic.kz/www/controllers/data.txt','error'.var_dump($res), FILE_APPEND);
@@ -75,7 +101,8 @@ class WawhController extends Controller{
 								$newChat->chatId = $chatId;
 								$newChat->chatName = $chatInfo->name;
 								$newChat->chatImage = $chatInfo->image;
-							
+								$newChat->instance = $data->instanceId;
+
 								$res = $newChat->save();
 								$newMessage = new ChatsMessages();
 						
@@ -95,8 +122,10 @@ class WawhController extends Controller{
 								$newMessage->quotedMsgId = $data->messages[$i]->quotedMsgId;
 								$newMessage->quotedMsgType = $data->messages[$i]->quotedMsgType;
 								$newMessage->chatName = $data->messages[$i]->chatName;
-								$newMessage->isNew = '1'; 
-								//file_put_contents('/web/sites/chat.onclinic.kz/www/controllers/data.txt','error'.var_dump($res), FILE_APPEND);
+								$newMessage->isNew = '1';
+                                $newMessage->instance = $data->instanceId;
+
+                                //file_put_contents('/web/sites/chat.onclinic.kz/www/controllers/data.txt','error'.var_dump($res), FILE_APPEND);
 								try {
 									$res = $newMessage->save();
 									
