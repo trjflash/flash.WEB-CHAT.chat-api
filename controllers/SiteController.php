@@ -91,22 +91,19 @@ class SiteController extends Controller
         //\flashHelpers::stopA(Yii::$app->user->can('instanceAdmin'));
 
         if(count($instanceCity) == 1){
-            $instanceId = ChatInstancesModel::getInstanceIdByName($instanceCity[0]['inst_name'])[0]['instance'];
+            $session->set('currentInstance', $instanceCity[0]['inst_name']);
+            $instanceId = ChatInstancesModel::getInstanceIdByName($instanceCity[0]['inst_name']);
             $instanceName = ChatInstancesModel::getInstanceDisplayNameByName($instanceCity[0]['inst_name']);
-
-
 
         }
         else{
-
-
             if($session->has('currentInstance')){
-                $instanceId = ChatInstancesModel::getInstanceIdByName($session->get('currentInstance'))[0]['instance'];
+                $instanceId = ChatInstancesModel::getInstanceIdByName($session->get('currentInstance'));
                 $instanceName = ChatInstancesModel::getInstanceDisplayName($session->get('currentInstance'));
             }
             else {
                 $session->set('currentInstance', $instanceCity[0]['inst_name']);
-                $instanceId = ChatInstancesModel::getInstanceIdByName($instanceCity[0]['inst_name'])[0]['instance'];
+                $instanceId = ChatInstancesModel::getInstanceIdByName($instanceCity[0]['inst_name']);
                 $instanceName = ChatInstancesModel::getInstanceDisplayName($instanceCity[0]['inst_name']);
             }
         }

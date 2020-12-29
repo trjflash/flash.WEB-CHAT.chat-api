@@ -13,8 +13,8 @@ $config = [
 		],
     'language' => 'ru-RU',
     'modules' => [
-        'adm' => [
-            'class' => 'app\modules\Adm\Module',
+        'wbadmin' => [
+            'class' => 'app\modules\wbadmin\Module',
         ],
     ],
     'aliases' => [
@@ -123,7 +123,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => array(
-                        'adm' => 'adm/dashboard',
+                        'wbadmin' => 'wbadmin/dashboard',
                         'login' => 'site/login',
                         'test' => 'site/contact',
                         'logout' => 'site/logout',

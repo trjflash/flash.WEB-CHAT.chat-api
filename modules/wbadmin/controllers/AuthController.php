@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\Adm\controllers;
+namespace app\modules\wbadmin\controllers;
 
 class AuthController extends AdminAppController{
 

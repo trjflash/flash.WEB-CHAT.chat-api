@@ -3,7 +3,7 @@
         <nav class="navbar align-items-stretch navbar-light bg-white flex-md-nowrap border-bottom p-0">
             <a class="navbar-brand w-100 mr-0" href="#" style="line-height: 25px;">
                 <div class="d-table m-auto">
-                    <img id="main-logo" class="d-inline-block align-top mr-1" style="max-width: 25px;" src="/web/images/adm/shards-dashboards-logo.svg" alt="Shards Dashboard">
+                    <img id="main-logo" class="d-inline-block align-top mr-1" style="max-width: 25px;" src="/images/adm/shards-dashboards-logo.svg" alt="Shards Dashboard">
                     <span class="d-none d-md-inline ml-1">Shards Dashboard</span>
                 </div>
             </a>
@@ -24,7 +24,7 @@
     <div class="nav-wrapper">
         <ul class="nav flex-column" id="main-menu">
             <li class="nav-item">
-                <a class="nav-link" href="/adm">
+                <a class="nav-link" href="/wbadmin">
                     <i class="material-icons">edit</i>
                     <span>Dashboard</span>
                 </a>
@@ -35,9 +35,10 @@
                     <span>Редакторы</span>
                 </a>
                 <ul style="display: none;">
-                    <li class="nav-item nav-sub-item"><a class="nav-link" href="/adm/editors/root"><span>ROOT материалы</span></a></li>
-                    <li class="nav-item nav-sub-item"><a class="nav-link" href="/adm/editors/shop"><span>Магазин</span></a></li>
-                    <li class="nav-item nav-sub-item"><a class="nav-link" href="/adm/editors/menu"><span>Меню</span></a></li>
+                    {% if app.user.can('fullAdmin') %}
+                        <li class="nav-item nav-sub-item"><a class="nav-link" href="/wbadmin/editors/instances"><span>Инстансы</span></a></li>
+                    {% endif %}
+                    <li class="nav-item nav-sub-item"><a class="nav-link" href="/wbadmin/editors/users"><span>Пользователи</span></a></li>
                 </ul>
             </li>
         </ul>

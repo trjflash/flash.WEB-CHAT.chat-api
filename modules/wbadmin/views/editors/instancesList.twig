@@ -1,0 +1,93 @@
+{% extends "themes/Shards/base.twig" %}
+
+{% block head %}
+    {% embed 'themes/Shards/repeatable/head.twig' %}
+        {% block title %}
+            Список инстансов для редактирования
+        {% endblock %}
+    {% endembed %}
+{% endblock head %}
+
+{% block right %}
+    {% embed 'themes/Shards/repeatable/right.twig' %}
+        {% block pageContent %}
+            {{ parent() }}
+
+            <!-- Page Header -->
+            <div class="page-header row no-gutters py-4">
+                <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+                    <span class="text-uppercase page-subtitle">Список инстансов для редактирования</span>
+                </div>
+            </div>
+            <!-- End Page Header -->
+            <div class="row">
+                <div class="col-lg col-md-6 col-sm-6 mb-4">
+                    <div class="stats-small stats-small--1 card card-small">
+                        <div class="card-body p-0 d-flex">
+                            <div class="form-group root_materials_list">
+                                <label for="exampleFormControlSelect1">Список инстансов для редактирования</label>
+
+                                <select class="form-control" id="instanceList">
+                                    <option value="empty"></option>
+                                    {%  for instanceItem in instances %}
+                                        <option value="{{ instanceItem.name }}">{{ instanceItem.display_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-primary" id="create_instance">Добавить инстанс</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-10 col-md-12 col-sm-12 mb-4 materialCard" id="add_instance" style="display: none;">
+                    <div class="card card-small">
+
+                        <div class="card-header border-bottom">
+                            <a href="#" class="close cancel-add-instance"> x </a>
+                            <h6 class="m-0">Добавляем меню</h6> </div>
+                        <div class="card-body pt-0">
+                            <form formid="instanceForm">
+                                <div class="AJAX-loading">
+                                    <div class="overlay"></div>
+                                    <img src="/web/images/gears-loading.gif">
+                                </div>
+                                <div class="instanceForm">
+
+                                    <div class="instance-item">
+                                        <div class="AJAX-instance-loading">
+                                            <div class="overlay"></div>
+                                            <img src="/web/images/gears-loading.gif">
+                                        </div>
+
+                                        <div class="form-group title-group">
+                                            <label for="instance-name">Название инстанса</label>
+                                            <input type="text" class="form-control instance-name" placeholder="Укажите отображаемое имя инстанса" value="">
+                                        </div>
+                                        <div class="form-group identity">
+                                            <label for="api-url">Api URL</label>
+                                            <input type="text" id = "api-url" class="form-control instance-key" placeholder="Укажите Api URL" value="">
+
+                                            <label for="token">Token</label>
+                                            <input type="text" id = "token" class="form-control instance-key" placeholder="Укажите токен" value="">
+
+                                            <label for="instance-id">Instance ID</label>
+                                            <input type="text" id="instance-id" class="form-control instance-id" placeholder="Нажмите для запроса ID инстанса" value="">
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary " id="add-new-instance">Сохранить</button>
+                                    <button type="submit" class="btn btn-danger " id="remove-instance">Удалить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        {% endblock %}
+    {% endembed %}
+{% endblock right %}

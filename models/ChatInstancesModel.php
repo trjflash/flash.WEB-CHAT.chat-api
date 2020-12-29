@@ -8,13 +8,18 @@ use yii\db\ActiveRecord;
 
 class ChatInstancesModel extends ActiveRecord
 {
+
+
     public static function tableName(){
         return 'flash_cms_table_chat_instances';
     }
 
+
+
     public function getInstanceForOperator(){
         return $this->hasOne(ChatCollationModel::className(), ['name' => 'inst_name']);
     }
+
 
     public function getInstanceByName($instanceName){
         return self::find()->where(['name' => "$instanceName"])->select(['link','token','instance'])->asArray()->all();
@@ -31,6 +36,7 @@ class ChatInstancesModel extends ActiveRecord
     }
 
     public function GetInstanceIdByName($instanceName){
-        return self::find()->where(['name' => "$instanceName"])->select('instance')->asArray()->all();
+        //\flashHelpers::stopA(self::find()->where(['name' => "$instanceName"])->select('instance')->asArray()->all());
+        return self::find()->where(['name' => "$instanceName"])->select('instance')->asArray()->all()[0]['instance'];
     }
 }

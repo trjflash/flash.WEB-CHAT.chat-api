@@ -17,38 +17,32 @@ class flashWhatsAppBot{
 
     private $debug = false;
 
-    public function __construct($instanceData = false){
+    public function __construct(){
 
-        if(!$instanceData) {
-            $this->session = Yii::$app->session;
-            $this->sInstanceId = ChatInstancesModel::getInstanceIdByName($this->session->get('currentInstance'))[0]['instance'];
+        $this->session = Yii::$app->session;
+        $this->sInstanceId = ChatInstancesModel::getInstanceIdByName($this->session->get('currentInstance'));
 
-            //
-            $instanceCity = ChatCollationModel::GetCitiesForOperator(Yii::$app->user->getId());
+        $instanceCity = ChatCollationModel::GetCitiesForOperator(Yii::$app->user->getId());
 
-            if (count($instanceCity) == 1) {
-                $instanceData = ChatInstancesModel::getInstanceByName($instanceCity[0]['inst_name']);
+        if (count($instanceCity) == 1) {
+            $instanceData = ChatInstancesModel::getInstanceByName($instanceCity[0]['inst_name']);
 
-                $this->APIurl = $instanceData[0]['link'];
-                $this->token = $instanceData[0]['token'];
-                $this->instanceId = $instanceData[0]['instance'];
-            }
-            else{
-                $instanceData = ChatInstancesModel::getInstanceById($this->sInstanceId);
-
-                $this->APIurl = $instanceData[0]['link'];
-                $this->token = $instanceData[0]['token'];
-                $this->instanceId = $instanceData[0]['instance'];
-
-
-                //\flashHelpers::stopA('>'.$instanceData);
-            }
-        }
-        else{
             $this->APIurl = $instanceData[0]['link'];
             $this->token = $instanceData[0]['token'];
             $this->instanceId = $instanceData[0]['instance'];
         }
+        else{
+
+            $instanceData = ChatInstancesModel::getInstanceById($this->sInstanceId);
+
+            $this->APIurl = $instanceData[0]['link'];
+            $this->token = $instanceData[0]['token'];
+            $this->instanceId = $instanceData[0]['instance'];
+
+
+            //\flashHelpers::stopA('>'.$instanceData);
+        }
+
 
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\Adm;
+namespace app\modules\WbAdmin;
 
 /**
  * admin module definition class
@@ -10,7 +10,7 @@ class Module extends \yii\base\Module
     /**
      * {@inheritdoc}
      */
-    public $controllerNamespace = 'app\modules\Adm\controllers';
+    public $controllerNamespace = 'app\modules\wbadmin\controllers';
 
 
     /**
