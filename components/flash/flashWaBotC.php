@@ -11,6 +11,7 @@ class flashWaBotC{
     private $APIurl;
     private $token;
     private $instanceId;
+    private $debug = false;
 
     public function __construct($instanceData){
 
@@ -21,7 +22,8 @@ class flashWaBotC{
     }
 
     public function sendMessageByPhone($phone, $text){
-        file_put_contents('/web/sites/chat.onclinic.local/www/components/jobs/logs/mailingErrorData.txt', PHP_EOL . 'mailing ', FILE_APPEND);
+        if($this->debug)
+            file_put_contents(Yii::getAlias('@wabotmailing/mailingErrorData.txt'), PHP_EOL . 'mailing ', FILE_APPEND);
 
         $data = array('phone'=>$phone,'body'=>$text);
         $res = $this->sendRequestPost('message',$data);

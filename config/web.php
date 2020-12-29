@@ -29,6 +29,7 @@ $config = [
         '@shopphotos' => '@app/web/images/shop',
         '@outfiles' => '@app/web/images/out',
         '@console' => '@app/console',
+        '@wabotmailing' => '@app/jobs/logs/wabot'
     ],
     'components' => [
 
