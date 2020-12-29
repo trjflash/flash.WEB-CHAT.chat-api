@@ -66,6 +66,7 @@ function parseForwardedMessage(message) {
 	}
 }
 $(document).ready(function() {
+
 	$('#main-page-carousel').owlCarousel({
 		loop: true, //Зацикливаем слайдер
 		margin: 50, //Отступ от элемента справа в 50px
@@ -87,6 +88,7 @@ $(document).ready(function() {
 			}
 		}
 	});
+
 	$('.side .sideBar').on("click", ".sideBar-body", function() {
 		$('.conversation').fadeOut(500);
 		var chatId = $(this).attr('id');
@@ -96,6 +98,7 @@ $(document).ready(function() {
 		$(this).find(hasNew).css("display", 'none');
 		getChatMessages(chatId, chatName, chatImg);
 	});
+
 	$('#new-chat-input').keydown(function(event) {
 		if(event.keyCode == 13) {
 			event.preventDefault();
@@ -119,16 +122,19 @@ $(document).ready(function() {
 			}
 		}
 	})
+
 	$(".reply-main textarea").keydown(function(event) {
 		if(event.keyCode == 13) {
 			event.preventDefault();
 			sendMessage();
 		}
 	})
+
 	$(".reply-send svg").click(function(e) {
 		e.preventDefault();
 		sendMessage();
 	})
+
 	$('#conversation').everyTime(5000, function() {
 		if($('#conversation').hasClass('active')) {
 			var lastMessageId = $('#conversation').find('.last-message').find('.last-message-id').val();
@@ -194,6 +200,7 @@ $(document).ready(function() {
 			});
 		}
 	})
+
 	$('.sideBar').everyTime(5000, function() {
 		var request = $.ajax({
 			type: 'POST',
@@ -286,6 +293,7 @@ $(document).ready(function() {
 		$(this).parents('.popup-fade').fadeOut();
 		return false;
 	});
+
 	$('.popup-fade').click(function(e) {
 		if($(e.target).closest('.popup').length == 0) {
 			$(this).fadeOut();
@@ -296,6 +304,7 @@ $(document).ready(function() {
 		$('.popup-fade').fadeIn();
 		return false;
 	});
+
 	$('#upload-telephones').change(function(){
 		files = this.files;
 

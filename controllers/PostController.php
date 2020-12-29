@@ -95,6 +95,12 @@ class PostController extends Controller{
                 case 'adduser':
                     self::saveUser($data);
                     break;
+                case 'edituser':
+                    self::getUserData($data);
+                    break;
+                case 'deluser' :
+                    self::removeUser($data);
+                    break;
                 case "getBotMessagesByCHatId":
                     $this->getWaBotMessagesById($data);
                     break;
@@ -274,21 +280,97 @@ class PostController extends Controller{
         exit();
     }
 
+    private function getUserData($data){
+        $user = json_decode($data['userContent']);
+
+        try {
+
+            $instanceCity = ChatCollationModel::GetCitiesForOperator(Yii::$app->user->getId());
+            //\flashHelpers::stopA($instanceCity);
+
+            if (count($instanceCity) == 1) {
+                $instances = ChatInstancesModel::getInstanceDisplayNameByName($instanceCity[0]['inst_name']);
+            } else {
+
+                $instances = ChatInstancesModel::getInstanceDisplayName($instanceCity[0]['inst_name']);
+
+            }
+
+            $userData = User::findOne(['username' => $user->userName]);
+
+            $roles = array();
+            $permissions = Yii::$app->authManager->getRoles();
+            //\flashHelpers::stopA($instanceCity);
+            $i = 0;
+            foreach ($permissions as $key => $perm) {
+                $roles[$i]['roleName'] = $perm->name;
+                $roles[$i]['displayName'] = $perm->description;
+                $i++;
+            }
+
+            $exit['error'] = false;
+
+            $userRole = Yii::$app->authManager->getRolesByUser($userData->id);
+            $currentRole = '';
+            foreach ($userRole as $role => $data) {
+                $currentRole = $data->name;
+            }
+
+            $exit['data']['roles'] = $roles;
+            $exit['data']['instances'] = $instances;
+            $exit['data']['userData']['activInstances'] = ChatCollationModel::GetCitiesForOperator($userData->id);
+            $exit['data']['userData']['activRole'] = $currentRole;
+            $exit['data']['userData']['login'] = $userData->username;
+            $exit['data']['userData']['displayName'] = $userData->display_name;
+            $exit['data']['userData']['pass'] = '******';
+
+            echo json_encode($exit);
+            exit();
+
+        }catch (Exception $e){
+            $exit['error'] = true;
+            $exit['mess'] = flashAjaxHelpers::returnJson(70);
+            $exit['error_level'] = flashAjaxHelpers::getErrorLevel(2);
+            echo json_encode($exit);
+            exit();
+        }
+
+
+    }
+
     private function saveUser($data){
         $newData = json_decode($data['userContent']);
 
-        $user = new User();
+        $edit = true;
+
+        $user = User::findOne((['username'=>$newData->userLogin]));
+
+
+        if(!$user) {
+            $edit = false;
+            $user = new User();
+        }
+
+
 
         $user->username = $newData->userLogin;
         $user->secret = \Yii::$app->security->generatePasswordHash($newData->userPass);
         $user->display_name = $newData->userName;
-        $roles = Yii::$app->authManager->getRoles();
+
         //
         try {
             $res = $user->save();
             if ($res){
                 for ($i = 0; $i< count($newData->userInstance); $i++) {
-                    $collation = new ChatCollationModel();
+
+                    if($edit){
+                        $collation = ChatCollationModel::findOne(['user'=>$user->getId()]);
+                    }
+                    else{
+                        $collation = new ChatCollationModel();
+                    }
+
+
                     $collation->inst_name = $newData->userInstance[$i];
                     $collation->user = $user->getId();
                     try {
@@ -296,6 +378,8 @@ class PostController extends Controller{
 
                         try {
                             $auth = Yii::$app->authManager;
+
+                            $auth->revokeAll($user->getId());
                             $auth->assign(Yii::$app->authManager->getRole(($newData->userRole)),$user->getId());
 
                             $exit['error'] = false;
@@ -306,6 +390,7 @@ class PostController extends Controller{
 
 
                         }catch (\Exception $e){
+                            //flashHelpers::stopA($e->getMessage());
 
                             $userData = User::findOne(['id'=>$user->getId()]);
 
@@ -341,6 +426,30 @@ class PostController extends Controller{
             exit();
         }
 
+    }
+
+    private function removeUser($data){
+        $user = json_decode($data['userContent']);
+
+        $userData = User::findOne(['username'=>$user->login]);
+
+        try{
+            $res = $userData->delete();
+            if($res){
+                $exit['error'] = false;
+                $exit['mess'] = flashAjaxHelpers::returnJson(72);
+                $exit['error_level'] = flashAjaxHelpers::getErrorLevel(0);
+                echo json_encode($exit);
+                exit();
+            }
+
+        }catch (\Exception $e){
+            $exit['error'] = true;
+            $exit['mess'] = flashAjaxHelpers::returnJson(71);
+            $exit['error_level'] = flashAjaxHelpers::getErrorLevel(3);
+            echo json_encode($exit);
+            exit();
+        }
     }
 
     private function getWaBotMessagesByPhone($data){
