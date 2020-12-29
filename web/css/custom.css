@@ -82,7 +82,7 @@ body {
 .heading {
     padding: 10px 16px 10px 15px;
     margin: 0;
-    height: 60px;
+    height: 85px;
     width: 100%;
     background-color: #eee;
     z-index: 1000;
@@ -135,7 +135,6 @@ body {
 
 .heading-dot {
     padding: 0;
-    margin-left: 10px;
 }
 
 .heading-dot svg {

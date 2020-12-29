@@ -9,46 +9,69 @@ use yii\console\Controller;
  */
 class MyRbacController extends Controller {
 
-    public function actionInit() {
+    public function actionInit()
+    {
         $auth = Yii::$app->authManager;
 
         $auth->removeAll(); //На всякий случай удаляем старые данные из БД...
 
         // Создадим роли админа и редактора новостей
-        $admin = $auth->createRole('admin');
-        $editor = $auth->createRole('editor');
+        $fullAdminRole = $auth->createRole('fullAdmin');
+        $fullAdminRole->description('Роль администратора системы');
+
+        $instanceAdminRole = $auth->createRole('instanceAdmin');
+        $instanceAdminRole->description('Роль администратора чата');
+
+        $instanceOperatorRole = $auth->createRole('instanceOperator');
+        $instanceOperatorRole->description('Роль оператор чата');
+
 
         // запишем их в БД
-        $auth->add($admin);
-        $auth->add($editor);
+        $auth->add($fullAdminRole);
+        $auth->add($instanceAdminRole);
+        $auth->add($instanceOperatorRole);
 
         // Создаем разрешения. Например, просмотр админки viewAdminPage и редактирование новости updateNews
-        $viewAdminPage = $auth->createPermission('viewAdminPage');
-        $viewAdminPage->description = 'Просмотр админки';
+        $systemAdminPerm = $auth->createPermission('systemAdmin');
+        $systemAdminPerm->description = 'Администратор системы';
 
-        $updateNews = $auth->createPermission('updateNews');
-        $updateNews->description = 'Редактирование новости';
+        $chatAdminPerm = $auth->createPermission('chatAdmin');
+        $chatAdminPerm->description = 'Администратор инстанса бота';
+
+        $chatOperatorPerm = $auth->createPermission('chatOperator');
+        $chatOperatorPerm->description = 'Оператор чат бота';
+
 
         // Запишем эти разрешения в БД
-        $auth->add($viewAdminPage);
-        $auth->add($updateNews);
+        $auth->add($systemAdminPerm);
+        $auth->add($chatAdminPerm);
+        $auth->add($chatOperatorPerm);
 
         // Теперь добавим наследования. Для роли editor мы добавим разрешение updateNews,
         // а для админа добавим наследование от роли editor и еще добавим собственное разрешение viewAdminPage
 
         // Роли «Редактор новостей» присваиваем разрешение «Редактирование новости»
-        $auth->addChild($editor,$updateNews);
+        $auth->addChild($fullAdminRole, $systemAdminPerm);
 
-        // админ наследует роль редактора новостей. Он же админ, должен уметь всё! :D
-        $auth->addChild($admin, $editor);
+        $auth->addChild($systemAdminPerm, $chatAdminPerm);
+        $auth->addChild($chatAdminPerm, $chatOperatorPerm);
 
-        // Еще админ имеет собственное разрешение - «Просмотр админки»
-        $auth->addChild($admin, $viewAdminPage);
+
+        $auth->addChild($instanceAdminRole, $chatAdminPerm);
+
+        $auth->addChild($instanceOperatorRole, $chatOperatorPerm);
+
+
 
         // Назначаем роль admin пользователю с ID 1
-        $auth->assign($admin, 1);
+        $auth->assign($fullAdminRole, 1);
 
-        // Назначаем роль editor пользователю с ID 2
-        $auth->assign($editor, 2);
+        $auth->assign($instanceOperatorRole, 5);
+        $auth->assign($instanceOperatorRole, 6);
+        $auth->assign($instanceOperatorRole, 7);
+        $auth->assign($instanceAdminRole, 2);
+        $auth->assign($instanceAdminRole, 3);
+        $auth->assign($instanceAdminRole, 4);
     }
+
 }

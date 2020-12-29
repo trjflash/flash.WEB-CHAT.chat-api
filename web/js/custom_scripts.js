@@ -1,3 +1,5 @@
+var home = 'http://chat.onclinic.local';
+
 function parseMessage(message) {
 	switch(message.type) {
 		case 'image':
@@ -64,6 +66,7 @@ function parseForwardedMessage(message) {
 	}
 }
 $(document).ready(function() {
+
 	$('#main-page-carousel').owlCarousel({
 		loop: true, //Зацикливаем слайдер
 		margin: 50, //Отступ от элемента справа в 50px
@@ -85,6 +88,7 @@ $(document).ready(function() {
 			}
 		}
 	});
+
 	$('.side .sideBar').on("click", ".sideBar-body", function() {
 		$('.conversation').fadeOut(500);
 		var chatId = $(this).attr('id');
@@ -94,6 +98,7 @@ $(document).ready(function() {
 		$(this).find(hasNew).css("display", 'none');
 		getChatMessages(chatId, chatName, chatImg);
 	});
+
 	$('#new-chat-input').keydown(function(event) {
 		if(event.keyCode == 13) {
 			event.preventDefault();
@@ -117,16 +122,19 @@ $(document).ready(function() {
 			}
 		}
 	})
+
 	$(".reply-main textarea").keydown(function(event) {
 		if(event.keyCode == 13) {
 			event.preventDefault();
 			sendMessage();
 		}
 	})
+
 	$(".reply-send svg").click(function(e) {
 		e.preventDefault();
 		sendMessage();
 	})
+
 	$('#conversation').everyTime(5000, function() {
 		if($('#conversation').hasClass('active')) {
 			var lastMessageId = $('#conversation').find('.last-message').find('.last-message-id').val();
@@ -192,6 +200,7 @@ $(document).ready(function() {
 			});
 		}
 	})
+
 	$('.sideBar').everyTime(5000, function() {
 		var request = $.ajax({
 			type: 'POST',
@@ -201,7 +210,7 @@ $(document).ready(function() {
 				_csrf: yii.getCsrfToken()
 			},
 			success: function(data) {
-				var content = $.parseJSON(data);
+				var content = data;
 				if(content.error != undefined) {
 					if(content.error == true) {
 						VanillaToasts.create({
@@ -245,7 +254,6 @@ $(document).ready(function() {
 										success: function(data) {
 											var content = $.parseJSON(data);
 											if(content.error != undefined) {
-												console.log(content.data);
 												if($('.current-chat-id').val() != content.data.id) {
 													if(content.error == true) {
 														VanillaToasts.create({
@@ -285,6 +293,7 @@ $(document).ready(function() {
 		$(this).parents('.popup-fade').fadeOut();
 		return false;
 	});
+
 	$('.popup-fade').click(function(e) {
 		if($(e.target).closest('.popup').length == 0) {
 			$(this).fadeOut();
@@ -295,6 +304,7 @@ $(document).ready(function() {
 		$('.popup-fade').fadeIn();
 		return false;
 	});
+
 	$('#upload-telephones').change(function(){
 		files = this.files;
 
@@ -354,6 +364,52 @@ $(document).ready(function() {
 
 
 	});
+
+	$("#instance").change(function (e) {
+		e.preventDefault();
+
+		var instance = $(this).children(":selected").val()
+
+		var query = {};
+
+		query._csrf = yii.getCsrfToken();
+		query.action = 'changeInstance';
+		query.instance = instance;
+
+		var data = new FormData();
+		$.each( query, function( key, value ){
+			data.append( key, value );
+		});
+		var request = $.ajax({
+			type: "POST",
+			url: "/post/request",
+			data: data,
+			cache: false,
+			dataType: 'json',
+			processData: false, // Не обрабатываем файлы (Don't process the files)
+			contentType: false, // Так jQuery скажет серверу что это строковой запрос
+			success: function(data) {
+
+				var content = data;
+				if(content.error != undefined) {
+					if(content.error == true) {
+						VanillaToasts.create({
+							title: 'Внимание',
+							text: $.parseJSON(content.mess),
+							type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+							icon: '', // optional parameter
+							timeout: 5000, // hide after 5000ms, // optional paremter
+							callback: function() {} // executed when toast is clicked / optional parameter
+						});
+					} else {
+						window.location.replace(home);
+					}
+				} else {
+					console.log(data);
+				}
+			}
+		});
+	})
 
 
 

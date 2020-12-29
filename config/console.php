@@ -16,6 +16,7 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
         '@tests' => '@app/tests',
 		'@console' => '@app/console',
+        '@wabotmailing' => '@app/jobs/logs/wabot'
     ],
     'components' => [
 
@@ -39,6 +40,7 @@ $config = [
             'as log' => \yii\queue\LogBehavior::class,
         ],
         'db' => $db,
+
     ],
     'params' => $params,
     /*

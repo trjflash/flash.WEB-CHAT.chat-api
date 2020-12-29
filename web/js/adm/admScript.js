@@ -1,308 +1,47 @@
-$(document).ready(function(){
-    $('#main-menu li:has(ul)').click(function(e) {
+$(document).ready(function() {
+
+    //Боковое меню админки
+    $('#main-menu li:has(ul)').click(function (e) {
         e.preventDefault();
 
-        if($(this).hasClass('active')) {
+        if ($(this).hasClass('active')) {
             $(this).removeClass('active');
             $(this).children('ul').slideUp();
         } else {
-            $('.menu li ul').slideUp();
-            $('.menu li').removeClass('active');
+            $('.instance li ul').slideUp();
+            $('.instance li').removeClass('active');
             $(this).addClass('active');
             $(this).children('ul').slideDown();
         }
 
-        $('#main-menu li ul li a').click(function() {
+        $('#main-menu li ul li a').click(function () {
             window.location.href = $(this).attr('href');
         })
     });
 
-    $('#pagesList').change(function () {
-        if ($('#pagesList').val() != undefined){
+    //Парс урла инстанса, вытаскиваем ID
+    $('#instance-id').click(function(e){
+        e.preventDefault();
 
-            var pageId = $("#pagesList option:selected").val();
+        var url = $('#api-url').val();
+        var token = $('#token').val();
 
-            createEditor(pageId);
+        if(url.length > 30 && token.length > 10){
+            var parser = parse_url(url);
+            var instanceId  = parser.pathname;
 
-            $('.materialCard').fadeOut(1000)
-            $('#'+$('#pagesList').val()).fadeIn(1000);
+            $('#instance-id').val(instanceId.replace(/[^+\d]/g, ''));
         }
-    });
-
-    $('.make_edit').click(function(e) {
-        e.preventDefault();
-
-        var form = $(this).parent();
-        var action = 'editRoot';
-        var mat_id = $(form).children('#mat-id').val();
-        var page_type = $(this).parent().attr('formId');
-        var page_type_name = $(form).children('#page_type_name').val();;
-        var title = $(form).find(('.title')).val();
-        var keywords = $(form).find(('.Keywords')).val();
-        var description = $(form).find(('.Description')).val();
-        var page_content = getDataFromMaterialsEditor();
-        var activ = 0;
-        var need_info_line = 0;
-        var need_commnets = 0;
-
-        if ($(form).find($('.isActive')).is(':checked'))
-            activ = 1;
-        if ($(form).find($('.isNeedCommnets')).is(':checked'))
-            need_commnets = 1;
-        if ($(form).find($('.isNeedInfoLine')).is(':checked'))
-            need_info_line = 1;
-        var request = $.ajax({
-            type: "POST",
-            url: "/post/request",
-
-            data:{
-                action: action,
-                mat_id: mat_id,
-                title: title,
-                keywords: keywords,
-                description: description,
-                page_content: page_content,
-                activ: activ,
-                need_info_line: need_info_line,
-                need_commnets: need_commnets,
-                page_type: page_type,
-                page_type_name: page_type_name,
-                _csrf : yii.getCsrfToken()
-            },
-            success:function( data ) {
-                var content = $.parseJSON(data);
-
-                if(content['error'] != undefined ){
-                    if(content['error'] == true) {
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-                    }
-                    else{
-                        //alert(data);
-                        VanillaToasts.create({
-                            title: content['title'],
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-
-                        });
-                        $('.materialCard').fadeOut(1000)
-                        $("#pagesList").val("empty");
-                    }
-
-                }
-
-                else{
-                    console.log(data);
-                }
-            }
-        });
-    });
-
-    $('#create_page').click(function(e) {
-        e.preventDefault();
-
-        $('.materialCard').fadeOut(1000)
-        $("#new_page").fadeIn(1000);
-    });
-
-    $('#create_new_page').click(function(e) {
-        e.preventDefault();
-        var action = 'addRoot';
-        var page_type = $('#new_page_type').val();
-        var page_type_name = $("#new_page_type option:selected").text();
-        var title = $('#new_page_title').val();
-        var keywords = $('#new_page_Keywords').val();
-        var description = $('#new_page_Description').val();
-        var page_content = getDataFromNewEditor();
-        var activ = 0;
-        var need_info_line = 0;
-        var need_commnets = 0;
-        if ($('#new_page_activ').is(':checked'))
-            activ = 1;
-        if ($('#new_page_need_commnets').is(':checked'))
-            need_commnets = 1;
-        if ($('#new_page_need_info_line').is(':checked'))
-            need_info_line = 1;
-
-        var request = $.ajax({
-            type: "POST",
-            url: "/post/request",
-
-            data:{
-                action: action,
-                title: title,
-                keywords: keywords,
-                description: description,
-                page_content: page_content,
-                activ: activ,
-                need_info_line: need_info_line,
-                need_commnets: need_commnets,
-                page_type: page_type,
-                page_type_name: page_type_name,
-                _csrf : yii.getCsrfToken()
-            },
-            success:function( data ) {
-                var content = $.parseJSON(data);
-
-                if(content['error'] != undefined ){
-                    if(content['error'] == true) {
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-                    }
-                    else{
-                        //alert(data);
-                        VanillaToasts.create({
-                            title: content['title'],
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-
-                        });
-                        $('#new_page').fadeOut(1000);
-
-                        window.location.replace('/adm/editors/root');
-
-                    }
-
-                }
-
-                else{
-                    console.log(data);
-                }
-            }
-        });
-
-    });
-
-    $('.make_delete').click(function(e) {
-        e.preventDefault();
-        var action = 'dellRoot';
-        var page_type = $(this).parent();
-        var mat_id = $(page_type).children('#mat-id').val();
-        var request = $.ajax({
-            type: "POST",
-            url: "/post/request",
-
-            data:{
-                action: action,
-                mat_id: mat_id,
-                _csrf : yii.getCsrfToken()
-            },
-            success:function( data ) {
-                var content = $.parseJSON(data);
-
-                if(content['error'] != undefined ){
-                    if(content['error'] == true) {
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-                    }
-                    else{
-                        //alert(data);
-                        VanillaToasts.create({
-                            title: content['title'],
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-
-                        });
-                        $('.materialCard').fadeOut(1000);
-
-                        $('#new_page_title').val("");
-                        $('#new_page_Keywords').val("");
-                        $('#new_page_Description').val("");
-
-                        var carId = $(this).parent().attr('formId')+"_id_"+mat_id;
-                        $("#"+carId).remove();
-                        $("#pagesList  option:selected").remove();
-
-                        $("#pagesList").val("empty");
-                    }
-
-                }
-
-                else{
-                    console.log(data);
-                }
-            }
-        });
 
     })
 
-    $('.add_menu_item').click(function(e) {
+    //Кнопка добавить инстанс
+    $("#create_instance").click(function (e) {
         e.preventDefault();
-        var addedElement = undefined;
-        $(".AJAX-loading").fadeIn(100);
-
-        addedElement = $(".clear-menu-item").clone().appendTo(".menuForm");
-
-        $(addedElement).addClass("menu-item");
-        $(addedElement).removeClass("clear-menu-item");
-
-        $(addedElement).children('.title-group').children(".title").val("");
-        $(addedElement).children('.destinations-block').children(".destinationType option:selected").remove();
-        $(addedElement).children('.destinations-block').children(".destinationPoint option:selected").remove();
-        $(addedElement).children('.destinations-block').children(".destinationPoint").empty();
-        $(addedElement).children('.destinations-block').children(".destinationPoint").prop('disabled', true);
-
-
-
-        $(".AJAX-loading").fadeOut(100);
-
-
-    })
-
-
-    $( ".menuForm" ).on(
-        "click", ".delete-menu-item", function() {
-            var element = $(this).parent();
-            element.remove();
-            return false;
-        }
-    );
-
-
-    $("#create_menu").click(function (e) {
-        e.preventDefault();
-        $('#create_menu').prop('disabled', true);
-        $('.destinationType').empty();
-        $('.destinationPoint').empty();
+        $('.instance-name').val('');
+        $('#api-url').val('');
+        $('#token').val('');
+        $('#instance-id').val('');
 
 
         $(".AJAX-loading").fadeIn(100);
@@ -311,913 +50,1262 @@ $(document).ready(function(){
             type: "POST",
             url: "/post/request",
 
-            data:{
-                action: 'getFirstMenuLvl',
-                _csrf : yii.getCsrfToken()
+            data: {
+                action: 'getFirstinstanceLvl',
+                _csrf: yii.getCsrfToken()
             },
-            success:function( data ) {
+            success: function (data) {
                 var content = $.parseJSON(data);
 
-                if(content.error != undefined ){
-                    if(content.error == true) {
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-                    }
-                    else{
-                        content = $.parseJSON(content.data);
-                        $('.destinationType').append('<option value=""></option>');
-                        $.each(content, function(index, value){
-                            $('.destinationType').append('<option value="'+value.table_title+'">'+value.table_title+'</option>');
-                        });
-                        $(".destinationPoint").attr("disabled", "disabled");
-                    }
-
-                }
-
-                else{
-                    console.log(data);
-                }
-            }
-        });
-
-
-        $(".AJAX-loading").fadeOut(100);
-        $("#add_menu").fadeIn(500);
-        $("#add_menu").addClass('active');
-
-
-    })
-
-    $( ".menuForm" ).on(
-        "change", ".destinationType", function() {
-            if ($('.destinationType').val() != undefined){
-
-                $(".AJAX-loading").fadeIn(100);
-
-                var myform = $(this).parent();
-
-                var materialName = $(myform).find($(".destinationType option:selected")).val();
-                var request = $.ajax({
-                    type: "POST",
-                    url: "/post/request",
-
-                    data:{
-                        action: 'getSecondMenuLvl',
-                        material: materialName,
-                        _csrf : yii.getCsrfToken(),
-                    },
-                    success:function( data ) {
-                        var content = $.parseJSON(data);
-
-                        if(content.error != undefined ){
-                            if(content.error == true) {
-                                var toastTitle = "Внимание";
-                                var toastTimeout = 5000;
-
-                                makeToast(toastTitle, $.parseJSON(content['mess']), $.parseJSON(content['error_level']), toastTimeout);
-
-                            }
-                            else{
-                                content = $.parseJSON(content.data);
-                                $(myform).find($('.destinationPoint')).empty();
-                                $.each(content, function(index, value){
-                                    $(myform).find($('.destinationPoint')).append('<option value="'+value.title+'">'+value.title+'</option>');
-                                });
-                                $(myform).find($(".destinationPoint")).attr("disabled", false);
-                            }
-
-                        }
-
-                        else{
-                            console.log(data);
-                        }
-                    }
-                });
-
-                $(".AJAX-loading").fadeOut(100);
-            }
-        }
-    );
-
-    $("#menuList").change(function (e) {
-        var pageId = $("#menuList option:selected").val();
-
-        if (pageId != "empty"){
-            $(".AJAX-loading").fadeIn(100);
-            var request = $.ajax({
-                type: "POST",
-                url: "/post/request",
-
-                data:{
-                    action: 'editMenu',
-                    menuName: pageId,
-                    _csrf : yii.getCsrfToken()
-                },
-                success:function( data ) {
-                    var content = $.parseJSON(data);
-
-                    if(content.error != undefined ){
-                        if(content.error == true) {
-                            VanillaToasts.create({
-                                title: 'Внимание',
-                                text: $.parseJSON(content['mess']),
-                                type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                                icon: '', // optional parameter
-                                timeout: 5000, // hide after 5000ms, // optional paremter
-                                callback: function() {
-
-                                } // executed when toast is clicked / optional parameter
-                            });
-                            $("#menuList").append('<option value="'+urlLit(menuName,0)+'">'+menuName+'</option>');
-                            cancellAddMenu();
-                        }
-                        else{
-                            VanillaToasts.create({
-                                title: 'Внимание',
-                                text: $.parseJSON(content['mess']),
-                                type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                                icon: '', // optional parameter
-                                timeout: 5000, // hide after 5000ms, // optional paremter
-                                callback: function() {
-
-                                } // executed when toast is clicked / optional parameter
-                            });
-                        }
-
-                    }
-
-                    else{
-                        console.log(data);
-                    }
-                }
-            });
-
-
-            $(".AJAX-loading").fadeOut(100);
-        }
-    })
-
-
-    $("#add-new-menu").click(function (e) {
-        e.preventDefault();
-        var menu = {};
-
-        var form = $(this).parent();
-        var menuName = $(form).find($(".menu-name")).val();
-        if (menuName == "undefined" || !menuName || menuName.length < 4){
-            $(form).find($(".menu-name")).addClass("is-invalid");
-
-            var toastTitle = "Внимание";
-            var toastText = "Название меню не может быть пустым или слишком коротко";
-            var toastType = "warning";
-            var toastTimeout = 5000;
-
-            makeToast(toastTitle, toastText, toastType, toastTimeout);
-
-        }
-        else{
-
-            var items = $(form).find($(".menu-item"));
-            var menuData = searchData(items);
-
-            menu = {"name": menuName, items: menuData};
-        }
-
-        var request = $.ajax({
-            type: "POST",
-            url: "/post/request",
-
-            data:{
-                action: 'addMenu',
-                menuContent: JSON.stringify(menu),
-                _csrf : yii.getCsrfToken()
-            },
-            success:function( data ) {
-                var content = $.parseJSON(data);
-
-                if(content.error != undefined ){
-                    if(content.error == true) {
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-                        $("#menuList").append('<option value="'+urlLit(menuName,0)+'">'+menuName+'</option>');
-                        cancellAddMenu();
-                    }
-                    else{
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content['mess']),
-                            type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-                    }
-
-                }
-
-                else{
-                    console.log(data);
-                }
-            }
-        });
-
-
-        $(".AJAX-loading").fadeOut(100);
-
-
-    })
-
-    $(".menu-name").focus( function () {
-        $(this).removeClass("is-invalid");
-    });
-
-    $( ".menuForm" ).on(
-        "focus", ".title", function() {
-            $(this).removeClass('is-invalid');
-        }
-    );
-
-    $( ".menuForm" ).on(
-        "focus", ".destinationType", function() {
-            $(this).removeClass('is-invalid');
-        }
-    );
-    $( ".menuForm" ).on(
-        "focus", ".destinationPoint", function() {
-            $(this).removeClass('is-invalid');
-        }
-    );
-    $( ".menuForm" ).on(
-        "click", ".add-sub-menu", function() {
-
-            var myElement = $(this).parent();
-            $(".AJAX-loading").fadeIn(100);
-
-            console.log($(myElement).children(".sub-menu-item").length)
-
-            if($(myElement).children(".sub-menu-item").length == 0){
-
-                var addedElement = $(".clear-menu-item").clone().appendTo(myElement);
-
-                $(addedElement).addClass("sub-menu-item");
-                $(addedElement).removeClass("clear-menu-item");
-                $(this).appendTo(myElement);
-
-                $(addedElement).children('.title-group').children(".title").val("");
-                $(addedElement).children('.destinations-block').children(".destinationType option:selected").remove();
-                $(addedElement).children('.destinations-block').children(".destinationPoint option:selected").remove();
-                $(addedElement).children('.destinations-block').children(".destinationPoint").empty();
-                $(addedElement).children('.destinations-block').children(".destinationPoint").prop('disabled', true);
-
-                addedElement = null;
-
-            }
-            else {
-                console.log("ELSE")
-                var addedElement =  $(".clear-menu-item").clone().appendTo(myElement);
-
-                $(addedElement).addClass("sub-menu-item");
-                $(addedElement).removeClass("clear-menu-item");
-
-                $(this).appendTo(myElement);
-
-                $(addedElement).children('.title-group').children(".title").val("");
-                $(addedElement).children('.destinations-block').children(".destinationType option:selected").remove();
-                $(addedElement).children('.destinations-block').children(".destinationPoint option:selected").remove();
-                $(addedElement).children('.destinations-block').children(".destinationPoint").empty();
-                $(addedElement).children('.destinations-block').children(".destinationPoint").prop('disabled', true);
-                addedElement = null;
-            }
-
-            $(".AJAX-loading").fadeOut(100);
-        }
-    );
-
-
-    $('#create_category').click(function (e) {
-        e.preventDefault();
-        $('.materialCard').fadeOut(500);
-        $('#category_form').fadeIn(1000);
-        $('#category_action').html('Новая категория');
-        var request = $.ajax({
-            type: "POST",
-            url: "/post/request",
-
-            data:{
-                action: 'getCategoriesNames',
-                _csrf : yii.getCsrfToken()
-            },
-            success:function( data ) {
-                var content = $.parseJSON(data);
-
-                if(content.error != undefined ){
-                    if(content.error == true) {
+                if (content.error != undefined) {
+                    if (content.error == true) {
                         VanillaToasts.create({
                             title: 'Внимание',
                             text: $.parseJSON(content.mess),
                             type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
                             icon: '', // optional parameter
                             timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
+                            callback: function () {
 
                             } // executed when toast is clicked / optional parameter
                         });
+                    } else {
 
                     }
-                    else{
 
-                        $("#category_id").empty();
-                        $("#category_id").append('<option value="empty"></option>');
-                        $("#category_id").append(content.data);
-                    }
-
-                }
-
-                else{
+                } else {
                     console.log(data);
                 }
             }
         });
 
 
+        $(".AJAX-loading").fadeOut(100);
+        $("#add_instance").fadeIn(500);
+        $("#add_instance").addClass('active');
+        $("#remove-instance").prop('disabled', true);
+
+
     })
 
-    $('#category_make_edit').click(function (e) {
+    //Добавление инстанса
+    $("#add-new-instance").click(function (e) {
         e.preventDefault();
-        var categoryId = $('#current_category_id').val();
-        var categoryName = $('#category_name').val();
-        var categoryKeyWords = $('#category_kw').val();
-        var categoryDescriprion = $('#category_description').val();
-        var categoryActive = '';
-        var categoryParent = $("#category_id option:selected").text();
-        if ($('#isCategoryActive').is(':checked'))
-            categoryActive = 1;
+        var instance = {};
+        var instanceName = $(".instance-name").val();
 
-        var category = {};
 
-        if (categoryName == "undefined" || !categoryName || categoryName.length < 4){
-            $('#category_name').addClass("is-invalid");
+        if (instanceName == "undefined" || !instanceName || instanceName.length < 4) {
+            $(".instance-name").addClass("is-invalid");
 
             var toastTitle = "Внимание";
-            var toastText = "Название категории не может быть пустым или слишком коротко";
+            var toastText = "Название инстанса не может быть пустым или слишком коротко";
             var toastType = "warning";
             var toastTimeout = 5000;
 
             makeToast(toastTitle, toastText, toastType, toastTimeout);
+            return false;
 
+        } else {
+
+            instance = {
+                "name": instanceName,
+                "apiUrl": $('#api-url').val(),
+                "token" : $('#token').val(),
+                "instanceId" : $('#instance-id').val()
+
+            };
         }
-        else{
-            $('#category_name').removeClass("is-invalid");
-            category = {
-                "categoryId": categoryId,
-                "categoryName": categoryName,
-                "categoryKeyWords": categoryKeyWords,
-                "categoryDescriprion": categoryDescriprion,
-                "categoryActive":categoryActive,
-                "categoryParent":categoryParent
+
+        var request = $.ajax({
+            type: "POST",
+            url: "/post/request",
+
+            data: {
+                action: 'addinstance',
+                instanceContent: JSON.stringify(instance),
+                _csrf: yii.getCsrfToken()
+            },
+            success: function (data) {
+                var content = $.parseJSON(data);
+
+                if (content.error != undefined) {
+                    if (content.error == true) {
+                        VanillaToasts.create({
+                            title: 'Внимание',
+                            text: $.parseJSON(content.mess),
+                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                            icon: '', // optional parameter
+                            timeout: 5000, // hide after 5000ms, // optional paremter
+                            callback: function () {
+
+                            } // executed when toast is clicked / optional parameter
+                        });
+
+                        if(!$('#instanceList option[value="' + urlLit(instanceName, 0) + '"]')){
+                            $("#instanceList").append('<option value="' + urlLit(instanceName, 0) + '">' + instanceName + '</option>');
+
+                        }
+                        cancellAddinstance();
+
+                    } else {
+                        VanillaToasts.create({
+                            title: 'Внимание',
+                            text: $.parseJSON(content.mess),
+                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                            icon: '', // optional parameter
+                            timeout: 5000, // hide after 5000ms, // optional paremter
+                            callback: function () {
+
+                            } // executed when toast is clicked / optional parameter
+                        });
+                    }
+
+                } else {
+                    console.log(data);
+                }
+            }
+        });
+
+
+        $(".AJAX-loading").fadeOut(100);
+
+
+    })
+
+    //Удаление инстанса
+    $("#remove-instance").click(function (e) {
+        e.preventDefault();
+        var instance = {};
+
+        var form = $(this).parent();
+        var instanceName = $(form).find($(".instance-name")).val();
+
+
+        instance = {
+            "name": instanceName,
+            "apiUrl": $('#api-url').val(),
+            "token" : $('#token').val(),
+            "instanceId" : $('#instance-id').val()
+
+        };
+
+
+        var request = $.ajax({
+            type: "POST",
+            url: "/post/request",
+
+            data: {
+                action: 'delinstance',
+                instanceContent: JSON.stringify(instance),
+                _csrf: yii.getCsrfToken()
+            },
+            success: function (data) {
+                var content = $.parseJSON(data);
+
+                if (content.error != undefined) {
+                    if (content.error == true) {
+                        VanillaToasts.create({
+                            title: 'Внимание',
+                            text: $.parseJSON(content.mess),
+                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                            icon: '', // optional parameter
+                            timeout: 5000, // hide after 5000ms, // optional paremter
+                            callback: function () {
+
+                            } // executed when toast is clicked / optional parameter
+                        });
+
+
+
+                    } else {
+                        VanillaToasts.create({
+                            title: 'Внимание',
+                            text: $.parseJSON(content.mess),
+                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                            icon: '', // optional parameter
+                            timeout: 5000, // hide after 5000ms, // optional paremter
+                            callback: function () {
+
+                            } // executed when toast is clicked / optional parameter
+                        });
+                        $("#instanceList option:selected").remove();
+
+                        cancellAddinstance();
+
+                    }
+
+                } else {
+                    console.log(data);
+                }
+            }
+        });
+
+
+        $(".AJAX-loading").fadeOut(100);
+
+
+    })
+
+    //Выбор инстанса для редактирования
+    $("#instanceList").change(function (e) {
+
+        var instanceId = $("#instanceList option:selected").val();
+        $('.instance-name').val('');
+        $('#api-url').val('');
+        $('#token').val('');
+        $('#instance-id').val('');
+
+        if (instanceId != "empty") {
+
+            var instance ={};
+
+            instance = {
+                "instanceId": instanceId
             };
 
+            $(".AJAX-loading").fadeIn(100);
             var request = $.ajax({
                 type: "POST",
                 url: "/post/request",
 
-                data:{
-                    action: 'addNewCat',
-                    data: category,
-                    _csrf : yii.getCsrfToken()
+                data: {
+                    action: 'editinstance',
+                    instanceContent: JSON.stringify(instance),
+                    _csrf: yii.getCsrfToken()
                 },
-                success:function( data ) {
+                success: function (data) {
                     var content = $.parseJSON(data);
 
-                    if(content.error != undefined ){
-                        if(content.error == true) {
+                    if (content.error != undefined) {
+                        if (content.error == true) {
                             VanillaToasts.create({
                                 title: 'Внимание',
                                 text: $.parseJSON(content.mess),
                                 type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
                                 icon: '', // optional parameter
                                 timeout: 5000, // hide after 5000ms, // optional paremter
-                                callback: function() {
+                                callback: function () {
 
                                 } // executed when toast is clicked / optional parameter
                             });
+                        } else {
 
-                        }
-                        else{
-                            VanillaToasts.create({
-                                title: 'Внимание',
-                                text: $.parseJSON(content.mess),
-                                type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
-                                icon: '', // optional parameter
-                                timeout: 5000, // hide after 5000ms, // optional paremter
-                                callback: function() {
+                            $(".AJAX-loading").fadeOut(100);
+                            $("#add_instance").fadeIn(500);
 
-                                } // executed when toast is clicked / optional parameter
-                            });
-                            $("#categoryList option[value='empty']").attr("selected", "selected");
-                            $('.materialCard').fadeOut(500);
-                            $('#category_action').val('');
-                            $('#category_name').val('');
-                            $('#category_kw').val('');
-                            $('#category_description').val('');
-                            $("#category_id").empty();
-                            $('#isCategoryActive').prop('checked', false);
 
+                            $('.instance-name').val($("#instanceList option:selected").text());
+                            $('#api-url').val(content.instanceData.link);
+                            $('#token').val(content.instanceData.token);
+                            $('#instance-id').val(content.instanceData.instance);
+
+                            $("#add_instance").addClass('active');
 
                         }
 
-                    }
-
-                    else{
+                    } else {
                         console.log(data);
                     }
                 }
             });
+
+
+            $(".AJAX-loading").fadeOut(100);
+            $("#remove-instance").prop('disabled', false);
         }
-
     })
 
-    $('#category_make_delete').click(function (e) {
+    //Кнопка создать пользователя
+    $('#create_user').click(function (e) {
+
         e.preventDefault();
-        var catId = $("#current_category_id").val();
-        var request = $.ajax({
-            type: "POST",
-            url: "/post/request",
 
-            data:{
-                action: 'removeCat',
-                data: catId,
-                _csrf : yii.getCsrfToken()
-            },
-            success:function( data ) {
-                var content = $.parseJSON(data);
+        $("#user_display_name").val('');
+        $("#login").val('');
+        $("#password").val('');
+        $('#instanceoption:first').prop('selected', true);
+        $('#role option:first').prop('selected', true);
 
-                if(content.error != undefined ){
-                    if(content.error == true) {
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content.mess),
-                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
+        $('.materialCard').fadeOut(1000)
+        $("#user").fadeIn(1000);
+        $("#remove-user").prop('disabled', true);
 
-                            } // executed when toast is clicked / optional parameter
-                        });
+    });
 
-                    }
-                    else{
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content.mess),
-                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-                        $('.materialCard').fadeOut(500);
-                        $("#categoryList option[value='empty']").attr("selected", "selected");
-                        $("#categoryList option[value='"+catId+"']").remove();
-
-                    }
-
-                }
-
-                else{
-                    console.log(data);
-                }
-            }
-        });
-    })
-
-    $('#categoryList').change(function (e) {
+    //Добавление пользователя
+    $('#add-new-user').click(function (e) {
         e.preventDefault();
-        var categoryForEdit = $("#categoryList option:selected").val();
+        var user = {};
+        var userName = $("#user_display_name").val();
+        var userLogin = $("#login").val();
+        var userPass = $("#password").val();
+        var userInstance = $("#instance").val();
+        var userRole = $("#role").val();
 
-        if(categoryForEdit == "empty") {
+
+
+        if (userName == "undefined" || !userName || userName.length < 4 || userLogin == "undefined" || !userLogin || userLogin.length < 4 || userPass == "undefined" || !userPass || userPass.length < 4) {
+            $(".instance-name").addClass("is-invalid");
+
+            var toastTitle = "Внимание";
+            var toastText = "Имя, логин или пароль пусты или короче 4х символов";
+            var toastType = "warning";
+            var toastTimeout = 5000;
+
+            makeToast(toastTitle, toastText, toastType, toastTimeout);
+            return false;
+
+        }
+        else if(userInstance == 0 || userRole == 0){
+            var toastTitle = "Внимание";
+            var toastText = "Инстанс и роль должны быть выбраны";
+            var toastType = "warning";
+            var toastTimeout = 5000;
+
+            makeToast(toastTitle, toastText, toastType, toastTimeout);
             return false;
         }
+        else {
+
+            user = {
+                "userName": userName,
+                "userLogin": userLogin,
+                "userPass" : userPass,
+                "userInstance" : userInstance,
+                "userRole" : userRole
+
+            };
+        }
 
         var request = $.ajax({
             type: "POST",
             url: "/post/request",
 
-            data:{
-                action: 'getCategoriesNames',
-                _csrf : yii.getCsrfToken()
+            data: {
+                action: 'adduser',
+                userContent: JSON.stringify(user),
+                _csrf: yii.getCsrfToken()
             },
-            success:function( data ) {
+            success: function (data) {
                 var content = $.parseJSON(data);
 
-                if(content.error != undefined ){
-                    if(content.error == true) {
+                if (content.error != undefined) {
+                    if (content.error == true) {
                         VanillaToasts.create({
                             title: 'Внимание',
                             text: $.parseJSON(content.mess),
                             type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
                             icon: '', // optional parameter
                             timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
+                            callback: function () {
 
                             } // executed when toast is clicked / optional parameter
                         });
+                    } else {
+                        //alert(data);
+                        VanillaToasts.create({
+                            title: content['title'],
+                            text: $.parseJSON(content.mess),
+                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                            icon: '', // optional parameter
+                            timeout: 5000, // hide after 5000ms, // optional paremter
+                            callback: function () {
+
+                            } // executed when toast is clicked / optional parameter
+
+                        });
+                        if(!$('#usersList option[value="' + urlLit(userName, 0) + '"]')){
+                            $("#instanceList").append('<option value="' + urlLit(userLogin, 0) + '">' + userName + '</option>');
+
+                        }
+                        cancellAddUser();
 
                     }
-                    else{
 
-                        $("#category_id").empty();
-                        $("#category_id").append('<option value="empty"></option>');
-                        $("#category_id").append(content.data);
-                    }
-
-                }
-
-                else{
+                } else {
                     console.log(data);
                 }
             }
         });
 
+        $("#usersList:first").prop('selected', true);
+
+    });
+
+    //Выбор пользователя для редактирования
+    $("#usersList").change(function (e) {
+
+        var userName = $("#usersList option:selected").val();
+
+
+        $("#user_display_name").empty();
+        $("#login").empty();
+        $("#password").empty();
+
+        $("#instance").empty();
+        $("#role").empty();
+
+        $('#instance').append('<option value=""></option>');
+        $('#role').append('<option value=""></option>');
+
+        $("#instance:first").prop('selected', true);
+        $("#role:first").prop('selected', true);
+
+        if (userName != "empty") {
+
+            var user ={};
+
+            user = {
+                "userName": userName
+            };
+
+            $(".AJAX-loading").fadeIn(100);
+            var request = $.ajax({
+                type: "POST",
+                url: "/post/request",
+
+                data: {
+                    action: 'edituser',
+                    userContent: JSON.stringify(user),
+                    _csrf: yii.getCsrfToken()
+                },
+                success: function (data) {
+                    var content = $.parseJSON(data);
+
+                    if (content.error != undefined) {
+                        if (content.error == true) {
+                            VanillaToasts.create({
+                                title: 'Внимание',
+                                text: $.parseJSON(content.mess),
+                                type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+                                icon: '', // optional parameter
+                                timeout: 5000, // hide after 5000ms, // optional paremter
+                                callback: function () {
+
+                                } // executed when toast is clicked / optional parameter
+                            });
+                        } else {
+
+
+                            $(".AJAX-loading").fadeOut(100);
+                            $("#user").fadeIn(500);
+
+
+                            $("#user_display_name").val(content.data.userData.displayName);
+                            $("#login").val(content.data.userData.login);
+                            $("#password").val(content.data.userData.pass);
+
+                            for (var i = 0;i < content.data.instances.length; i++){
+                                $('#instance').append('<option value="'+content.data.instances[i].name+'">'+content.data.instances[i].display_name+'</option>');
+                            }
+
+                            for (var i = 0;i < content.data.roles.length; i++){
+                                $('#role').append('<option value="'+content.data.roles[i].roleName+'">'+content.data.roles[i].displayName+'</option>');
+                            }
+
+                            for (var i = 0;i < content.data.userData.activInstances.length; i++){
+
+                                var val = content.data.userData.activInstances[i].inst_name;
+                                $('#instance option[value= '+val+']').prop('selected', true);
+                            }
+
+
+                            $('#role option[value= '+content.data.userData.activRole+']').prop('selected', true);
+
+
+                            $("#user").addClass('active');
+
+                        }
+
+                    } else {
+                        console.log(data);
+                    }
+                }
+            });
+
+
+            $(".AJAX-loading").fadeOut(100);
+            $("#remove-instance").prop('disabled', false);
+        }
+    });
+
+    //Удаление пользователя
+    $('#remove-user').click(function(e){
+        e.preventDefault();
+        var user = {};
+
+        user = {
+            "name": $("#user_display_name").val(),
+            "login": $("#login").val()
+
+        };
+
+
         var request = $.ajax({
             type: "POST",
             url: "/post/request",
 
-            data:{
-                action: 'getCatForEdit',
-                data: categoryForEdit,
-                _csrf : yii.getCsrfToken()
+            data: {
+                action: 'deluser',
+                userContent: JSON.stringify(user),
+                _csrf: yii.getCsrfToken()
             },
-            success:function( data ) {
+            success: function (data) {
                 var content = $.parseJSON(data);
 
-                if(content.error != undefined ){
-                    if(content.error == true) {
+                if (content.error != undefined) {
+                    if (content.error == true) {
                         VanillaToasts.create({
                             title: 'Внимание',
                             text: $.parseJSON(content.mess),
                             type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
                             icon: '', // optional parameter
                             timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
+                            callback: function () {
 
                             } // executed when toast is clicked / optional parameter
                         });
 
-                    }
-                    else{
 
-                        $('.materialCard').fadeOut(500);
-                        $('#category_form').fadeIn(1000);
 
-                        $('#category_action').html("Редактируем категорю '"+content.data.category_name+"'");
-                        $('#category_name').val(content.data.category_name);
-                        $('#category_kw').val(content.data.keywords);
-                        $('#category_description').val(content.data.description);
-                        $("#current_category_id").val(content.data.id);
-                        if(content.data.is_active == 1)
-                            $('#isCategoryActive').prop('checked', true);
-                        else
-                            $('#isCategoryActive').prop('checked', false);
-
-                        var id = content.data.parent_id;
-                        if(content.data.is_parent == 1)
-                            $("#category_id option[value='"+id+"']").attr("selected", "selected");
-
-                    }
-
-                }
-
-                else{
-                    console.log(data);
-                }
-            }
-        });
-    })
-
-    $('#create_good').click(function (e) {
-        e.preventDefault();
-        $('.materialCard').fadeOut(500);
-        $('#good_form').fadeIn(1000);
-        $('#good_action').html('Новый товар');
-
-        var request = $.ajax({
-            type: "POST",
-            url: "/post/request",
-
-            data:{
-                action: 'getCategoriesNames',
-                _csrf : yii.getCsrfToken()
-            },
-            success:function( data ) {
-                var content = $.parseJSON(data);
-
-                if(content.error != undefined ){
-                    if(content.error == true) {
+                    } else {
                         VanillaToasts.create({
                             title: 'Внимание',
                             text: $.parseJSON(content.mess),
                             type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
                             icon: '', // optional parameter
                             timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
+                            callback: function () {
 
                             } // executed when toast is clicked / optional parameter
                         });
+                        $("#instanceList option:selected").remove();
 
-                    }
-                    else{
-                        $("#good_category").empty();
-                        $("#good_category").append('<option value="empty"></option>');
-                        $("#good_category").append(content.data);
-                    }
-
-                }
-
-                else{
-                    console.log(data);
-                }
-            }
-        });
-
-    })
-
-    $('#good_make_edit').click(function (e) {
-        e.preventDefault();
-        var query = {};
-        query.goodName = $('#good_name').val();
-        query.photos = '';
-        query.goodCategory = $('#good_category option:selected').val();
-        query.goodPrice = $('#good_price').val();
-        query.goodSelfPrice = $('#good_self_price').val();
-        query.goodAnons = $('#good_anons').val();
-        query.goodDescription = $('#good_description').val();
-        query.goodMetaKw = $('#good_meta_kw').val();
-        query.goodMetaDescription = $('#good_meta_description').val();
-
-        query.activeGood = 0;
-        query.topGood = 0;
-        query.newGood = 0;
-        query.isComments = 0;
-        query.isInfoLine = 0;
-
-
-        if ($('.isActive').is(':checked'))
-            query.activeGood = 1;
-
-        if ($('.is_top').is(':checked'))
-            query.topGood = 1;
-
-
-        if ($('.is_new').is(':checked'))
-            query.newGood = 1;
-
-
-        query.availability = $('#availability').val();
-
-        if ($('.isComments').is(':checked'))
-            query.isComments = 1;
-
-        if ($('.isInfoLine').is(':checked'))
-            query.isInfoLine = 1;
-
-        query.currentGoodId =$('#current_good_id').val();
-        query.action ='addNewGood';
-
-        var good = new FormData();
-
-
-        var files = [];
-
-        jQuery.each(queue, function(key, element){
-            files.push(element);
-        })
-
-        jQuery.each(files, function(i, file) {
-            good.append(i, file);
-        });
-
-        $.each( query, function( key, value ){
-
-            good.append( key, value );
-        });
-
-
-        var request = $.ajax({
-            type: "POST",
-            url: "/post/request",
-            data: good,
-            _csrf : yii.getCsrfToken(),
-            cache: false,
-            dataType: 'json',
-            processData: false, // Не обрабатываем файлы (Don't process the files)
-            contentType: false, // Так jQuery скажет серверу что это строковой запрос
-
-            success:function( data ) {
-                var content = $.parseJSON(data);
-
-                if(content.error != undefined ){
-                    if(content.error == true) {
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content.mess),
-                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-
-                    }
-                    else{
-                        VanillaToasts.create({
-                            title: 'Внимание',
-                            text: $.parseJSON(content.mess),
-                            type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
-                            icon: '', // optional parameter
-                            timeout: 5000, // hide after 5000ms, // optional paremter
-                            callback: function() {
-
-                            } // executed when toast is clicked / optional parameter
-                        });
-                        $('.materialCard').fadeOut(500);
-
-
-                        $("#good_category option[value='empty']").attr("selected", "selected");
-                        $('#good_name').val('');
-                        $('#good_category option:selected').val('');
-                        $('#good_price').val('');
-                        $('#good_self_price').val('');
-                        $('#good_anons').val('');
-                        $('#good_description').val('');
-                        $('#good_meta_kw').val('');
-                        $('#good_meta_description').val('');
-                        $('#current_good_id').val('');
-                        $('.isActive').prop('checked', false);
-                        $('.is_top').prop('checked', false);
-                        $('.is_new').prop('checked', false);
-                        $('#availability').val('');
-                        $('.isComments').prop('checked', false);
-                        $('.isInfoLine').prop('checked', false);
-                        $('#current_good_id').val('');
-                        $('#uploadImagesList').fadeOut(500);
-                        $('#uploadImagesList li:not(:first)').remove();
-
+                        cancellAddUser();
+                        $("#usersList option:selected").remove();
+                        $("#usersList:first").prop('selected', true);
 
                     }
 
-                }
-
-                else{
+                } else {
                     console.log(data);
                 }
             }
         });
 
 
-    })
+        $(".AJAX-loading").fadeOut(100);
 
-    $('#create_delivery').click(function (e) {
-        e.preventDefault();
-        $('.materialCard').fadeOut(500);
-        $('#delivery_form').fadeIn(1000);
-        $('#delivery_action').html('Новый способ доставки');
 
-    })
+    });
 
+
+    // Не итспользуемые...вроде как....
+    //
+    // $('#pagesList').change(function () {
+    //     if ($('#pagesList').val() != undefined) {
+    //
+    //         var pageId = $("#pagesList option:selected").val();
+    //
+    //         createEditor(pageId);
+    //
+    //         $('.materialCard').fadeOut(1000)
+    //         $('#' + $('#pagesList').val()).fadeIn(1000);
+    //     }
+    // });
+    //
+    // $('.make_edit').click(function (e) {
+    //     e.preventDefault();
+    //
+    //     var form = $(this).parent();
+    //     var action = 'editRoot';
+    //     var mat_id = $(form).children('#mat-id').val();
+    //     var page_type = $(this).parent().attr('formId');
+    //     var page_type_name = $(form).children('#page_type_name').val();
+    //     ;
+    //     var title = $(form).find(('.title')).val();
+    //     var keywords = $(form).find(('.Keywords')).val();
+    //     var description = $(form).find(('.Description')).val();
+    //     var page_content = getDataFromMaterialsEditor();
+    //     var activ = 0;
+    //     var need_info_line = 0;
+    //     var need_commnets = 0;
+    //
+    //     if ($(form).find($('.isActive')).is(':checked'))
+    //         activ = 1;
+    //     if ($(form).find($('.isNeedCommnets')).is(':checked'))
+    //         need_commnets = 1;
+    //     if ($(form).find($('.isNeedInfoLine')).is(':checked'))
+    //         need_info_line = 1;
+    //     var request = $.ajax({
+    //         type: "POST",
+    //         url: "/post/request",
+    //
+    //         data: {
+    //             action: action,
+    //             mat_id: mat_id,
+    //             title: title,
+    //             keywords: keywords,
+    //             description: description,
+    //             page_content: page_content,
+    //             activ: activ,
+    //             need_info_line: need_info_line,
+    //             need_commnets: need_commnets,
+    //             page_type: page_type,
+    //             page_type_name: page_type_name,
+    //             _csrf: yii.getCsrfToken()
+    //         },
+    //         success: function (data) {
+    //             var content = $.parseJSON(data);
+    //
+    //             if (content['error'] != undefined) {
+    //                 if (content['error'] == true) {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //                 } else {
+    //                     //alert(data);
+    //                     VanillaToasts.create({
+    //                         title: content['title'],
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //
+    //                     });
+    //                     $('.materialCard').fadeOut(1000)
+    //                     $("#pagesList").val("empty");
+    //                 }
+    //
+    //             } else {
+    //                 console.log(data);
+    //             }
+    //         }
+    //     });
+    // });
+    //
+    //
+    //
+    // $('.make_delete').click(function (e) {
+    //     e.preventDefault();
+    //     var action = 'dellRoot';
+    //     var page_type = $(this).parent();
+    //     var mat_id = $(page_type).children('#mat-id').val();
+    //     var request = $.ajax({
+    //         type: "POST",
+    //         url: "/post/request",
+    //
+    //         data: {
+    //             action: action,
+    //             mat_id: mat_id,
+    //             _csrf: yii.getCsrfToken()
+    //         },
+    //         success: function (data) {
+    //             var content = $.parseJSON(data);
+    //
+    //             if (content['error'] != undefined) {
+    //                 if (content['error'] == true) {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //                 } else {
+    //                     //alert(data);
+    //                     VanillaToasts.create({
+    //                         title: content['title'],
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //
+    //                     });
+    //                     $('.materialCard').fadeOut(1000);
+    //
+    //                     $('#new_page_title').val("");
+    //                     $('#new_page_Keywords').val("");
+    //                     $('#new_page_Description').val("");
+    //
+    //                     var carId = $(this).parent().attr('formId') + "_id_" + mat_id;
+    //                     $("#" + carId).remove();
+    //                     $("#pagesList  option:selected").remove();
+    //
+    //                     $("#pagesList").val("empty");
+    //                 }
+    //
+    //             } else {
+    //                 console.log(data);
+    //             }
+    //         }
+    //     });
+    //
+    // })
+    //
+    // $(".instance-name").focus(function () {
+    //     $(this).removeClass("is-invalid");
+    // });
+    //
+    // $(".instanceForm").on(
+    //     "focus", ".title", function () {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // );
+    //
+    // $(".instanceForm").on(
+    //     "focus", ".destinationType", function () {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // );
+    // $(".instanceForm").on(
+    //     "focus", ".destinationPoint", function () {
+    //         $(this).removeClass('is-invalid');
+    //     }
+    // );
+    // $(".instanceForm").on(
+    //     "click", ".add-sub-instance", function () {
+    //
+    //         var myElement = $(this).parent();
+    //         $(".AJAX-loading").fadeIn(100);
+    //
+    //         console.log($(myElement).children(".sub-instance-item").length)
+    //
+    //         if ($(myElement).children(".sub-instance-item").length == 0) {
+    //
+    //             var addedElement = $(".clear-instance-item").clone().appendTo(myElement);
+    //
+    //             $(addedElement).addClass("sub-instance-item");
+    //             $(addedElement).removeClass("clear-instance-item");
+    //             $(this).appendTo(myElement);
+    //
+    //             $(addedElement).children('.title-group').children(".title").val("");
+    //             $(addedElement).children('.destinations-block').children(".destinationType option:selected").remove();
+    //             $(addedElement).children('.destinations-block').children(".destinationPoint option:selected").remove();
+    //             $(addedElement).children('.destinations-block').children(".destinationPoint").empty();
+    //             $(addedElement).children('.destinations-block').children(".destinationPoint").prop('disabled', true);
+    //
+    //             addedElement = null;
+    //
+    //         } else {
+    //             console.log("ELSE")
+    //             var addedElement = $(".clear-instance-item").clone().appendTo(myElement);
+    //
+    //             $(addedElement).addClass("sub-instance-item");
+    //             $(addedElement).removeClass("clear-instance-item");
+    //
+    //             $(this).appendTo(myElement);
+    //
+    //             $(addedElement).children('.title-group').children(".title").val("");
+    //             $(addedElement).children('.destinations-block').children(".destinationType option:selected").remove();
+    //             $(addedElement).children('.destinations-block').children(".destinationPoint option:selected").remove();
+    //             $(addedElement).children('.destinations-block').children(".destinationPoint").empty();
+    //             $(addedElement).children('.destinations-block').children(".destinationPoint").prop('disabled', true);
+    //             addedElement = null;
+    //         }
+    //
+    //         $(".AJAX-loading").fadeOut(100);
+    //     }
+    // );
+    //
+    //
+    // $('#create_category').click(function (e) {
+    //     e.preventDefault();
+    //     $('.materialCard').fadeOut(500);
+    //     $('#category_form').fadeIn(1000);
+    //     $('#category_action').html('Новая категория');
+    //     var request = $.ajax({
+    //         type: "POST",
+    //         url: "/post/request",
+    //
+    //         data: {
+    //             action: 'getCategoriesNames',
+    //             _csrf: yii.getCsrfToken()
+    //         },
+    //         success: function (data) {
+    //             var content = $.parseJSON(data);
+    //
+    //             if (content.error != undefined) {
+    //                 if (content.error == true) {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //
+    //                 } else {
+    //
+    //                     $("#category_id").empty();
+    //                     $("#category_id").append('<option value="empty"></option>');
+    //                     $("#category_id").append(content.data);
+    //                 }
+    //
+    //             } else {
+    //                 console.log(data);
+    //             }
+    //         }
+    //     });
+    //
+    //
+    // })
+    //
+    // $('#category_make_edit').click(function (e) {
+    //     e.preventDefault();
+    //     var categoryId = $('#current_category_id').val();
+    //     var categoryName = $('#category_name').val();
+    //     var categoryKeyWords = $('#category_kw').val();
+    //     var categoryDescriprion = $('#category_description').val();
+    //     var categoryActive = '';
+    //     var categoryParent = $("#category_id option:selected").text();
+    //     if ($('#isCategoryActive').is(':checked'))
+    //         categoryActive = 1;
+    //
+    //     var category = {};
+    //
+    //     if (categoryName == "undefined" || !categoryName || categoryName.length < 4) {
+    //         $('#category_name').addClass("is-invalid");
+    //
+    //         var toastTitle = "Внимание";
+    //         var toastText = "Название категории не может быть пустым или слишком коротко";
+    //         var toastType = "warning";
+    //         var toastTimeout = 5000;
+    //
+    //         makeToast(toastTitle, toastText, toastType, toastTimeout);
+    //
+    //     } else {
+    //         $('#category_name').removeClass("is-invalid");
+    //         category = {
+    //             "categoryId": categoryId,
+    //             "categoryName": categoryName,
+    //             "categoryKeyWords": categoryKeyWords,
+    //             "categoryDescriprion": categoryDescriprion,
+    //             "categoryActive": categoryActive,
+    //             "categoryParent": categoryParent
+    //         };
+    //
+    //         var request = $.ajax({
+    //             type: "POST",
+    //             url: "/post/request",
+    //
+    //             data: {
+    //                 action: 'addNewCat',
+    //                 data: category,
+    //                 _csrf: yii.getCsrfToken()
+    //             },
+    //             success: function (data) {
+    //                 var content = $.parseJSON(data);
+    //
+    //                 if (content.error != undefined) {
+    //                     if (content.error == true) {
+    //                         VanillaToasts.create({
+    //                             title: 'Внимание',
+    //                             text: $.parseJSON(content.mess),
+    //                             type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                             icon: '', // optional parameter
+    //                             timeout: 5000, // hide after 5000ms, // optional paremter
+    //                             callback: function () {
+    //
+    //                             } // executed when toast is clicked / optional parameter
+    //                         });
+    //
+    //                     } else {
+    //                         VanillaToasts.create({
+    //                             title: 'Внимание',
+    //                             text: $.parseJSON(content.mess),
+    //                             type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                             icon: '', // optional parameter
+    //                             timeout: 5000, // hide after 5000ms, // optional paremter
+    //                             callback: function () {
+    //
+    //                             } // executed when toast is clicked / optional parameter
+    //                         });
+    //                         $("#categoryList option[value='empty']").attr("selected", "selected");
+    //                         $('.materialCard').fadeOut(500);
+    //                         $('#category_action').val('');
+    //                         $('#category_name').val('');
+    //                         $('#category_kw').val('');
+    //                         $('#category_description').val('');
+    //                         $("#category_id").empty();
+    //                         $('#isCategoryActive').prop('checked', false);
+    //
+    //
+    //                     }
+    //
+    //                 } else {
+    //                     console.log(data);
+    //                 }
+    //             }
+    //         });
+    //     }
+    //
+    // })
+    //
+    // $('#category_make_delete').click(function (e) {
+    //     e.preventDefault();
+    //     var catId = $("#current_category_id").val();
+    //     var request = $.ajax({
+    //         type: "POST",
+    //         url: "/post/request",
+    //
+    //         data: {
+    //             action: 'removeCat',
+    //             data: catId,
+    //             _csrf: yii.getCsrfToken()
+    //         },
+    //         success: function (data) {
+    //             var content = $.parseJSON(data);
+    //
+    //             if (content.error != undefined) {
+    //                 if (content.error == true) {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //
+    //                 } else {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //                     $('.materialCard').fadeOut(500);
+    //                     $("#categoryList option[value='empty']").attr("selected", "selected");
+    //                     $("#categoryList option[value='" + catId + "']").remove();
+    //
+    //                 }
+    //
+    //             } else {
+    //                 console.log(data);
+    //             }
+    //         }
+    //     });
+    // })
+    //
+    // $('#categoryList').change(function (e) {
+    //     e.preventDefault();
+    //     var categoryForEdit = $("#categoryList option:selected").val();
+    //
+    //     if (categoryForEdit == "empty") {
+    //         return false;
+    //     }
+    //
+    //     var request = $.ajax({
+    //         type: "POST",
+    //         url: "/post/request",
+    //
+    //         data: {
+    //             action: 'getCategoriesNames',
+    //             _csrf: yii.getCsrfToken()
+    //         },
+    //         success: function (data) {
+    //             var content = $.parseJSON(data);
+    //
+    //             if (content.error != undefined) {
+    //                 if (content.error == true) {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //
+    //                 } else {
+    //
+    //                     $("#category_id").empty();
+    //                     $("#category_id").append('<option value="empty"></option>');
+    //                     $("#category_id").append(content.data);
+    //                 }
+    //
+    //             } else {
+    //                 console.log(data);
+    //             }
+    //         }
+    //     });
+    //
+    //     var request = $.ajax({
+    //         type: "POST",
+    //         url: "/post/request",
+    //
+    //         data: {
+    //             action: 'getCatForEdit',
+    //             data: categoryForEdit,
+    //             _csrf: yii.getCsrfToken()
+    //         },
+    //         success: function (data) {
+    //             var content = $.parseJSON(data);
+    //
+    //             if (content.error != undefined) {
+    //                 if (content.error == true) {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //
+    //                 } else {
+    //
+    //                     $('.materialCard').fadeOut(500);
+    //                     $('#category_form').fadeIn(1000);
+    //
+    //                     $('#category_action').html("Редактируем категорю '" + content.data.category_name + "'");
+    //                     $('#category_name').val(content.data.category_name);
+    //                     $('#category_kw').val(content.data.keywords);
+    //                     $('#category_description').val(content.data.description);
+    //                     $("#current_category_id").val(content.data.id);
+    //                     if (content.data.is_active == 1)
+    //                         $('#isCategoryActive').prop('checked', true);
+    //                     else
+    //                         $('#isCategoryActive').prop('checked', false);
+    //
+    //                     var id = content.data.parent_id;
+    //                     if (content.data.is_parent == 1)
+    //                         $("#category_id option[value='" + id + "']").attr("selected", "selected");
+    //
+    //                 }
+    //
+    //             } else {
+    //                 console.log(data);
+    //             }
+    //         }
+    //     });
+    // })
+    //
+    // $('#create_good').click(function (e) {
+    //     e.preventDefault();
+    //     $('.materialCard').fadeOut(500);
+    //     $('#good_form').fadeIn(1000);
+    //     $('#good_action').html('Новый товар');
+    //
+    //     var request = $.ajax({
+    //         type: "POST",
+    //         url: "/post/request",
+    //
+    //         data: {
+    //             action: 'getCategoriesNames',
+    //             _csrf: yii.getCsrfToken()
+    //         },
+    //         success: function (data) {
+    //             var content = $.parseJSON(data);
+    //
+    //             if (content.error != undefined) {
+    //                 if (content.error == true) {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //
+    //                 } else {
+    //                     $("#good_category").empty();
+    //                     $("#good_category").append('<option value="empty"></option>');
+    //                     $("#good_category").append(content.data);
+    //                 }
+    //
+    //             } else {
+    //                 console.log(data);
+    //             }
+    //         }
+    //     });
+    //
+    // })
+    //
+    // $('#good_make_edit').click(function (e) {
+    //     e.preventDefault();
+    //     var query = {};
+    //     query.goodName = $('#good_name').val();
+    //     query.photos = '';
+    //     query.goodCategory = $('#good_category option:selected').val();
+    //     query.goodPrice = $('#good_price').val();
+    //     query.goodSelfPrice = $('#good_self_price').val();
+    //     query.goodAnons = $('#good_anons').val();
+    //     query.goodDescription = $('#good_description').val();
+    //     query.goodMetaKw = $('#good_meta_kw').val();
+    //     query.goodMetaDescription = $('#good_meta_description').val();
+    //
+    //     query.activeGood = 0;
+    //     query.topGood = 0;
+    //     query.newGood = 0;
+    //     query.isComments = 0;
+    //     query.isInfoLine = 0;
+    //
+    //
+    //     if ($('.isActive').is(':checked'))
+    //         query.activeGood = 1;
+    //
+    //     if ($('.is_top').is(':checked'))
+    //         query.topGood = 1;
+    //
+    //
+    //     if ($('.is_new').is(':checked'))
+    //         query.newGood = 1;
+    //
+    //
+    //     query.availability = $('#availability').val();
+    //
+    //     if ($('.isComments').is(':checked'))
+    //         query.isComments = 1;
+    //
+    //     if ($('.isInfoLine').is(':checked'))
+    //         query.isInfoLine = 1;
+    //
+    //     query.currentGoodId = $('#current_good_id').val();
+    //     query.action = 'addNewGood';
+    //
+    //     var good = new FormData();
+    //
+    //
+    //     var files = [];
+    //
+    //     jQuery.each(queue, function (key, element) {
+    //         files.push(element);
+    //     })
+    //
+    //     jQuery.each(files, function (i, file) {
+    //         good.append(i, file);
+    //     });
+    //
+    //     $.each(query, function (key, value) {
+    //
+    //         good.append(key, value);
+    //     });
+    //
+    //
+    //     var request = $.ajax({
+    //         type: "POST",
+    //         url: "/post/request",
+    //         data: good,
+    //         _csrf: yii.getCsrfToken(),
+    //         cache: false,
+    //         dataType: 'json',
+    //         processData: false, // Не обрабатываем файлы (Don't process the files)
+    //         contentType: false, // Так jQuery скажет серверу что это строковой запрос
+    //
+    //         success: function (data) {
+    //             var content = $.parseJSON(data);
+    //
+    //             if (content.error != undefined) {
+    //                 if (content.error == true) {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //
+    //                 } else {
+    //                     VanillaToasts.create({
+    //                         title: 'Внимание',
+    //                         text: $.parseJSON(content.mess),
+    //                         type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+    //                         icon: '', // optional parameter
+    //                         timeout: 5000, // hide after 5000ms, // optional paremter
+    //                         callback: function () {
+    //
+    //                         } // executed when toast is clicked / optional parameter
+    //                     });
+    //                     $('.materialCard').fadeOut(500);
+    //
+    //
+    //                     $("#good_category option[value='empty']").attr("selected", "selected");
+    //                     $('#good_name').val('');
+    //                     $('#good_category option:selected').val('');
+    //                     $('#good_price').val('');
+    //                     $('#good_self_price').val('');
+    //                     $('#good_anons').val('');
+    //                     $('#good_description').val('');
+    //                     $('#good_meta_kw').val('');
+    //                     $('#good_meta_description').val('');
+    //                     $('#current_good_id').val('');
+    //                     $('.isActive').prop('checked', false);
+    //                     $('.is_top').prop('checked', false);
+    //                     $('.is_new').prop('checked', false);
+    //                     $('#availability').val('');
+    //                     $('.isComments').prop('checked', false);
+    //                     $('.isInfoLine').prop('checked', false);
+    //                     $('#current_good_id').val('');
+    //                     $('#uploadImagesList').fadeOut(500);
+    //                     $('#uploadImagesList li:not(:first)').remove();
+    //
+    //
+    //                 }
+    //
+    //             } else {
+    //                 console.log(data);
+    //             }
+    //         }
+    //     });
+    //
+    //
+    // })
+    //
+    // $('#create_delivery').click(function (e) {
+    //     e.preventDefault();
+    //     $('.materialCard').fadeOut(500);
+    //     $('#delivery_form').fadeIn(1000);
+    //     $('#delivery_action').html('Новый способ доставки');
+    //
+    // })
+    //
     $('.close').click(function (e) {
         e.preventDefault();
         $('.materialCard').fadeOut(500);
     })
 
+});
 
-    var queue = {};
-    var imagesList = $('#uploadImagesList');
+var queue = {};
 
-    $('#good_photos').change(function () {
-        $('#uploadImagesList').fadeOut(500);
-        var maxFileSize = 2 * 1024 * 1024; // (байт) Максимальный размер файла (2мб)
-        var files = this.files;
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-
-            if ( !file.type.match(/image\/(jpeg|jpg|png|gif)/) ) {
-                alert( 'Фотография должна быть в формате jpg, png или gif' );
-                continue;
-            }
-
-            if ( file.size > maxFileSize ) {
-                alert( 'Размер фотографии не должен превышать 2 Мб' );
-                continue;
-            }
-
-            preview(files[i], i);
-        }
-    });
-
-    // Удаление фотографий
-    imagesList.on('click', '.delete-link', function () {
-        var item = $(this).closest('.gallery-item'),
-            id = item.data('id'),
-            itemId = item.data('fileId');
-
-        delete queue[id];
-
-        item.remove();
-        if($('.gallery-item').length == 1)
-            $('#uploadImagesList').fadeOut(500);
-
-    });
-
-    function preview(file, fileId) {
-        var itemPreviewTemplate = imagesList.find('.gallery-item.gallery-template').clone();
-        itemPreviewTemplate.removeClass('gallery-template');
-
-        var reader = new FileReader();
-        reader.addEventListener('load', function(event) {
-            var img = document.createElement('img');
-
-            var itemPreview = itemPreviewTemplate.clone();
-
-            itemPreview.find('.img-wrap img').attr('src', event.target.result);
-            itemPreview.data('fileId', fileId);
-            itemPreview.data('id', file.name);
-
-            imagesList.append(itemPreview);
-
-            queue[file.name] = file;
-
-        });
-        reader.readAsDataURL(file);
-        $('#uploadImagesList').fadeIn(1000);
-    }
-
-} );
-
-
-
-
-function searchData(items) {
-    var out = [];
-    $.each(items, function(index, value){
-        var title = $(value).find($(".title")).val();
-        var destinationType = $(value).find($(".destinationType option:selected")).val();
-        var destinationPoint = $(value).find($(".destinationPoint option:selected")).val();
-        var subItem = $(value).find($(".sub-menu-item"));
-        if(title === "undefined" || !title || title.length < 3) {
-            $(value).find($(".title")).addClass("is-invalid");
-
-            var toastTitle = "Внимание";
-            var toastText = "Имя пунка пустое либо слишком короткое";
-            var toastType = "warning";
-            var toastTimeout = 5000;
-
-            makeToast(toastTitle, toastText, toastType, toastTimeout);
-            return false;
-        }
-        else if(!destinationPoint){
-            $(value).find($(".destinationType")).addClass("is-invalid");
-
-            var toastTitle = "Внимание";
-            var toastText = "Не назначен переход";
-            var toastType = "warning";
-            var toastTimeout = 5000;
-
-            makeToast(toastTitle, toastText, toastType, toastTimeout);
-            return false;
-        }
-
-        var data = {itemTitle: title,destinationType: destinationType, destinationPoint: destinationPoint}
-
-        if(subItem.length > 0)
-            out.push({menuData: data, subMenuData: searchData(subItem)});
-        else
-            out.push({menuData: data});
-
-
-    });
-    return out;
-}
 
 function makeToast(title,text,type,timeout){
     VanillaToasts.create({
@@ -1228,76 +1316,76 @@ function makeToast(title,text,type,timeout){
         timeout: timeout, // hide after 5000ms, // optional paremter
         callback: function () {
 
-        } // executed when toast is clicked / optionmenuListal parameter
+        } // executed when toast is clicked / optioninstanceListal parameter
     });
 }
 
-$(".cancel-add-menu").click(function (e) {
+$(".cancel-add-instance").click(function (e) {
     e.preventDefault();
-    cancellAddMenu();
+    cancellAddinstance();
 })
+
+
 
 $(this).keydown(function(eventObject){
     if (eventObject.which == 27){
-        cancellAddMenu();
+        cancellAddinstance();
     }
 });
 
-function clearNewMenu() {
-    $('.menuForm .menu-item:not(:first)').remove();
-    $('.menu-name').val('');
+function clearNewinstance() {
+    $('.instanceForm .instance-item:not(:first)').remove();
+    $('.instance-name').val('');
     $('.title').val('');
     $('.destinationType :first').attr("selected", "selected");
     $('.destinationPoint :first').attr("selected", "selected");
 }
 
-function cancellAddMenu() {
+function cancellAddinstance() {
 
-    $('#create_menu').prop('disabled', false)
+    $('#create_instance').prop('disabled', false)
     setTimeout( function(){
-        $("#add_menu").fadeOut(500);
+        $("#add_instance").fadeOut(500);
         setTimeout(function (){
-            clearNewMenu();
+            clearNewinstance();
         },500);
     },0);
-    $("#add_menu").removeClass('active');
+    $("#add_instance").removeClass('active');
 
 }
 
-function createEditor(id){
-    var idNum = (id.replace(/[^\d]/g, ''));
-    let materialsEditor = null;
+function cancellAddUser() {
 
-    $('.editorScriptBlock').empty();
-    $('.ck').remove();
-    var code = " <script>  ClassicEditor.create(document.querySelector('#page_content_id_" + idNum+"')).then(editor => {    materialsEditor = editor;}).catch(error => {    console.error(error);})<\/script>";
-    $('.editorScriptBlock').append(code);
+    $('#create_user').prop('disabled', false)
+    setTimeout( function(){
+        $("#user").fadeOut(500);
+        setTimeout(function (){
+            clearNewinstance();
+        },500);
+    },0);
+    $("#user").removeClass('active');
+
 }
 
-function getDataFromMaterialsEditor() {
-    return materialsEditor.getData();
-}
 
-let newEditor;
-
-ClassicEditor
-    .create(document.querySelector('#new_page_content'))
-    .then(editor => {
-        newEditor = editor; // Save for later use.
-    })
-    .catch(error => {
-        console.error(error);
-    });
-
-function getDataFromNewEditor() {
-    return newEditor.getData();
-}
 function urlLit(w,v) {
     var tr='a b v g d e ["zh","j"] z i y k l m n o p r s t u f h c ch sh ["shh","shch"] ~ y ~ e yu ya ~ ["jo","e"]'.split(' ');
     var ww=''; w=w.toLowerCase();
     for(i=0; i<w.length; ++i) {
         cc=w.charCodeAt(i); ch=(cc>=1072?tr[cc-1072]:w[i]);
-        if(ch.length<3) ww+=ch; else ww+=eval(ch)[v];}
+        if(ch.length<3) ww+=ch; else ww+=eval(ch)[v];
+    }
     return(ww.replace(/[^a-zA-Z0-9\-]/g,'-').replace(/[-]{2,}/gim, '-').replace( /^\-+/g, '').replace( /\-+$/g, ''));
+
+}
+
+function parse_url(url){
+    // example 1: parse_url('http://example.com:3000/pathname/?search=test#hash');
+    // returns 1: {protocol: 'http:', hostname: 'example.com', port: '3000', pathname: '/pathname/', search: '?search=test', hash: '#hash', host: 'example.com:3000'}
+
+    var parser = document.createElement('a');
+    parser.href = url;
+
+    return parser;
 }
 
