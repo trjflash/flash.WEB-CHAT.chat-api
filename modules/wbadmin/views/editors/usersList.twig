@@ -1,0 +1,106 @@
+{% extends "themes/Shards/base.twig" %}
+
+{% block head %}
+    {% embed 'themes/Shards/repeatable/head.twig' %}
+        {% block title %}
+            Список материалов для редактирования
+        {% endblock %}
+    {% endembed %}
+{% endblock head %}
+
+{% block right %}
+    {% embed 'themes/Shards/repeatable/right.twig' %}
+        {% block pageContent %}
+            {{ parent() }}
+
+            <!-- Page Header -->
+            <div class="page-header row no-gutters py-4">
+                <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+                    <span class="text-uppercase page-subtitle">Управление пользователями</span>
+                </div>
+            </div>
+            <!-- End Page Header -->
+
+
+            <div class="row">
+                <div class="col-lg col-md-6 col-sm-6 mb-4">
+                    <div class="stats-small stats-small--1 card card-small">
+                        <div class="card-body p-0 d-flex">
+                            <div class="form-group root_materials_list" >
+                                <label for="exampleFormControlSelect1">Список пользователей</label>
+
+                                <select class="form-control" id="usersList">
+                                    <option value="empty"></option>
+                                    {%  for user in users %}
+                                        <option value="{{ user.username }}">{{ user.display_name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-primary" id="create_user">Создать</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--- NEW PAGE FORM --->
+                <div class="col-lg-10 col-md-12 col-sm-12 mb-4 materialCard" id="user" style="display: none">
+                    <div class="card card-small">
+                        <div class="card-header border-bottom">
+                            <h6 class="m-0">Новый пользователь</h6> </div>
+                        <div class="card-body pt-0">
+                            <form formid="main">
+
+                                <div class="form-group">
+                                    <label for="user_display_name">Имя пользователя</label>
+                                    <input type="text" class="form-control" id="user_display_name" placeholder="Укажите отображаемое имя пользователя" value="" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="login">Логин</label>
+                                    <input type="text" class="form-control" id="login" placeholder="Укажите логин пользователя" value="" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Пароль</label>
+                                    <input type="password" class="form-control" id="password" placeholder="Укажите пароль" value="" required>
+                                </div>
+                                <div class="form-group col-sm-12">
+                                    <div class="instance-access col-sm-6">
+                                        <label for="instances">Доступные инстансы</label>
+                                        <select multiple size="5" class="form-control" id="instance">
+                                            <option value="0"></option>
+
+                                            {% for instance in instances %}
+                                                <option value="{{ instance.name }}">{{ instance.display_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="instance-access col-sm-6">
+                                        <label for="roles">Доступные роли</label>
+                                        <select size="5" class="form-control" id="role">
+                                            <option value="0"></option>
+
+                                            {% for role in roles %}
+                                                <option value="{{ role.roleName }}">{{ role.displayName }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary " id="add-new-user">Сохранить</button>
+                                    <button type="submit" class="btn btn-danger " id="remove-user">Удалить</button>
+                                </div>
+                        </div>
+                </div>
+
+
+            <!---NEW PAGE FORM --->
+            </div>
+        </div>
+
+
+
+
+
+        {% endblock %}
+    {% endembed %}
+{% endblock right %}

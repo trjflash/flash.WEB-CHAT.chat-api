@@ -1,7 +1,10 @@
+var home = 'http://chat.onclinic.local';
+
 $('#adminLogin').click(function(event) {
+    alert('AAAAAAAA');
 
     event.preventDefault();
-    var action = $('#action').val();
+    var action = 'login';
     var username = $('#username').val();
     var password = $('#password').val();
     var remember = '';
@@ -23,12 +26,12 @@ $('#adminLogin').click(function(event) {
         success:function( data ) {
             var content = $.parseJSON(data);
 
-            if(content['error'] != undefined ){
-                if(content['error'] == true) {
+            if(content.error != undefined ){
+                if(content.error == true) {
                     VanillaToasts.create({
                         title: 'Внимание',
-                        text: $.parseJSON(content['mess']),
-                        type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
+                        text: $.parseJSON(content.mess),
+                        type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
                         icon: '', // optional parameter
                         timeout: 5000, // hide after 5000ms, // optional paremter
                         callback: function() {
@@ -39,9 +42,9 @@ $('#adminLogin').click(function(event) {
                 else{
                     //alert(data);
                     VanillaToasts.create({
-                        title: content['title'],
-                        text: $.parseJSON(content['mess']),
-                        type: $.parseJSON(content['error_level']), // success, info, warning, error   / optional parameter
+                        title: content.title,
+                        text: $.parseJSON(content.mess),
+                        type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
                         icon: '', // optional parameter
                         timeout: 5000, // hide after 5000ms, // optional paremter
                         callback: function() {
@@ -49,7 +52,7 @@ $('#adminLogin').click(function(event) {
                         } // executed when toast is clicked / optional parameter
 
                     });
-                    window.location.replace('/adm');
+                    window.location.replace(home);
                 }
 
             }

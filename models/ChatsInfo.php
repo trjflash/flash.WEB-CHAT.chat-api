@@ -15,8 +15,8 @@ class ChatsInfo extends ActiveRecord{
         return self::find()->where(['chatId' => "$chatId"])->select('id')->asArray()->all();
     }
 
-    public function getChats(){
-        return self::find()->asArray()->all();
+    public function getChats($instanceId){
+        return self::find()->where(['instance' => "$instanceId"])->asArray()->all();
     }
 
 }
