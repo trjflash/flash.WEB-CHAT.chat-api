@@ -1,3 +1,5 @@
+var home = 'http://chat.onclinic.local';
+
 function parseMessage(message) {
 	switch(message.type) {
 		case 'image':
@@ -353,6 +355,52 @@ $(document).ready(function() {
 
 
 	});
+
+	$("#instance").change(function (e) {
+		e.preventDefault();
+
+		var instance = $(this).children(":selected").val()
+
+		var query = {};
+
+		query._csrf = yii.getCsrfToken();
+		query.action = 'changeInstance';
+		query.instance = instance;
+
+		var data = new FormData();
+		$.each( query, function( key, value ){
+			data.append( key, value );
+		});
+		var request = $.ajax({
+			type: "POST",
+			url: "/post/request",
+			data: data,
+			cache: false,
+			dataType: 'json',
+			processData: false, // Не обрабатываем файлы (Don't process the files)
+			contentType: false, // Так jQuery скажет серверу что это строковой запрос
+			success: function(data) {
+
+				var content = data;
+				if(content.error != undefined) {
+					if(content.error == true) {
+						VanillaToasts.create({
+							title: 'Внимание',
+							text: $.parseJSON(content.mess),
+							type: $.parseJSON(content.error_level), // success, info, warning, error   / optional parameter
+							icon: '', // optional parameter
+							timeout: 5000, // hide after 5000ms, // optional paremter
+							callback: function() {} // executed when toast is clicked / optional parameter
+						});
+					} else {
+						window.location.replace(home);
+					}
+				} else {
+					console.log(data);
+				}
+			}
+		});
+	})
 
 
 

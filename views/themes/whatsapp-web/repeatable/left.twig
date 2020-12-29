@@ -13,9 +13,14 @@
 
             <div class="col-sm-5 col-xs-5 ">
                 <label for="exampleFormControlSelect1">Текущий инстанс</label>
-                <select class="form-control form-control-sm" id="exampleFormControlSelect1">
+                <select class="form-control form-control-sm" id="instance">
                     {%  for instance in instanceName %}
-                        <option value="{{ instance.name }}">{{ instance.display_name }}</option>
+                        <option value="{{ instance.name }}"
+                            {% if instance.name == currentInstance %}
+                                selected
+                            {% endif %}
+
+                        >{{ instance.display_name }}</option>
                     {% endfor %}
                 </select>
             </div>

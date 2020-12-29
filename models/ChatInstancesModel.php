@@ -19,6 +19,9 @@ class ChatInstancesModel extends ActiveRecord
     public function getInstanceByName($instanceName){
         return self::find()->where(['name' => "$instanceName"])->select(['link','token','instance'])->asArray()->all();
     }
+    public function getInstanceByid($instanceid){
+        return self::find()->where(['instance' => "$instanceid"])->select(['link','token','instance'])->asArray()->all();
+    }
 
     public function getInstanceDisplayNameByName($instanceName){
         return self::find()->where(['name' => "$instanceName"])->select(['name','display_name'])->asArray()->all();

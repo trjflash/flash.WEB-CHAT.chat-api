@@ -39,6 +39,7 @@ $config = [
             'as log' => \yii\queue\LogBehavior::class,
         ],
         'db' => $db,
+
     ],
     'params' => $params,
     /*

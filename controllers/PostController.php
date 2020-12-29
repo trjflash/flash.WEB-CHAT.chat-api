@@ -8,6 +8,7 @@ use app\components\flash\flashWhatsAppBot;
 
 use app\components\jobs\WaMailing;
 use app\models\AjaxLogin;
+use app\models\ChatInstancesModel;
 use app\modules\Adm\models\MenuEditorModel;
 use app\modules\Adm\models\MenuTableToController;
 use app\modules\Adm\models\RootEditorsModel;
@@ -33,6 +34,9 @@ class PostController extends Controller{
 
 
     private $bot;
+    private $session;
+    private $instanceId;
+
 
     public function behaviors()
     {
@@ -60,6 +64,9 @@ class PostController extends Controller{
     public function __construct($id, $module, $config = []){
         parent::__construct($id, $module, $config);
         $this->bot = new flashWhatsAppBot();
+        $this->session = Yii::$app->session;
+        $this->instanceId = ChatInstancesModel::getInstanceIdByName($this->session->get('currentInstance'))[0]['instance'];
+
 
     }
 
@@ -247,13 +254,16 @@ class PostController extends Controller{
                     $this->getNewMessages($data);
                     break;
                 case "checkNewMessages":
-                    $this->checkNewMessages($data);
+                    $this->checkNewMessages();
                     break;
                 case "getChatInfo":
                     $this->getDialogInfo($data);
                     break;
                 case "uploadPhonesList":
-                    $this->makeMailing($data);
+                    $this->makeMailing();
+                    break;
+                case "changeInstance":
+                    $this->changeInstance($data);
                     break;
 
                 default:
@@ -714,11 +724,12 @@ class PostController extends Controller{
         //flashHelpers::stopA($chatId);
 
         $bot = new flashWhatsAppBot();
-        $messages['messages'] = ChatsMessages::getChatMessages($chatId);
+
+        $messages['messages'] = ChatsMessages::getChatMessages($chatId,$this->instanceId);
         $bot->sendReadChat($chatId);
 
         $messages['messages'] = ($messages['messages']);
-        ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$chatId]);
+        ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$chatId, 'instance'=>$this->instanceId]);
 
         $exit['error'] = false;
         $exit['data'] = $messages;
@@ -736,7 +747,7 @@ class PostController extends Controller{
         $bot->sendReadChat($chatId);
 
         $messages['messages'] = ($messages['messages']);
-        ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$chatId]);
+        ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$chatId, 'instance'=>$this->instanceId]);
 
         $exit['error'] = false;
         $exit['data'] = $messages;
@@ -748,6 +759,7 @@ class PostController extends Controller{
 
         if(empty($_FILES)) {
             $sendResult = json_decode($this->bot->sendMessage($data['chatId'], $data['message']));
+            //flashHelpers::stopA($sendResult->sent);
             if ($sendResult->sent) {
                 $exit['error'] = false;
                 echo json_encode($exit);
@@ -796,10 +808,11 @@ class PostController extends Controller{
     private function getNewMessages($data){
         //flashHelpers::testA($data);
         if(isset($data['requestBody']['chatId']) && isset($data['requestBody']['lastMessageId']) ){
-            $messages['messages'] = ChatsMessages::getNewChatMessages($data['requestBody']['chatId']);
 
-            ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$data['requestBody']['chatId']]);
-            //flashHelpers::stopA($messages);
+            $messages['messages'] = ChatsMessages::getNewChatMessages($data['requestBody']['chatId'],$this->instanceId);
+
+            ChatsMessages::updateAll(['isNew'=>'0'],['chatId'=>$data['requestBody']['chatId'], 'instance'=>$this->instanceId]);
+
             if (count($messages['messages']) != 0) {
                 $this->bot->sendReadChat($data['requestBody']['chatId']);
                 $exit['error'] = false;
@@ -822,8 +835,9 @@ class PostController extends Controller{
         }
     }
 
-    private function checkNewMessages($data){
-        $messages['messages'] = ChatsMessages::checkNewMessages();
+    private function checkNewMessages(){
+
+        $messages['messages'] = ChatsMessages::checkNewMessages($this->instanceId);
         if (count($messages['messages']) != 0) {
             header('Content-Type: application/json');
             $exit['error'] = false;
@@ -858,7 +872,9 @@ class PostController extends Controller{
         }
     }
 
-    private function makeMailing($data){
+    private function makeMailing(){
+
+
         $res = array();
 
         for ($i = 0; $i < count($_FILES); $i++){
@@ -890,14 +906,34 @@ class PostController extends Controller{
         $data = json_encode($data);
 //flashHelpers::stopA($data);
 
-        $queueNum = Yii::$app->queue->push(new WaMailing(['data' => $data]));
-		
+        $queueNum = Yii::$app->queue->push(new WaMailing(['data' => $data,'instance'=>$this->instanceId]));
+
+        //flashHelpers::stopA($queueNum);
 		unlink($res[0]);
 		
-        $exit['error'] = true;
+        $exit['error'] = false;
         $exit['mess'] = flashAjaxHelpers::returnJson(58);
         $exit['error_level'] = flashAjaxHelpers::getErrorLevel(0);
         echo json_encode($exit);
         exit();
+    }
+
+    private function changeInstance($data){
+        $session = Yii::$app->session;
+        try{
+            ChatInstancesModel::getInstanceIdByName($data['instance'])[0]['instance'];
+            $session->set('currentInstance', $data['instance']);
+
+            $exit['error'] = false;
+            echo json_encode($exit);
+            exit();
+
+        }catch (\Exception $e){
+            $exit['error'] = true;
+            $exit['mess'] = flashAjaxHelpers::returnJson(60);
+            $exit['error_level'] = flashAjaxHelpers::getErrorLevel(2);
+            echo json_encode($exit);
+            exit();
+        }
     }
 }

@@ -42,8 +42,8 @@ class SiteController extends Controller
                     ],
 
                     [
-                        'actions' => ['login', 'error'],
                         'allow' => true,
+                        'actions' => ['login', 'error'],
                         'roles' => ['?','@'], // " ? " for guest user
                     ],
                 ],
@@ -86,8 +86,7 @@ class SiteController extends Controller
 
 
         $instanceCity = ChatCollationModel::GetCitiesForOperator(Yii::$app->user->getId());
-        $instanceId = '';
-        $instanceName =  '';
+        $session = Yii::$app->session;
 
         //\flashHelpers::stopA(Yii::$app->user->can('instanceAdmin'));
 
@@ -100,21 +99,27 @@ class SiteController extends Controller
         }
         else{
 
-            $session = Yii::$app->session;
-            $session->set('currentInstance', $instanceCity[0]['inst_name']);
-            $instanceId = ChatInstancesModel::getInstanceIdByName($instanceCity[0]['inst_name'])[0]['instance'];
-            $instanceName = ChatInstancesModel::getInstanceDisplayName($instanceCity[0]['inst_name']);
 
+            if($session->has('currentInstance')){
+                $instanceId = ChatInstancesModel::getInstanceIdByName($session->get('currentInstance'))[0]['instance'];
+                $instanceName = ChatInstancesModel::getInstanceDisplayName($session->get('currentInstance'));
+            }
+            else {
+                $session->set('currentInstance', $instanceCity[0]['inst_name']);
+                $instanceId = ChatInstancesModel::getInstanceIdByName($instanceCity[0]['inst_name'])[0]['instance'];
+                $instanceName = ChatInstancesModel::getInstanceDisplayName($instanceCity[0]['inst_name']);
+            }
         }
         //\flashHelpers::stopA($instanceId);
 
         $dialogs = ChatsInfo::getChats($instanceId);
         $username = Yii::$app->user->identity->display_name;
+        $currentInstance = $session->get("currentInstance");
 
 
         $page['page_content'] = array_reverse($dialogs);
-        //\flashHelpers::stopA($page);
-        return $this->render('main.twig', compact('page', 'username', 'instanceName'));
+        //\flashHelpers::stopA($currentInstance);
+        return $this->render('main.twig', compact('page', 'username', 'instanceName', 'currentInstance'));
 
     }
 
