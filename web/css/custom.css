@@ -133,11 +133,23 @@ body {
     cursor: pointer;
 }
 
-.heading-dot {
+.heading-dot{
     padding: 0;
 }
 
-.heading-dot svg {
+
+logout{
+    padding: 0;
+}
+
+.heading-dot svg{
+    text-align: right;
+    padding: 5px;
+    color: #93918f;
+    cursor: pointer;
+}
+
+logout a svg{
     text-align: right;
     padding: 5px;
     color: #93918f;

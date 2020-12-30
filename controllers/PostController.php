@@ -299,13 +299,17 @@ class PostController extends Controller{
             $userData = User::findOne(['username' => $user->userName]);
 
             $roles = array();
-            $permissions = Yii::$app->authManager->getRoles();
-            //\flashHelpers::stopA($instanceCity);
+            $userRole = Yii::$app->authManager->getRolesByUser(Yii::$app->user->getId());
+
             $i = 0;
-            foreach ($permissions as $key => $perm) {
-                $roles[$i]['roleName'] = $perm->name;
-                $roles[$i]['displayName'] = $perm->description;
-                $i++;
+            foreach ($userRole as $key => $perm) {
+                $avRoles = Yii::$app->authManager->getChildRoles($perm->name);
+                foreach ($avRoles as $roleName => $roleData) {
+                    $roles[$i]['roleName'] = $roleData->name;
+                    $roles[$i]['displayName'] = $roleData->description;
+                    $i++;
+                }
+
             }
 
             $exit['error'] = false;
@@ -635,7 +639,7 @@ class PostController extends Controller{
     private function changeInstance($data){
         $session = Yii::$app->session;
         try{
-            ChatInstancesModel::getInstanceIdByName($data['instance'])[0]['instance'];
+            ChatInstancesModel::getInstanceIdByName($data['instance']);
             $session->set('currentInstance', $data['instance']);
 
             $exit['error'] = false;

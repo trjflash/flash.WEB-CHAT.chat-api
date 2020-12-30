@@ -17,13 +17,13 @@ class MyRbacController extends Controller {
 
         // Создадим роли админа и редактора новостей
         $fullAdminRole = $auth->createRole('fullAdmin');
-        $fullAdminRole->description('Роль администратора системы');
+        //$fullAdminRole->description('Роль администратора системы');
 
         $instanceAdminRole = $auth->createRole('instanceAdmin');
-        $instanceAdminRole->description('Роль администратора чата');
+        //$instanceAdminRole->description('Роль администратора чата');
 
         $instanceOperatorRole = $auth->createRole('instanceOperator');
-        $instanceOperatorRole->description('Роль оператор чата');
+        //$instanceOperatorRole->description('Роль оператор чата');
 
 
         // запишем их в БД
@@ -52,12 +52,15 @@ class MyRbacController extends Controller {
 
         // Роли «Редактор новостей» присваиваем разрешение «Редактирование новости»
         $auth->addChild($fullAdminRole, $systemAdminPerm);
+        $auth->addChild($fullAdminRole, $instanceAdminRole);
+        $auth->addChild($fullAdminRole, $instanceOperatorRole);
 
         $auth->addChild($systemAdminPerm, $chatAdminPerm);
         $auth->addChild($chatAdminPerm, $chatOperatorPerm);
 
 
         $auth->addChild($instanceAdminRole, $chatAdminPerm);
+        $auth->addChild($instanceAdminRole, $instanceOperatorRole);
 
         $auth->addChild($instanceOperatorRole, $chatOperatorPerm);
 

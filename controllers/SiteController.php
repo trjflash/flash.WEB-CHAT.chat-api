@@ -82,6 +82,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+
         $this->view->title = "Чаты";
 
 
@@ -125,9 +126,7 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionLogin()
-    {
-
+    public function actionLogin(){
 
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -156,50 +155,8 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-
-        \flashHelpers::stopA(Yii::$app->security->generatePasswordHash(1234));
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout(){
-		/*
-		$code = "4/0AY0e-g56uq8XFAlifCLlGqbnbB5jDxamIWyTKb76Iw2Mdn5s9GVTjrZuHSKfthesPZAcag";
-		$curl = curl_init();
-		curl_setopt_array($curl, array(
-			CURLOPT_URL => 'https://www.google.com/m8/feeds/contacts/trjflash@gmail.com/full?access_token=ya29.a0AfH6SMDrjm_zbYPjGLg4pigVXBV5jCmNkY_mbi-xcqBgRE77CAvubgBulCiih5bhgucrkUV69a3Ag1r9ubDTDrltZU3ENYbheOnYmaDVgMZVWujAMwwbxQRJOr5K1RTNJ6cXPor2J1vEHshV_g6ec7pARjdY9n-CKohDHWJlMTA',
-			CURLOPT_VERBOSE => true,
-
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_TIMEOUT => 30,
-
-		));
-
-        $result = curl_exec($curl);
-        curl_close($curl);
-
-        \flashHelpers::stopA($result);*/
-	}
 	public function actionError(){
+
         \flashHelpers::stopA('ERROR');
     }
 }

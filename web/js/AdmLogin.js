@@ -1,8 +1,6 @@
 var home = 'http://chat.onclinic.local';
 
 $('#adminLogin').click(function(event) {
-    alert('AAAAAAAA');
-
     event.preventDefault();
     var action = 'login';
     var username = $('#username').val();

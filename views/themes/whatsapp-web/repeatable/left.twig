@@ -11,6 +11,8 @@
 
             </div>
 
+
+            {% if instanceName|length > 1 %}
             <div class="col-sm-5 col-xs-5 ">
                 <label for="exampleFormControlSelect1">Текущий инстанс</label>
                 <select class="form-control form-control-sm" id="instance">
@@ -24,12 +26,17 @@
                     {% endfor %}
                 </select>
             </div>
+            {% endif %}
+
 
             {% if app.user.can('chatAdmin') %}
                 <div class="col-sm-1 col-xs-1  heading-dot  pull-right">
                     <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
                 </div>
             {% endif %}
+            <div class="col-sm-1 col-xs-1 logout pull-right">
+                <a href="/logout"><i class="fa fa-sign-out fa-2x" aria-hidden="true"></i> </a>
+            </div>
 
         </div>
 
