@@ -1,0 +1,16 @@
+{{ use('/app/components') }}
+
+{% block head %}
+    {% embed 'themes/Shards/repeatable/head.twig' %}{% endembed %}
+{% endblock head %}
+
+{% include 'themes/Shards/repeatable/header.twig' %}
+{% include 'themes/Shards/repeatable/left.twig' %}
+
+{% block right %}
+    {% embed 'themes/Shards/repeatable/right.twig' %}{% endembed %}
+{% endblock right %}
+
+{% include 'themes/Shards/repeatable/footer.twig' %}
+{% include 'themes/Shards/repeatable/end.twig' %}
+

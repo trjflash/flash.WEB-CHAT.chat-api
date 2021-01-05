@@ -1,0 +1,36 @@
+{{ register_asset_bundle('app/assets/AppAsset') }}
+{{ void(this.beginPage()) }}
+<html lang='{{ app.language }}'>
+
+<head>
+    <title>{{ html.encode(this.title) }}</title>
+    <meta charset='{{ app.charset }}'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'> {{ html.csrfMetaTags | raw }}
+    <meta name='viewport' content='width=device-width, initial-scale=1'>{{   void(this.head) }}</head>
+
+<body>{{ void(this.beginBody()) }}
+    <div id="modal_content">
+        <div class="popup-fade in fadeInDown animated" style="display: none;">
+            <div class="popup"><a class="popup-close" href="#">X</a>
+
+                <div class="tab-content">
+                    <div id="telephone-list" class="">
+                        <div class="card-header border-bottom">
+                            <h6 class="m-0">Спиок номеров</h6></div>
+                        <div class="card-body pt-0">
+                            <div class="row border-bottom py-2 bg-light">
+                                <span class="btn btn-file btn-success btn-sm btn-white ml-auto mr-auto ml-sm-auto">
+                                    <i class="icon-plus"></i>
+                                    <span>Загрузить список для рассылки</span>
+                                    <input type="file" name="upload-telephones" id="upload-telephones">
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class='green-header'></div>
+<div class="container app">
+    <div class="row app-one">

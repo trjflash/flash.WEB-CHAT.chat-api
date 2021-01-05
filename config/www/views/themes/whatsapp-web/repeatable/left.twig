@@ -1,0 +1,131 @@
+<div class="col-sm-4 side">
+    <div class="side-one">
+        <div class="row heading">
+            <div class="col-sm-6 col-xs-6 heading-avatar">
+
+                <div class="self-heading-avatar-icon">
+                    <img src="{{ url(['images/avatars/'], {'alias' : web}) }}/avatardefault.png">
+                    <span class="avatar-name">{{ username }}</span>
+                </div>
+
+
+            </div>
+
+
+            {% if instanceName|length > 1 %}
+            <div class="col-sm-5 col-xs-5 ">
+                <label for="exampleFormControlSelect1">Текущий инстанс</label>
+                <select class="form-control form-control-sm" id="instance">
+                    {%  for instance in instanceName %}
+                        <option value="{{ instance.name }}"
+                            {% if instance.name == currentInstance %}
+                                selected
+                            {% endif %}
+
+                        >{{ instance.display_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+
+
+            {% if app.user.can('chatAdmin') %}
+                <div class="col-sm-1 col-xs-1  heading-dot  pull-right">
+                    <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
+                </div>
+            {% endif %}
+            <div class="col-sm-1 col-xs-1 logout pull-right">
+                <a href="/logout"><i class="fa fa-sign-out fa-2x" aria-hidden="true"></i> </a>
+            </div>
+
+        </div>
+
+        <div class="row searchBox">
+            <div class="col-sm-12 searchBox-inner">
+                <div class="form-group has-feedback">
+                    <div class="search">
+                        <label for="new-chat-input">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                            <span class="sr-only">Номер в формате 7 777 123 45 67</span>
+                        </label>
+                        <input id="new-chat-input" class="form-control input-lg" placeholder="Номер в формате 7 777 123 45 67" type="text" maxlength="11" minlength="10">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row sideBar">
+            <!---Последние чаты --->
+
+            {%  for dialogs in page.page_content %}
+			
+			
+                    <div id="{{ dialogs.chatId }}" class="row sideBar-body">
+                        <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                            <div class="avatar-icon">
+                                <img src="{{ dialogs.chatImage }}">
+                            </div>
+                        </div>
+                        <div class="col-sm-9 col-xs-9 sideBar-main">
+                            <div class="row">
+                                <div class="col-sm-8 col-xs-8 sideBar-name">
+                                <span class="name-meta">
+                                    {{ dialogs.chatName }}
+                                </span>
+                                </div>
+                            </div>
+                        </div>
+						<span class="has-new" style="display: none">
+							<i class="fa fa-circle" aria-hidden="true"></i>Есть новые
+						</span>
+                    </div>
+            {% endfor %}
+
+
+
+
+        </div>
+    </div>
+
+    <div class="side-two">
+        <div class="row newMessage-heading">
+            <div class="row newMessage-main">
+                <div class="col-sm-2 col-xs-2 newMessage-back">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                </div>
+                <div class="col-sm-10 col-xs-10 newMessage-title">
+                    Новый чат
+                </div>
+            </div>
+        </div>
+
+        <div class="row composeBox">
+            <div class="col-sm-12 composeBox-inner">
+                <div class="form-group has-feedback">
+                    <div class="search">
+
+                        <label for="search-input">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                            <span class="sr-only">Поиск контактов</span>
+                        </label>
+                        <input id="search-input" class="form-control input-lg" placeholder="Поиск контактов" autocomplete="off" spellcheck="false" autocorrect="off" tabindex="1">
+                        <a id="search-clear" href="#" class="fa fa-times-circle hide" aria-hidden="true"><span class="sr-only">Начать заново</span></a>
+                    </div>
+                    <div class="search">
+                        <label for="new-chat-input">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                            <span class="sr-only">Номер в формате 7 777 123 45 67</span>
+                        </label>
+                        <input id="new-chat-input" class="form-control input-lg" placeholder="Номер в формате 7 777 123 45 67" type="text" maxlength="11" minlength="10">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row compose-sideBar">
+            <!---Общий список контактов --->
+
+        </div>
+    </div>
+</div>
+
